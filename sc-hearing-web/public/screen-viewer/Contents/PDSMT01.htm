@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "帳票分割設定登録", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	オペレータIDごとにPDF分割及びAirRepo連携の設定を登録します。\
+<li>	利用区分によって、スーパーカクテルの帳票プログラムに対しての設定か、\
+スーパーカクテル外の個別ファイルの設定かを指定可能です。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	帳票IDではPRフレームが指定可能です。\
+<li>	AirRepo連携機能はAirRepoライセンスが必要となります。\
+<br />	AirRepo連携「1：連携する」とした場合は、下記の設定とする必要があります。\
+<br />	PDF名称区分　「1：帳票ID」\
+<br />	PDF分割区分　「1：分割する」\
+<br />	PDF分割キー　「指定する項目の項目長が13桁以内」\
+<li>	PDF分割キーは対象の帳票ワーク項目（数値・繰返項目以外）を指定可能です。\
+<li>	発行管理「1：管理する」とした場合でも、対象プログラムにて\
+発行管理に対応していない場合は管理されません。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	プログラムIDではPRフレーム／MTフレームが指定可能ですが、MTフレームで対応しているプログラムは以下となります。\
+<br />	「HANMT11_納品書発行(一覧選択)」\
+<br />	「SEKMT11_請求書発行(一覧選択)」\
+<br />	「VSKMT11_請求書発行(一覧選択)」\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+帳票分割設定登録&lt;PDSMT01&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/PDSMT01.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

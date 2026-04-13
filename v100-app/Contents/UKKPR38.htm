@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "回収予実比較表", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	経理締めのタイミングで出力し、個別債権管理を行う請求先毎に、作表時点での指定月の回収予実実績を確認します。\
+<li>	出力区分「入金エラー分」の指定で指定月回収額がマイナスの請求先だけを出力することができます。「仮受金付替計上」で、各月間の入金額を相殺する場合に使用できます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	対象年月／部門を指定することで指定月の回収予実実績を請求先別に確認できます。\
+<li>	出力区分により請求先を絞り込むことが可能です。１：全て           全請求先２：予定回収違算分 回収予実実績の異なる先３：物件残高有り   物件残高がある先４：入金エラー分   指定月回収額がマイナスの先\
+<li>	表示選択でコード順またはカナ順で印字できます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	「回収予定額」＝「指定月までの回収予定額」－「指定前月までの物件消込額」\
+<li>	「当月仮受金残」欄には、「当月回収額」のうち、物件と未突合わせの入金額を出力しています。\
+<li>	「現在仮受金残」には作表時点での「物件と未突合わせの入金額」を出力しています。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+回収予実比較表&lt;UKKPR38&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><A  HREF="image/rpt/UKKPR38.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票サンプルの表示</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/UKKPR38.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

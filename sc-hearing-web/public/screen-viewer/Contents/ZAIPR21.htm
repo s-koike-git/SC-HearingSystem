@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "有効在庫一覧表", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	在庫管理商品について、倉庫・商品別に予定在庫＆有効在庫を出力します。\
+<li>	集計区分にて日別または週別で出力することができます。\
+<li>	日別とすると開始日より9日間とそれ以降の集計で各受払の推移と有効在庫を確認できます。\
+<li>	週別とすると開始日含め7日間を一週間とし、9週間とそれ以降の集計で各受払の推移と有効在庫を確認できます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	商品区分や商品分類にて範囲を絞り込むことができます。\
+<li>	出力区分を指定することにより出力対象を絞り込めます。\
+<br />	　１：有効在庫または予定在庫がマイナスの商品だけ出力できます。\
+<br />	　2：予定在庫が発注点割れの商品だけ出力できます。\
+<li>	倉庫別に有効在庫を表示するか指定できます。\
+<li>	出力単位を選択する事で基本在庫単位又は、基本荷姿単位の何れかの単位で表示します。（初期値：基本荷姿単位）\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	予定在庫：該当日付前日（前週）末時点の予定在庫\
+<br />	　前日（前週）予定在庫＋前日（前週）仕入予定＋\
+<br />	　前日（前週）入庫予定＋前日（前週）製造予定－\
+<br />	　払出予定－出庫予定－売上予定\
+<li>	有効在庫：該当日付（前週）末時点の引当可能予定数\
+<br />	　前日（前週）有効在庫－当日（今週）分の引当済数\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+有効在庫一覧表&lt;ZAIPR21&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><A  HREF="image/rpt/ZAIPR21.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票サンプルの表示</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/ZAIPR21.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

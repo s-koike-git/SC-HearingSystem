@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "請求入力不可日付設定", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	請求消費税一括計算後、伝票修正ができなくなった状態を解除したい時に、変更が必要な得意先マスタの「税一括計算進行中締日」を一覧表示型で変更します。（複数得意先を一覧型で変更したい場合）\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	自動的に「税一括計算進行中締日（現在値）」に値がセットされるのは消費税算出区分が請求合計の請求先だけです。\
+<li>	その他の消費税算出区分の請求先にも手動で設定を行うことは可能です。設定を行うとその請求先の設定日以前の売上計上・出荷売上・直送売上計上伝票の登録・修正・削除を抑止します。\
+<li>	コード指定して設定変更を行いたい場合には、得意先詳細登録を使用してください。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+請求入力不可日付設定&lt;TOKMT05&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/TOKMT05.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

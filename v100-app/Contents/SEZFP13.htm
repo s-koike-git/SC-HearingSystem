@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "製造指示所要量計算処理", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	製品の製造指示情報より所要量を展開して、複数製品で共通使用されている半製品の必要数を集計し製造指示を自動作成します。\
+<br />	（機能としては、複数製品にまたがる共通半製品のみが対象ではなく、製造指示された製品の全ての構成半製品を対象に製造指示を作成します）\
+<br />	※当機能で導出される半製品の製造指示数は総所要量計算に基づく値となります。\
+<li>	条件指定により自動作成された製造指示データを削除します。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	商品詳細登録で「製造単位丸め区分：”する」と設定された半製品は、集計された製造指示数が製造単位（製造ロット）に丸められます。\
+<li>	必要数を集計する際の半製品のまとめ単位は「工場／製造日／ラインコード／納期／版数／倉庫コード となります。\
+<li>	当機能にて処理対象となる製品／半製品の条件は以下となります。製品　　：　製造指示入力時「仕掛区分：”１階層”」で登録された製品。半製品　：　商品詳細登録で「計算処理対象(製造指示)：”対象”」、かつ上位製品（半製品）が「仕掛区分：”１階層”」「下位有無：”あり”」と設定されている半製品。\
+<li>	作成される半製品製造指示伝票の「仕掛区分」は「商品詳細登録」にて設定された値となります。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	確認方法（帳票）：製造指示日記帳\
+<li>	当機能においては、同一条件指定による所要量計算処理を抑制しておりません。製品の製造指示内容を変更して、再度所要量計算を行いたい場合には、先に自動作成した製造指示伝票を一旦削除後、再計算を実施してください。\
+<li>	既存伝票削除指示の際に以下は削除対象外となります。①既に「完了」されている製造指示伝票②製造指示内容が一部でも「完成」済みである製造指示伝票\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+製造指示所要量計算処理&lt;SEZFP13&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/SEZFP13.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

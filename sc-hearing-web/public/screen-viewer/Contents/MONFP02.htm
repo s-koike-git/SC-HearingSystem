@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "月次棚卸評価計算", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	「ユーザー情報管理テーブル登録」にて「棚卸評価方法：&quot;最終仕入&quot;、&quot;総平均&quot;、&quot;移動平均&quot;」が選択されている場合、もしくは「商品詳細登録」にて「棚卸評価単価算出条件：&quot;最終仕入&quot;、&quot;総平均&quot;、&quot;移動平均&quot;」が選択されている際に、指定値での棚卸評価単価を導出します。\
+<li>	棚卸評価単価は各々の商品の「基本在庫単位」ごとに計算されます。（各商品が一つの評価単価を保持しています。商品別倉庫別などの評価単価計算方式は未サポートです。）\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	同月度で複数回実行できます。在庫表の出力後に伝票もれなどがあった場合に伝票処理して再処理できます。\
+<li>	「ユーザー情報管理テーブル登録」にて「日次締運用条件：&quot;締運用する&quot;」と指定し、かつ棚卸評価単価を&quot;移動平均&quot;で導出する場合に限り、処理対象日付での日次締処理を行うことが出来ます。日次締処理を実施することで、対象日付以前の在庫受払を伴う伝票操作（伝票登録／修正／削除）を無効にできます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	棚卸評価単価区分が最終仕入・総平均・総平均の場合に計算が実行されます。標準原価を採用している場合もエラー表示されません。\
+<li>	月次更新済の月を対象に処理する事はできません。チェックされますが、入力は慎重に行って下さい。\
+<li>	日次締を行うと、評価方法が移動平均でない商品に対しても、伝票操作は無効になります。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+月次棚卸評価計算&lt;MONFP02&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/MONFP02.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

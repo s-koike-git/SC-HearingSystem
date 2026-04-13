@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "部門情報登録", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	部門の新規登録／修正／削除を行います。\
+<li>	名称・住所・電話・ＦＡＸ情報を登録します。\
+<br />\
+<br />【SC会計連携あり】\
+<li>	SC会計連携機能を使用する際に、会計側の部門とデータ連携を行います。\
+<br />\
+<br />【汎用項目】\
+<li>	汎用項目を入力します。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	当設定情報は「発注書」に印字されます。\
+<br />\
+<br />【SC会計連携あり】\
+<li>	会計部門コード：会計側の部門を指定します。会計側に存在しないデータをセットした場合は、会計部門マスタにデータが新規で作成されます。\
+<li>    製造区分：会計部門に対して「製造部門」か「非製造部門」かの指定をします。「製造部門」とすることで、会計側で製造原価科目が入力可能となります。\
+<li>	Core会計ポスグレ版でデータベースがPostgreSQLに変更されたことに伴い、Core会計ポスグレ版にて用意されている外部連携WebAPIを用いてデータ参照や更新を行います。\
+<li>	登録時はSC側の連携マスタのデータと共にCore会計ポスグレ版のマスタにも登録が同時に行われます。\
+<br />\
+<br />【汎用項目】\
+<li>	メイン画面にある「汎用項目」ボタンを押下すると起動します。\
+<li>	「マスタ汎用設定登録」で設定した汎用項目に対して入力を行うことができます。汎用文字列・汎用数値・汎用日付に各10項目ずつ入力が可能です。\
+<li>	「マスタ汎用設定登録」の設定に従い、入力時チェックや入力可能文字制御を行います。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	部門運用をしない場合でも、部門コード「000000」（全社）を登録してください。\
+<br />	（システム上、必須レコードとなります）\
+<br />\
+<br />【SC会計連携あり】\
+<li>	以下の項目はユーザー情報管理テーブル登録の「SC会計マスタ連携」を「1:する」とした場合のみ表示されます。\
+<br />　「会計部門コード」「会計部門名称」「会計部門略称」「製造区分」\
+<br />\
+<br />【汎用項目】\
+<li>	「マスタ汎用設定登録」で対象マスタの利用区分が利用しないになっている場合や対象マスタに対する設定がない場合は「汎用項目」ボタンが非表示になるため起動できません。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+部門情報登録&lt;BMNMT04&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><a href="JavaScript:showhide('main')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面</a></li>
+<li><a href="JavaScript:showhide('sub')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（SC会計連携あり）</a></li>
+<li><a href="JavaScript:showhide('sub2')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">サブ画面</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/BMNMT04.png">
+</div>
+<div id="sub">
+メイン画面（SC会計連携あり）<br>
+<img src="image/BMNMT04_T2.PNG">
+</div>
+<!----メイン画面ここまで---->
+<!----サブ画面---->
+<div id="sub2">
+サブ画面<br>
+<img src="image/BMNMT04_MHY.PNG">
+</div>
+<!----サブ画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

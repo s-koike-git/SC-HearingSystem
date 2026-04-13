@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "受発注計上（Core FOODs）", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	受注と同時に発注の計上が行えます（取寄せ品など）。\
+<li>	スーパーカクテルCore FOODs販売ライセンスで利用可能です。\
+<li>	登録時や伝票参照時に「証憑保管情報登録」をリンク起動し、登録した伝票に利用した受領文書の情報を登録・確認することができます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	仕入先コードを入力すると発注データの入力が可能になります。仕入先コードを入力しない場合は受注のみのデータとして計上します。\
+<li>	得意先別商品別の契約単価が参照可能です。\
+<li>	ユーザー情報管理テーブルの設定により、契約単価の自動作成が可能です。\
+<li>	商品詳細登録に登録されている複数荷姿毎に数量登録できるサブ画面を表示させることができます。（受注・発注毎）\
+<li>	伝票登録後、または登録済の伝票を表示している状態での証憑情報ボタン押下により「証憑保管情報登録」をリンク起動することができます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	発注データについて注文書を発行することが可能です。なお、注文書のみの発行はできません。\
+<li>	受発注計上は引当処理対象外です。\
+<li>	得意先別の計上基準（出荷基準or検収基準、検収LT）の設定より売上予定日を自動表示します。（日付変更可）出荷基準の場合：出荷日、検収基準の場合：指定納品＋検収LT\
+<li>	仕入先別の検収LTの設定より仕入予定日を自動表示します。（日付変更可）\
+<li>	売上予定日は、売上一括計上時に、出荷同時売上の伝票でも、出荷日と売上日を別日付にて計上するために使用します。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+受発注計上&lt;JUCET05&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><a href="JavaScript:showhide('main')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面</a></li>
+<li><a href="JavaScript:showhide('sub')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">サブ画面</a></li>
+<li><A  HREF="image/rpt/HATPR05.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（注文書）</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/JUCET05.png">
+</div>
+<!----メイン画面ここまで---->
+<!----サブ画面---->
+<div id="sub">
+サブ画面<br>
+<img src="image/JUCET05_OLN.PNG">
+<br>
+<img src="image/JUCET05_TNM.PNG">
+<br>
+<img src="image/JUCET05_NNM.PNG">
+<br>
+<img src="image/JUCET05_UNT.PNG">
+</div>
+<!----サブ画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

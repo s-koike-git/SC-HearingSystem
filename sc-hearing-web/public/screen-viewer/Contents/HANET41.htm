@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "出荷売上計上（Core販売）", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	出荷売上情報を入力／修正／削除します。\
+<li>	受注データをもとに、出荷売上実績を入力することができます。また、単独での売上入力も可能です。\
+<li>	現金売上の場合には、入金情報を作成しています。別途に入金計上する必要はありません。\
+<li>	得意先別の契約単価が参照可能です。\
+<li>	「預り区分」を１と指定することにより、預り売上伝票を処理します。\
+<li>	スーパーカクテルCore 販売ライセンスで利用可能です。\
+<li>	預り取引・店・帳合先に非対応です。\
+<li>	明細項目の倉庫・出荷予定日に非対応です。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	伝票№は手入力、自動採番が設定可能です。\
+<li>	各種コードは検索ウィンドウから検索入力が可能です。\
+<li>	マスタの設定により、得意先及び納・ 品先、商品の名称等手入力が可能です。\
+<li>	個数をクリックすることで、現在庫／出荷残／入荷残を照会できます。\
+<li>	売上単価をクリックすることで、過去５回迄の取引単価が参照できます。\
+<li>	確認ウィンドウで、即時伝票発行が可能です。\
+<li>	帳端を設定する事で、請求月の調整が行えます。\
+<li>	「ロット№別在庫一覧」ウィンドウで、ロット別在庫の参照が可能です。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	受注データをもとにした場合、分納が可能です。\
+<li>	引当処理を行っている場合、未引当の受注データは表示されません。\
+<li>	出荷日と売上日を別日付（出荷日<=売上日）で計上することができます。\
+<li>	得意先別の売上計上基準（出荷基準or検収基準、検収LT）の設定より売上予定日を自動表示します。（日付変更可）得意先の計上基準による売上日の初期値\
+<br />	　出荷基準の場合：出荷日\
+<br />	　検収基準の場合：納品日＋得意先マスタの検収LT\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+出荷売上計上&lt;HANET41&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><a href="JavaScript:showhide('main')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面</a></li>
+<li><a href="JavaScript:showhide('sub')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">サブ画面</a></li>
+<li><A  HREF="image/rpt/HANPR10_1.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（納品書(ヒサゴ)）</a></li>
+<li><A  HREF="image/rpt/HANPR10_2.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（納品書(TA1)）</a></li>
+<li><A  HREF="image/rpt/HANPR10_3.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（納品書(TA2)）</a></li>
+<li><A  HREF="image/rpt/HANPR10_4.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（納品書(ヒサゴ３段)）</a></li>
+<li><A  HREF="image/rpt/HANPR10_5.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（売上伝票(LBP版)）</a></li>
+<li><A  HREF="image/rpt/SYUPR05.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（仮納品書(ヒサゴ)）</a></li>
+<li><A  HREF="image/rpt/SYUPR08.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（仮納品書(ヒサゴ３段)）</a></li>
+<li><A  HREF="image/rpt/SYUPR09.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（仮納品書(LBP版)）</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/HANET41.png">
+</div>
+<!----メイン画面ここまで---->
+<!----サブ画面---->
+<div id="sub">
+サブ画面<br>
+<img src="image/HANET41_LOT.PNG">
+<br>
+<img src="image/HANET41_TNM.PNG">
+<br>
+<img src="image/HANET41_OLN.PNG">
+<br>
+<img src="image/HANET41_UNT.PNG">
+<br>
+<img src="image/HANET41_NNM.PNG">
+<br>
+<img src="image/HANET41_FLT.PNG">
+</div>
+<!----サブ画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

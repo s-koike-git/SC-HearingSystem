@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "請求書発行（一覧選択）", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	請求先毎の請求書を出力します。\
+<li>	「得意先詳細登録」にて設定された請求書区分に従って「明細請求書」 「合計請求書」「伝票合計明細請求書」のいずれに出力されるかが異なります。\
+<li>	範囲指定により請求データを明細に表示し、対象を選択して印刷することが可能です。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	請求親子の場合には、請求先として出力されます。その場合、明細には子の得意先コード順に出力されます。\
+<li>	伝票合計明細請求書の場合、明細に１行目の商品名を印刷するかしないかの選択が出来ます。\
+<li>	ユーザー情報管理テーブル登録にて、預り記号出力抑制を0:出力抑制しないと指定した場合、預り区分が1:預り売上の売上伝票明細には伝票番号の後に　’*’の記号を出力します。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	請求書区分で\
+<br />	　明細請求書（ヒサゴ　型番　GB68/GB690）\
+<br />	　伝票合計明細請求書（ヒサゴ　型番　GB68/GB690）\
+<br />	　合計請求書（ヒサゴ 型番　GB48/GBＥ48）\
+<br />	　明細請求書（LBP版）　白紙用紙（A4縦）\
+<br />	　伝票合計明細請求書（LBP版）　白紙用紙（A4縦）\
+<br />	　合計請求書（LBP版）　白紙用紙（A4縦）\
+<br />	から選択します。\
+<li>	テスト印刷は正式印刷と同様に請求準備処理が実施済のデータからのみ\
+出力できます。請求準備処理前に売上対象の明細を確認する場合は請求書発行を使用してください。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+請求書発行（一覧選択）&lt;SEKMT11&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><A  HREF="image/rpt/SEKMT11_1.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（明細請求書）</a></li>
+<li><A  HREF="image/rpt/SEKMT11_2.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（伝票合計請求明細書）</a></li>
+<li><A  HREF="image/rpt/SEKMT11_3.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（合計請求書）</a></li>
+<li><A  HREF="image/rpt/SEKMT11_4.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（明細請求書(LBP版)）</a></li>
+<li><A  HREF="image/rpt/SEKMT11_5.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（伝票合計請求明細書(LBP版)）</a></li>
+<li><A  HREF="image/rpt/SEKMT11_6.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票（合計請求書(LBP版)）</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/SEKMT11.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

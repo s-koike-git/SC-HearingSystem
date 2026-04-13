@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>SC Screen Viewer</title>
+
+  <!-- 基盤JS（Start.htm と同階層に配置されている前提） -->
+  <script src="prototype.js"></script>
+  <script src="effects.js"></script>
+  <script src="window.js"></script>
+  <script src="window_effects.js"></script>
+  <script src="sc-scripts.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: auto;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    (function () {
+      // URL パラメータ取得
+      var params = new URLSearchParams(window.location.search);
+      var screenId = params.get('screen');
+
+      // screen 指定が無い場合は何もしない
+      if (!screenId) {
+        console.warn('screen パラメータが指定されていません');
+        return;
+      }
+
+      // 既存ウィンドウがあれば閉じる
+      if (window.__scViewerWindow) {
+        try {
+          window.__scViewerWindow.close();
+        } catch (e) {}
+      }
+
+      // window.js の Window を生成
+      window.__scViewerWindow = new Window({
+        id: 'sc_viewer_window',
+        title: screenId,
+        width: 1400,        // ← 横を広げる
+        height: 900,        // ← 縦を広げる
+        resizable: true,
+        maximizable: true,
+        minimizable: false,
+        closable: true,
+        draggable: true,
+        showEffect: Effect.Appear,
+        hideEffect: Effect.Fade,
+        // ★ スクロール有効
+        url: 'Contents/' + screenId + '.htm'
+      });
+      // 表示
+      window.__scViewerWindow.show();
+    })();
+  </script>
+</body>
+</html>

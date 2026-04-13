@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "単価変更入力", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	同一商品を複数単位で扱う場合は、商品詳細登録で基本単位(入数１)を設定後、当画面で、「基本単位以外に使用する単位」を設定します。\
+<li>	全ての単位の単価を設定する機能も持つ画面です。\
+<li>	単価利用区分が「バラ」の場合、単位別の設定単価は単位当り\
+の数量単価（単位(1)に対する単価）です。\
+<li>	単価利用区分が「荷姿」の場合、単位別の設定単価は単位当り\
+の荷姿単価（各単位に対する単価）です。\
+<li>	基準数量毎に数量別単価を設定することができます。\
+<li>	販売、購買業務の各計上にて、基本在庫単位ではない別の荷姿単位を初期表示する運用の場合、販売と購買各々で初期表示させる単位を設定できます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	価格改定に備え事前設定できる様に有効開始日付と各単価を設定する形式です。当画面では日付昇・ 順チェックが行われ、価格判断時は今回→前回→前々回の順に採用されます。\
+<li>	画面ヘッダのモード新規は今回欄を設定し過去にずらせる処理です。価格改定に使用できます。モード修正はすべての欄を自由に設定できます。設定ミスなどに汎用的に使えます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	単位マスタは事前設定必要です。\
+<li>	数量別の単価を設定する場合は、基準数量登録の基準数量を事前設定する必要がありまし。\
+<li>	同一商品で同一単位コード、同一基準数量の複数設定はできません。\
+<li>	標準原単価は基本単位にのみ設定できます。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+単価変更入力&lt;HINMT03&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/HINMT03.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "自由帳票リスト設定", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br />【抽出テーブル】\
+<li>	自由帳票出力で出力対象とするテーブルの選択、テーブル同士の結合や固定の抽出条件を登録／修正／削除します。\
+<li>	指定可能なテーブルは、自由帳票テーブル閲覧情報登録で閲覧可としたテーブルのみが指定可能です。\
+<br />\
+<br />【抽出項目】\
+<li>	自由帳票出力で出力対象とする項目を登録／修正／削除します。\
+<li>	指定可能なテーブル項目は、抽出テーブルで指定したテーブル項目および指定したテーブル項目を使用した計算が指定可能です。\
+<br />\
+<br />【その他条件/出力順】\
+<li>	自由帳票出力でグリッド、EXCELブック、CSV形式、XML形式を指定した場合の集計項目などの条件設定および出力順とする項目を登録／修正／削除します。\
+<li>	指定可能なテーブル項目は、抽出テーブルで指定したテーブル項目が指定可能です。\
+<br />\
+<br />【画面/EXCEL設定】\
+<li>	自由帳票出力で表示される画面条件指定項目と出力時の設定をを登録／修正／削除します。\
+<li>	指定可能な条件項目は、抽出テーブルで指定したテーブル項目が指定可能です。\
+<br />\
+<br />【テスト】\
+<li>	入力中のリスト定義の実行テストを行います。\
+<br />\
+<br />【簡易版定義】\
+<li>	定義されているリスト抽出情報を利用し、「自由帳票データ抽出（簡易版）」で利用する抽出設定および抽出基となるVIEWを定義します。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br />【抽出テーブル】\
+<li>	テーブルの指定やテーブル結合、固定の抽出条件を指定しますので、作業はSEやシステム管理者といったシステムを把握している方で作業をして頂くことを想定しております。\
+<br />\
+<br />【抽出項目】\
+<li>	テーブル項目の指定や計算式を指定しますので、作業はSEやシステム管理者といったシステムを把握している方で作業をして頂くことを想定しております。\
+<br />\
+<br />【テスト】\
+<li>	実行前に「SQL確認」を行うとユーザー修飾はされません。そのためUSR1以外のテーブルを使用している場合、そのままでは実行できないSQLが表示されることがあります。一度実行した後の「SQL確認」ではこの問題はありません。\
+<li>	テスト実行時、日付書式/数値書式の設定は適用されません。\
+<br />\
+<br />【簡易版定義】\
+<li>	標準版の以下機能は設定できません。仮想画面項目／出力形式ごとの書式有効設定／スケジュール実行\
+<li>	VIEWリスト保存では、簡易版にて利用する定義情報のほか、簡易版の出力基となるVIEWも同時に作成されます。そのため、確実な情報を利用するために、「簡易版定義」を設定後、必ず当画面で「F2:更新」で「簡易版定義」の情報を更新してから「VIEWリスト保存」の処理を実施してください。\
+<li>	「VIEW出力項目」の「文字種」「検索時書式」は「自由帳票データ出力（簡易版）」の抽出画面の設定となります、VIEW項目の定義ではございません。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+自由帳票リスト設定&lt;EXCFP01&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><a href="JavaScript:showhide('main')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（抽出テーブル）</a></li>
+<li><a href="JavaScript:showhide('sub')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（抽出項目）</a></li>
+<li><a href="JavaScript:showhide('sub2')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（その他条件/出力順）</a></li>
+<li><a href="JavaScript:showhide('sub3')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（画面/EXCEL設定）</a></li>
+<li><a href="JavaScript:showhide('sub4')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（テスト）</a></li>
+<li><a href="JavaScript:showhide('sub5')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（簡易版定義）</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面（抽出テーブル）<br>
+<img src="image/EXCFP01.png">
+</div>
+<div id="sub">
+メイン画面（抽出項目）<br>
+<img src="image/EXCFP01_T2.png">
+</div>
+<div id="sub2">
+メイン画面（その他条件/出力順）<br>
+<img src="image/EXCFP01_T3.png">
+</div>
+<div id="sub3">
+メイン画面（画面/EXCEL設定）<br>
+<img src="image/EXCFP01_T4.png">
+</div>
+<div id="sub4">
+メイン画面（テスト）<br>
+<img src="image/EXCFP01_T5.png">
+</div>
+<div id="sub5">
+メイン画面（簡易版定義）<br>
+<img src="image/EXCFP01_T6.png">
+</div>
+<!----メイン画面ここまで---->
+<!----サブ画面---->
+<!----サブ画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

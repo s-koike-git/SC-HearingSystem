@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "部門制御登録", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	ログインユーザーに対してデータ閲覧／更新を許可する部門を設定します。\
+<li>	以下の部門を設定することで、業務ごとに設定した部門以下の階層に紐づくデータのみ閲覧／更新が可能となります。\
+<br />	　・得意先担当者部門：販売管理業務（出荷を除く）\
+<br />	　・仕入先担当者部門：購買管理業務（入荷を除く）\
+<br />	　・債権管理部門：請求売掛業務\
+<br />	　・債務管理部門：支払買掛業務\
+<br />	　・在庫管理部門：在庫管理業務（入荷・出荷を含む）\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	パターンコード「00000000」で登録した部門制御レコードがシステムで使用されます。\
+<li>	組織変更に備えてパターンコード「00000000」以外のレコードを事前に作成しておき、\
+「表示中のパターンを現行パターンに差し替え」を行うことで、\
+パターンコード「00000000」のレコードを上書きします。\
+<li>	既存のパターンをコピーして、新しいパターンを参照作成可能です。\
+<li>	パターンコード「00000000」は削除不可です。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	部門の階層の設定は、「部門体系登録」にて行います。\
+<li>	部門を設定しない業務については、全ての部門のデータが閲覧／更新可能です。\
+<li>	当画面で未登録のオペレータについては、全ての部門のデータが閲覧／更新可能です。\
+<li>	部門制御を有効にするためには、当画面の設定に加えて、「ユーザー情報管理テーブル登録で「部門制御：有効」の設定が必要です。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+部門制御登録&lt;OPEMT02&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/OPEMT02.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

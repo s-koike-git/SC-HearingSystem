@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "製造指示入力（複数版）", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br />	【製造指示入力（複数版）】\
+<li>	複数の構成品から、製品・半製品が複数できる連産品の入力に対応します。\
+<li>	当画面では、「製品・半製品」を入力します。\
+<br />\
+<br />	【製造指示入力（複数版）（構成品）】\
+<li>	「製造指示入力（複数版）」画面から呼び出されます。\
+<li>	連産品の製造指示における構成品の入力を行います。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br />	【製造指示入力（複数版）】\
+<li>	事前に登録した製造パターンを指定し、登録済みの製品・半製品の一覧を明細に展開します。\
+<li>	構成品の入力は、ツールバー「構成品情報」から起動される「製造指示入力（複数版）（構成品）」画面にて行います。\
+<li>	サブ画面で中間親情報の確認が可能です。\
+<br />\
+<br />	【製造指示入力（複数版）（構成品）】\
+<li>	「製造指示入力（複数版）」画面で指定した製品・半製品の製造に必要な構成品が明細に展開されます。構成品の追加・修正・削除や所要量の修正を行うことができます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br />	【製造指示入力（複数版）】\
+<li>	当画面にてデータを登録する際は、必ず「製造指示入力（複数版）（構成品）」で構成品の情報が登録されている必要があります。また、構成品情報を登録後、当画面にて入力値を変更した場合は、再度「製造指示入力（複数版）（構成品）」の情報を登録する必要があります。\
+<br />\
+<br />	【製造指示入力（複数版）（構成品）】\
+<li>	構成に含まれていない構成品を追加することが可能です。追加した構成品の明細にて「対象製品・半製品コード」を指定することで、　特定の製品・半製品のみに追加することが可能です。空白とした場合、「製造指示入力（複数版）」にて入力されている製品・半製品の全てで使用することとなり、それぞれの在庫単位数量にて構成品使用数を按分します。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+製造指示入力（複数版）&lt;SEZET16&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><a href="JavaScript:showhide('main')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面</a></li>
+<li><a href="JavaScript:showhide('sub')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">サブ画面</a></li>
+<li><a href="JavaScript:showhide('sub2')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（構成品）</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/SEZET16.png">
+</div>
+<!----メイン画面ここまで---->
+<!----サブ画面---->
+<div id="sub">
+サブ画面<br>
+<img src="image/SEZET16_OYA.PNG">
+</div>
+<div id="sub2">
+メイン画面（構成品）<br>
+<img src="image/SEZET17.png">
+</div>
+<!----サブ画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "構成品発注点割れ確認表", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	生産計画、製造指示を基に、それに必要な構成品の必要量、現在庫と入出荷予定から予定在庫を算出します。\
+<li>	予定在庫が発注点を下回る場合は、発注点に戻す数量を過不足として出力します。（発注点登録は倉庫別在庫マスタに登録）\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	生産計画の場合対象工場、ライン、期間の生産品目の生産計画数より、構成マスタから所要量展開して、構成品とその必要数を算出します。\
+<li>	生産指示の場合対象工場、ライン、期間の製造指示に対する払出予定を集計し必要数として出力します。\
+<li>	倉庫別に対象日付（終了）までの出荷残（受注残・払出予定）、入荷残（発注残・製造予定）と現在庫より予定在庫を計算し、予定在庫が発注点を下回る場合のみ不足数を出力します。ただし製造指示の場合、出荷残は必要数を省いた数値です。\
+<li>	不足数がある構成品は、購買荷姿での不足数と手配先を表示します。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	対象日付（開始）はシステム日付以前の日付は入力不可です。\
+<li>	構成品の出力対象は、画面で指定した構成品の範囲、出力区分\
+および生産計画、製造指示に関連する使用予定のある構成品が\
+対象です。\
+<li>	不足している構成品のみ確認することができます。\
+<li>	構成品が複数倉庫で管理されいてる場合も考慮して、倉庫別の入出荷残を表示させるか、倉庫計のみ表示するか選択できます。\
+<li>	複数工場にて同一構成品を各工場で各々管理されている場合は出力倉庫を絞り込むことで、担当倉庫のみを出力して確認頂きます。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+構成品発注点割れ確認表&lt;SEZPR08&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><A  HREF="image/rpt/SEZPR08.PDF" target="_blank" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">帳票サンプルの表示</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/SEZPR08.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

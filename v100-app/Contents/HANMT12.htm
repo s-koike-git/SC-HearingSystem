@@ -1,0 +1,91 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "売上一括計上（伝票単位）", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	受注データをもとに、伝票単位で売上の計上を行います。受注時に明細単位で倉庫/出荷予定日/指定納期を指定いたとしても、当処理では見出しの倉庫/出荷予定日/指定納期を採用します。\
+<li>	ロット管理する商品については、出荷可能なロットより引き落としを行います。その際、出庫すべきロット在庫が不足している時に伝票作成を行うか否かを選択できます。\
+<li>	受注時にロット指定している場合は指定ロットを、管理日付を指定している場合は指定管理日付以降のロットを引き落とします。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	指定された出荷予定日以前の受注データが、伝票単位で表示されるので、対象区分を入力して売上の計上を行います。（受注計上の見出しで指定した指定納期を抽出対象とします。）\
+<li>	出荷日付区分：伝票の出荷日を指定します。画面で入力した日付か受注時の出荷予定日を出荷日とするかを選択できます。\
+<li>	売上日付区分：伝票売上日を指定します。画面で入力した日付（出荷日付区分：画面指定時のみ選択可）か、受注時の出荷予定日、売上予定日、指定納期の何れかを売上日とするかを選択できます。\
+<li>	売上伝票日付が出荷予定日の場合、納期が次回の締め範囲に含まれる時、自動的に帳端区分を次回請求にスライドさせるかどうか得意先ごとに設定する事が出来ます。\
+<li>	帳端を伝票毎に変更できます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	受注時に出荷売上同時計上と指示されたデータが対象です。\
+<li>	在庫引当運用を行う場合は、未引当状態の明細は対象外です。ロット在庫不足時に伝票作成する設定の場合は、未引当状態の明細は対象外となり、引当済の明細のみで伝票作成されます。\
+<li>	売上一括チェックリストで一括計上の結果が確認できます。\
+<li>	出荷日と売上日を別日付（出荷日<=売上日）で計上することができます。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+売上一括計上(伝票単位)&lt;HANMT12&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/HANMT12.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

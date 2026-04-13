@@ -1,0 +1,1394 @@
+﻿@charset "UTF-8";
+/*IE用デザインCSS*/
+
+/* 全体設定 */
+img{
+ border:0 ;
+}
+
+ul { 
+    margin-left: 1.2em ; 
+}
+
+
+/*テーブル設定*/
+	td.none {
+	    border:none;
+	    font-size: 10pt ;
+	}
+
+	td.title {
+	    border:none;
+	    font-size: 12pt ;
+	    
+	}
+	td.dttitle {
+	    border:none;
+	    font-size: 10pt ;
+	    color: #FFF ;
+	}
+	td.t0 {
+		border:thin solid;
+	    border-bottom-width: 1px;
+		border-top-width: 1px;
+		border-left-width: 1px;
+		border-right-width: 1px;
+		border-color: #000000 ;
+	    font-size: 10pt ;
+	    color: #000000 ;
+	}
+	td.t1 {
+		border:thin solid;
+	    border-bottom-width: 1px;
+		border-top-width: 0px;
+		border-left-width: 1px;
+		border-right-width: 1px;
+		border-color: #000000 ;
+	    font-size: 10pt ;
+	    color: #000000 ;
+	}
+
+
+/*タイトル設定*/
+div.title {
+    display: block ;
+    position: absolute ;
+    left: 0px ;
+    top: 0px ;
+    width: 1070px ;
+    height: 24px ;
+    font-size: 16pt ;
+    background-image:url("../image/_title_back.png");
+    border-bottom-width: 1px; 
+    border-bottom-color: #747474 ;
+    border-bottom-style: solid ;
+    z-index: 100 ;
+    font-family: "ＭＳ Ｐゴシック", "ヒラギノ角ゴ Pro W3", Osaka, sans-serif ;
+}
+
+/*サイドメニュー設定*/
+	div.sidemenu {
+	    font-size: 9pt ;
+		text-decoration:none;
+	    z-index: 5 ;
+		padding : 0;
+		margin : 0;
+	    border-width: 1px;
+	    left: -159px ;
+	    top: 24px ;
+	    height: 220px ;
+	    width: 190px ;
+	    position: absolute ;
+
+	    line-height:30px ;
+	    background-color: #F4F4F4 ;
+	    border-color: #000000 ;
+	    border-style: solid ;
+	    font-family: "ＭＳ Ｐゴシック", "ヒラギノ角ゴ Pro W3", Osaka, sans-serif ;
+	}
+	div.sidemenu img{
+	 border:0 ;
+	 padding-right:2px ;
+	 padding-left:2px ;
+	}
+
+	div.sidemenu.dt a{
+	    font-size: 9pt ;
+		text-decoration:none;
+	    z-index: 5 ;
+		padding : 0;
+		margin : 0;
+	    margin-right:0px;
+	    padding-right:0px;
+		padding-left:0px;
+	    border-width: 1px; 
+		left:0px;
+		top:30px;
+		height:30px;
+		width:100%;
+		border-bottom:solid 1px #000000; 
+
+		color:#000000;
+		background-color: #F4F4F4 ;
+	}
+
+
+
+	div.sidemenu.dt a:hover{
+	    font-size: 9pt ;
+		text-decoration:none;
+	    z-index: 5 ;
+		padding : 0;
+		margin : 0;
+	    margin-right:0px;
+	    padding-right:0px;
+		padding-left:0px;
+	    border-width: 1px; 
+		left:0px;
+		top:30px;
+		height:30px;
+		width:100%;
+		border-bottom:solid 1px #000000; 
+
+		color:#FFFFFF;
+		background-color:#0837ae;
+	}
+
+	div.sidemenu ul{
+	  list-style : none;  /*リストマークを消す*/
+	  text-align:left;  
+	  padding : 0;
+	  margin : 0;
+   }
+	div.sidemenu li{
+	  width : 13em;  /*リストの幅の設定*/
+	  padding : 0;
+	  margin : 0;
+   }
+
+
+/*メイン画面設定*/
+div#main {
+	display: block ;
+    position: absolute ;
+    left: 40px ;
+    top: 30px ;
+    width: 1000px ;
+    font-size: 12pt ;
+    background-color: #FFFFFF ;
+    z-index: 0 ;
+    font-family: "ＭＳ Ｐゴシック", "ヒラギノ角ゴ Pro W3", Osaka, sans-serif ;
+}
+
+/*サブ画面設定*/
+div#sub {
+    display: none ;
+    position: absolute ;
+    left: 40px ;
+    top: 30px ;
+    width: 1000px ;
+    font-size: 12pt ;
+    background-color: #FFFFFF ;
+    z-index: 0 ;
+    font-family: "ＭＳ Ｐゴシック", "ヒラギノ角ゴ Pro W3", Osaka, sans-serif ;
+}
+/*サブ画面設定 V70以下追加*/
+div#sub2 {
+    display: none ;
+    position: absolute ;
+    left: 40px ;
+    top: 30px ;
+    width: 1000px ;
+    font-size: 12pt ;
+    background-color: #FFFFFF ;
+    z-index: 0 ;
+    font-family: "ＭＳ Ｐゴシック", "ヒラギノ角ゴ Pro W3", Osaka, sans-serif ;
+}
+div#sub3 {
+    display: none ;
+    position: absolute ;
+    left: 40px ;
+    top: 30px ;
+    width: 1000px ;
+    font-size: 12pt ;
+    background-color: #FFFFFF ;
+    z-index: 0 ;
+    font-family: "ＭＳ Ｐゴシック", "ヒラギノ角ゴ Pro W3", Osaka, sans-serif ;
+}
+div#sub4 {
+    display: none ;
+    position: absolute ;
+    left: 40px ;
+    top: 30px ;
+    width: 1000px ;
+    font-size: 12pt ;
+    background-color: #FFFFFF ;
+    z-index: 0 ;
+    font-family: "ＭＳ Ｐゴシック", "ヒラギノ角ゴ Pro W3", Osaka, sans-serif ;
+}
+div#sub5 {
+    display: none ;
+    position: absolute ;
+    left: 40px ;
+    top: 30px ;
+    width: 1000px ;
+    font-size: 12pt ;
+    background-color: #FFFFFF ;
+    z-index: 0 ;
+    font-family: "ＭＳ Ｐゴシック", "ヒラギノ角ゴ Pro W3", Osaka, sans-serif ;
+}
+/*サブ画面設定 V70以上追加*/
+
+/*詳細説明*/
+	div#detail {
+	    font-size:12pt ;
+	    width:400px ;
+	    position:absolute ;
+	    top:24px;
+	    left:120px ;
+	    background:#FFFFFF ;
+	    cursor:move ;
+	    z-index:10 ;
+        display:none;
+	}
+	div#detail table{
+	    border: 0px ;
+	    width: 400px ;
+	}
+
+/*Copyrights*/
+	div.copyrights {
+		display: block ; 
+	    width:93%;
+		position:relative ;
+		top: -5px ;
+		text-align:right;
+		font-size:8pt;
+        color:#FFFFFF;
+		z-index:200;
+	}
+
+/* パーツとパーツの間に空きを作る */
+
+img.v_spacer_s {
+    display: block ;
+    width: 100% ;
+    height: 3px ;
+}
+img.h_spacer_s {
+    width: 3px ;
+    height: 18px ;
+}
+
+img.v_spacer_m {
+    display: block ;
+    width: 100% ;
+    height: 5px ;
+}
+
+img.v_spacer_l {
+    display: block ;
+    width: 100% ;
+    height: 8px ;
+}
+img.icon_margin{
+	margin: 0px 4px 0px 0px;
+	vertical-align:-10%;
+}
+
+
+/*JOBメニューの修飾*/
+
+
+div#job-main {
+    display: block ;
+    font-size: 10pt ;
+    width: 60px ;
+    height: 15px ;
+    border-bottom : solid #0000ff;
+
+    font-family: "ＭＳ Ｐゴシック", "ヒラギノ角ゴ Pro W3", Osaka, sans-serif ;
+}
+
+div#rpt {
+    display: block ;
+    font-size: 10pt ;
+    width: 75px ;
+    height: 15px ;
+    border-bottom : solid #0000ff;
+    
+
+    font-family: "ＭＳ Ｐゴシック", "ヒラギノ角ゴ Pro W3", Osaka, sans-serif ;
+}
+
+
+/*トップメニュー*/
+div#container_main a#exit {
+    display: block ;
+    position: absolute ;
+    left: 655px ;
+    top: 65px ;
+    width: 88px ;
+    height: 25px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+    background-color: transparent ;
+}
+
+div#container_main a#tm1 {
+    display: block ;
+    position: absolute ;
+    left: 22px ;
+    top: 123px ;
+    width: 138px ;
+    height: 24px ;
+    text-align:center;
+	line-height: 22px;
+    font-size: 10pt ;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm1b {
+    display: block ;
+    position: absolute ;
+    left: 22px ;
+    top: 123px ;
+    width: 138px ;
+    height: 24px ;
+    text-align:center;
+	line-height: 22px;
+    font-size: 10pt ;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+div#container_main a#tm2 {
+    display: block ;
+    position: absolute ;
+    left: 167px ;
+    top: 123px ;
+    width: 138px ;
+    height: 24px ;
+    text-align:center;
+	line-height: 22px;
+    font-size: 10pt ;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm2b {
+    display: block ;
+    position: absolute ;
+    left: 167px ;
+    top: 123px ;
+    width: 138px ;
+    height: 24px ;
+    text-align:center;
+	line-height: 22px;
+    font-size: 10pt ;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+div#container_main a#tm3 {
+    display: block ;
+    position: absolute ;
+    left: 310px ;
+    top: 123px ;
+    width: 138px ;
+    height: 24px ;
+    text-align:center;
+	line-height: 22px;
+    font-size: 10pt ;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm3b {
+    display: block ;
+    position: absolute ;
+    left: 310px ;
+    top: 123px ;
+    width: 138px ;
+    height: 24px ;
+    text-align:center;
+	line-height: 22px;
+    font-size: 10pt ;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+div#container_main a#tm4 {
+    display: block ;
+    position: absolute ;
+    left: 454px ;
+    top: 123px ;
+    width: 138px ;
+    height: 24px ;
+    text-align:center;
+	line-height: 20px;
+    font-size: 10pt ;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm4b {
+    display: block ;
+    position: absolute ;
+    left: 454px ;
+    top: 123px ;
+    width: 138px ;
+    height: 24px ;
+    text-align:center;
+	line-height: 20px;
+    font-size: 10pt ;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+div#container_main a#tm5 {
+    display: block ;
+    position: absolute ;
+    left: 599px ;
+    top: 123px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm5b {
+    display: block ;
+    position: absolute ;
+    left: 599px ;
+    top: 123px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+div#container_main a#tm6 {
+    display: block ;
+    position: absolute ;
+    left: 22px ;
+    top: 151px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm6b {
+    display: block ;
+    position: absolute ;
+    left: 22px ;
+    top: 151px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+div#container_main a#tm7 {
+    display: block ;
+    position: absolute ;
+    left: 167px ;
+    top: 151px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm7b {
+    display: block ;
+    position: absolute ;
+    left: 167px ;
+    top: 151px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+div#container_main a#tm8 {
+    display: block ;
+    position: absolute ;
+    left: 311px ;
+    top: 151px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm8b {
+    display: block ;
+    position: absolute ;
+    left: 311px ;
+    top: 151px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+div#container_main a#tm9 {
+    display: block ;
+    position: absolute ;
+    left: 454px ;
+    top: 151px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm9b {
+    display: block ;
+    position: absolute ;
+    left: 454px ;
+    top: 151px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+div#container_main a#tm10 {
+    display: block ;
+    position: absolute ;
+    left: 599px ;
+    top: 151px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+ 	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm10b {
+    display: block ;
+    position: absolute ;
+    left: 599px ;
+    top: 151px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+ 	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+div#container_main a#tm11 {
+    display: block ;
+    position: absolute ;
+    left: 22px ;
+    top: 178px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm11b {
+    display: block ;
+    position: absolute ;
+    left: 22px ;
+    top: 178px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+div#container_main a#tm12 {
+    display: block ;
+    position: absolute ;
+    left: 167px ;
+    top: 178px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm12b {
+    display: block ;
+    position: absolute ;
+    left: 167px ;
+    top: 178px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+div#container_main a#tm13 {
+    display: block ;
+    position: absolute ;
+    left: 311px ;
+    top: 178px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm13b {
+    display: block ;
+    position: absolute ;
+    left: 311px ;
+    top: 178px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+div#container_main a#tm14 {
+    display: block ;
+    position: absolute ;
+    left: 455px ;
+    top: 178px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm14b {
+    display: block ;
+    position: absolute ;
+    left: 455px ;
+    top: 178px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+div#container_main a#tm15 {
+    display: block ;
+    position: absolute ;
+    left: 599px ;
+    top: 178px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm15b {
+    display: block ;
+    position: absolute ;
+    left: 599px ;
+    top: 178px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+div#container_main a#tm16 {
+    display: block ;
+    position: absolute ;
+    left: 22px ;
+    top: 206px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+ 	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm16b {
+    display: block ;
+    position: absolute ;
+    left: 22px ;
+    top: 206px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+ 	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+div#container_main a#tm17 {
+    display: block ;
+    position: absolute ;
+    left: 167px ;
+    top: 206px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm17b {
+    display: block ;
+    position: absolute ;
+    left: 167px ;
+    top: 206px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+div#container_main a#tm18 {
+    display: block ;
+    position: absolute ;
+    left: 311px ;
+    top: 206px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm18b {
+    display: block ;
+    position: absolute ;
+    left: 311px ;
+    top: 206px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+div#container_main a#tm19 {
+    display: block ;
+    position: absolute ;
+    left: 455px ;
+    top: 206px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm19b {
+    display: block ;
+    position: absolute ;
+    left: 455px ;
+    top: 206px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+div#container_main a#tm20 {
+    display: block ;
+    position: absolute ;
+    left: 599px ;
+    top: 206px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+}
+div#container_main a#tm20b {
+    display: block ;
+    position: absolute ;
+    left: 599px ;
+    top: 206px ;
+    width: 138px ;
+    height: 24px ;
+    font-size: 10pt ;
+	text-align:center;
+	line-height: 20px;
+    z-index: 120 ;
+	background-image:url("../image/_btn.png");
+	color:#ff0000;
+}
+
+
+
+/*レフトメニュー*/
+div#container_main a#sm1 {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 253px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	color:#FFFFFF;
+}
+div#container_main a#sm1b {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 253px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+    background-color: #111111 ;
+	color:#FFFFFF;
+}
+div#container_main a#sm2 {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 283px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+div#container_main a#sm2b {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 283px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+    background-color: #111111 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+
+div#container_main a#sm3 {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 313px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+div#container_main a#sm3b {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 313px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+    background-color: #111111 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+
+div#container_main a#sm4 {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 343px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+div#container_main a#sm4b {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 343px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+    background-color:  #111111  ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+
+div#container_main a#sm5 {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 373px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+div#container_main a#sm5b {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 373px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+    background-color: #111111 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+
+div#container_main a#sm6 {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 403px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+div#container_main a#sm6b {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 403px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+    background-color: #111111 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+
+div#container_main a#sm7 {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 433px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+div#container_main a#sm7b {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 433px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+    background-color: #111111 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+
+div#container_main a#sm8 {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 463px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+div#container_main a#sm8b {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 463px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+    background-color: #111111 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+
+div#container_main a#sm9 {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 493px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+div#container_main a#sm9b {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 493px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+    background-color: #111111 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+
+div#container_main a#sm10 {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 523px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+div#container_main a#sm10b {
+    display: block ;
+    position: absolute ;
+    left: 25px ;
+    top: 523px ;
+    width: 147px ;
+    height: 20px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+    background-color: #111111 ;
+	vertical-align:middle;
+	color:#FFFFFF;
+}
+
+/*ジョブ*/
+div#container_main a#jm1 {
+    display: block ;
+    position: absolute ;
+    left: 200px ;
+    top: 253px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+
+
+div#container_main a#jm2 {
+    display: block ;
+    position: absolute ;
+    left: 200px ;
+    top: 283px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm3 {
+    display: block ;
+    position: absolute ;
+    left: 200px ;
+    top: 313px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm4 {
+    display: block ;
+    position: absolute ;
+    left: 200px ;
+    top: 343px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm5 {
+    display: block ;
+    position: absolute ;
+    left: 200px ;
+    top: 373px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm6 {
+    display: block ;
+    position: absolute ;
+    left: 200px ;
+    top: 403px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm7 {
+    display: block ;
+    position: absolute ;
+    left: 200px ;
+    top: 433px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm8 {
+    display: block ;
+    position: absolute ;
+    left: 200px ;
+    top: 463px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm9 {
+    display: block ;
+    position: absolute ;
+    left: 200px ;
+    top: 493px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm10 {
+    display: block ;
+    position: absolute ;
+    left: 200px ;
+    top: 523px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+
+
+/*右段*/
+div#container_main a#jm11 {
+    display: block ;
+    position: absolute ;
+    left: 468px ;
+    top: 253px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm12 {
+    display: block ;
+    position: absolute ;
+    left: 468px ;
+    top: 283px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm13 {
+    display: block ;
+    position: absolute ;
+    left: 468px ;
+    top: 313px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm14 {
+    display: block ;
+    position: absolute ;
+    left: 468px ;
+    top: 343px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm15 {
+    display: block ;
+    position: absolute ;
+    left: 468px ;
+    top: 373px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm16 {
+    display: block ;
+    position: absolute ;
+    left: 468px ;
+    top: 403px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm17 {
+    display: block ;
+    position: absolute ;
+    left: 468px ;
+    top: 433px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm18 {
+    display: block ;
+    position: absolute ;
+    left: 468px ;
+    top: 463px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm19 {
+    display: block ;
+    position: absolute ;
+    left: 468px ;
+    top: 493px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}
+div#container_main a#jm20 {
+    display: block ;
+    position: absolute ;
+    left: 468px ;
+    top: 523px ;
+    width: 250px ;
+    height: 23px ;
+    font-size: 10pt ;
+    z-index: 120 ;
+	vertical-align:middle;
+	color:#000000;
+}

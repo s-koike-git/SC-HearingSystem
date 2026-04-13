@@ -1,0 +1,90 @@
+[
+  {
+    "businessType": "見積",
+    "questionNo": "Q1",
+    "questionText": "見積書の印字パターン（レイアウト）を設定していますか？",
+    "answerType": "Boolean",
+    "options": ["はい", "いいえ"],
+    "displayOrder": 1
+  },
+  {
+    "businessType": "見積",
+    "questionNo": "Q2",
+    "questionText": "見積書に社印を印字しますか？",
+    "answerType": "Boolean",
+    "options": ["はい", "いいえ"],
+    "displayOrder": 2
+  },
+  {
+    "businessType": "見積",
+    "questionNo": "Q3",
+    "questionText": "見積はどのように作成していますか？",
+    "answerType": "SingleChoice",
+    "options": ["新規に手入力", "過去の見積を参照", "両方"],
+    "displayOrder": 3
+  },
+  {
+    "businessType": "見積",
+    "questionNo": "Q4",
+    "questionText": "セット商品（複数商品をセットにしたもの）の見積はありますか？",
+    "answerType": "Boolean",
+    "options": ["はい", "いいえ"],
+    "displayOrder": 4
+  },
+  {
+    "businessType": "見積",
+    "questionNo": "Q5",
+    "questionText": "見積明細に小計・中計を挿入していますか？",
+    "answerType": "Boolean",
+    "options": ["はい", "いいえ"],
+    "displayOrder": 5
+  },
+  {
+    "businessType": "見積",
+    "questionNo": "Q6",
+    "questionText": "見積書の発行タイミングはどれですか？",
+    "answerType": "SingleChoice",
+    "options": ["登録と同時に発行", "登録後に必要な時に発行", "発行しない"],
+    "displayOrder": 6
+  },
+  {
+    "businessType": "見積",
+    "questionNo": "Q7",
+    "questionText": "見積書の日付表記はどれですか？",
+    "answerType": "SingleChoice",
+    "options": ["和暦", "西暦", "得意先ごと"],
+    "displayOrder": 7
+  },
+  {
+    "businessType": "見積",
+    "questionNo": "Q8",
+    "questionText": "見積書に特定の行だけ印字しないことはありますか？",
+    "answerType": "Boolean",
+    "options": ["はい", "いいえ"],
+    "displayOrder": 8
+  },
+  {
+    "businessType": "見積",
+    "questionNo": "Q9",
+    "questionText": "見積一覧で登録内容を確認していますか？",
+    "answerType": "Boolean",
+    "options": ["はい", "いいえ"],
+    "displayOrder": 9
+  },
+  {
+    "businessType": "見積",
+    "questionNo": "Q10",
+    "questionText": "古い見積データを削除していますか？",
+    "answerType": "Boolean",
+    "options": ["はい", "いいえ"],
+    "displayOrder": 10
+  },
+  {
+    "businessType": "見積",
+    "questionNo": "Q11",
+    "questionText": "受注時に過去の見積を参照していますか？",
+    "answerType": "Boolean",
+    "options": ["はい", "いいえ"],
+    "displayOrder": 11
+  }
+]

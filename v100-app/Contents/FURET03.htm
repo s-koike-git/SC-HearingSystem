@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "移動計上", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	棚卸資産の入庫／出庫／社内移動／在庫調整に使用します。\
+<li>	伝票の登録／修正／削除の処理が可能です。\
+<li>	積送区分の指定により積送処理が可能です。\
+<li>	移動依頼伝票からの連動が可能です。ただし依頼残管理は行いません。一度連動した依頼伝票を指定すると、メッセージが表示され、以前連動されたことを警告します。処理は継続できます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	在庫管理対象商品のみ処理可能です。\
+<li>	「在庫伝票種別」から在庫受払処理の種類（入庫／出庫／移動／調整）を選択します。\
+<li>	伝票発行機能はありません。\
+<li>	商品は３通りの単位で扱う事ができ、元帳や日記帳には入力された通りに出ます。\
+<li>	個数をクリックすることで、現在庫・出荷残・入荷残を照会できます。(出庫倉庫の在庫情報)\
+<li>	「ロット管理（ロット№･日付）商品」または「複数単位（荷姿）設定商品」については「ロット別単位別個数入力」および「単位別個数入力」ウィンドウにて複数ロット、単位別の入力が可能です。\
+<li>	ロット別詳細入力にて、Ｆ５キーによりロット別在庫マスタが参照可能です。（現在庫が0より大きいものを表示）\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	受注や発注とは関連していません。\
+<li>	品名の手入力はマスタ名称入力区分に関わらずできません。\
+<li>	原単価の入力は、在庫金額や粗利とは関係しません。(ユーザガイド6章・棚卸資産の評価を参照下さい)部門間の棚卸資産移動の基礎データとしてトランザクション及び部門実績集計データに金額保持されますが、帳票に出力される箇所はありません。\
+<li>	積送区分にて通常、積送(出庫)、積送(入庫)の各処理が選択できます。移動依頼連動時、移動依頼にて積送倉庫が入力されていない場合は通常、入力されている場合は積送(出庫)の指定が可能です。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+移動計上&lt;FURET03&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><a href="JavaScript:showhide('main')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面</a></li>
+<li><a href="JavaScript:showhide('sub')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">サブ画面</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/FURET03.png">
+</div>
+<!----メイン画面ここまで---->
+<!----サブ画面---->
+<div id="sub">
+サブ画面<br>
+<img src="image/FURET03_UNT.PNG">
+<br>
+<img src="image/FURET03_LOT.PNG">
+<br>
+<img src="image/FURET03_FLT.PNG">
+</div>
+<!----サブ画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

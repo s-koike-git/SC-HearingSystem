@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "商品詳細登録", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	商品情報の詳細を登録します。修正及び削除も可能です。\
+<br />\
+<br />【基本情報】\
+<li>	設定内容を基本情報、在庫管理、商品仕様、生産情報の４種に分類してタブで切り替えます。\
+<li>	システムでは１商品を複数の単位で販売・購買・振替する機能があります。\
+<br />\
+<br />【在庫管理】\
+<li>	在庫管理情報を設定します。\
+<br />\
+<br />【商品仕様】\
+<li>	商品仕様情報を設定します。商品イメージ設定や商品の裏面情報を設定し、商品仕様照会にて、計上時に確認できます。\
+<br />\
+<br />【生産情報】\
+<li>	生産情報を設定します。\
+<br />\
+<br />【汎用項目】\
+<li>	汎用項目を入力します。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br />【基本情報】\
+<li>	引当を行なう商品に関しては引当区分を「1：する」と設定します。\
+<li>	取引有効期間を設定することにより、計上での使用を制御できます。\
+<br />	誤って使用することを防止します。\
+<br />	外部：販売・購買の各計上\
+<br />	内部：セット加工計上の構成品\
+<li>	不定貫商品を指定した場合、基本在庫単位と荷姿単位２とで独立した在庫管理が可能です。ただし、評価単価は基本在庫単位のみです。\
+<br />\
+<br />【在庫管理】\
+<li>	在庫商品のロット№別管理、ロット管理日付別管理を行いたい場合には、各々ロット管理区分、ロット日付管理区分をオンにします。\
+<li>	ロット№、日付管理を行うと設定した場合は、受払時にロット№・管理日付を入力する必要があります。\
+<li>	ロット管理日付：Sの場合、管理日付計算値、最低保証期間を設定します。最低保証期間はピッキングリストにて表示される最低保証期間の算出に使用します。\
+<li>	受注受付区分の設定によって、受注受付登録の商品指定時に受注形式の初期値が判断されます。\
+<br />\
+<br />【商品仕様】\
+<li>	表示分類（商品表示分類設定を事前登録）を指定することにより商品属性で異なる表示内容（見出し）に対応します。成分表示の内容も登録可です。\
+<li>	表示分類が設定されている場合、画像イメージを最大４種類設定可能です。イメージ表示より、画像表示の表示／非表示を設定できます。\
+<li>	仕様変更日、版数の設定ができます。ただし、改訂履歴管理はできません。（商品概要項目を活用頂くことは可能です）\
+<br />\
+<br />【生産情報】\
+<li>	販売用商品コードは、複数の製品を１つの商品コードに集約して在庫管理する場合に使用します。\
+<li>	仕掛区分は、生産計画や製造指示の時の初期値として使用します。\
+<li>	原料依頼指示設定では原料移動に際しての構成品纏め処理の設定をします。\
+<br />\
+<br />【汎用項目】\
+<li>	「マスタ汎用設定登録」で設定した汎用項目に対して入力を行うことができます。汎用文字列・汎用数値・汎用日付に各10項目ずつ入力が可能です。\
+<li>	「マスタ汎用設定登録」の設定に従い、入力時チェックや入力可能文字制御を行います。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br />【基本情報】\
+<li>	１商品を複数単位で扱う場合は、「荷姿②」「荷姿③」項目で使用単位や単価の設定を行います。\
+<li>	当画面の荷姿、単価欄は、３世代単価の最新欄を表示・置換更新するもので、単価変更画面の改定処理(新規ﾓｰﾄﾞ)とは異なります。\
+<li>	商品単価ランクは取引単価を商品単価ﾗﾝｸ別掛率で使用する場合に設定します。（名称マスタへの事前登録）\
+<li>	「不定貫管理区分：”する”」が指定された場合には、「セット区分：”非セット商品」、「在庫管理区分：”対象”」が併せて設定されます。\
+<li>	「不定貫商品」運用時は、「単位コード２」「単位名２」「入数２」項目は必ず設定してください。また、「販売荷姿単位」「購買荷姿単位」には同一の荷姿単位を設定します。\
+<br />\
+<br />【在庫管理】\
+<li>	在庫管理対象外に設定した商品は在庫表に印刷されないばかりでなく一切の在庫データを持ちません。\
+<li>	発注支援にてExcel連携し発注処理を行う対象商品を行う際は、発注ｻｲｸﾙｺｰﾄﾞ、発注ﾘｰﾄﾞﾀｲﾑ、発注ロットを設定しておく必要があります。またここで指定する発注サイクルコードの追加、修正は、事前に名称登録にて設定しておく必要があります。\
+<br />\
+<br />【商品仕様】\
+<li>	画像イメージは、ユーザー情報管理テーブルに設定されているイメージ保存パス内に保存されている必要があります。保存パスには、１階層のみサブフォルダーを作成することが可能です。\
+<br />\
+<br />【生産情報】\
+<li>	ﾕｰｻﾞｰ情報管理ﾃｰﾌﾞﾙの製造業務使用区分がしない：9の場合はこのタブは表示されません。\
+<br />\
+<br />【汎用項目】\
+<li>	「マスタ汎用設定登録」で対象マスタの利用区分が利用しないになっている場合や対象マスタに対する設定がない場合は表示されません。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+商品詳細登録&lt;HINMR01&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><a href="JavaScript:showhide('main')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（基本情報）</a></li>
+<li><a href="JavaScript:showhide('sub')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（在庫管理）</a></li>
+<li><a href="JavaScript:showhide('sub2')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（商品仕様）</a></li>
+<li><a href="JavaScript:showhide('sub3')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（生産情報）</a></li>
+<li><a href="JavaScript:showhide('sub4')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（汎用項目）</a></li>
+<li><a href="JavaScript:showhide('sub5')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">サブ画面</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面（基本情報）<br>
+<img src="image/HINMR01.png">
+</div>
+<div id="sub">
+メイン画面（在庫管理）<br>
+<img src="image/HINMR01_T2.png">
+</div>
+<div id="sub2">
+メイン画面（商品仕様）<br>
+<img src="image/HINMR01_T3.png">
+</div>
+<div id="sub3">
+メイン画面（生産情報）<br>
+<img src="image/HINMR01_T4.png">
+</div>
+<div id="sub4">
+メイン画面（汎用項目）<br>
+<img src="image/HINMR01_T5.png">
+</div>
+<!----メイン画面ここまで---->
+<!----サブ画面---->
+<div id="sub5">
+サブ画面<br>
+<img src="image/HINMR01_GAZOULST.PNG">
+</div>
+<!----サブ画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

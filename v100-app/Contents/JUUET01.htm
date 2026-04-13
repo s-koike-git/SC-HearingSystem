@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "受注受付登録", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	受注受付情報を入力／修正／削除します。\
+<li>	1得意先に対しての受注情報を登録します。\
+<li>	明細単位で受注・受発注・直送の受注形式を設定することができます。\
+<li>	明細単位で受注情報を設定することが可能です。\
+<li>	過去の受注受付データ・見積データからの参照登録が可能です。\
+<li>	受注形式の明細では１ロットまで紐づけることができます。\
+<li>	仮伝票作成以降に処理が進んでいる明細は修正・削除することができません。\
+<li>	スーパーカクテルCore FOODs販売/Core販売のライセンスどちらかの区分をconfigに設定し、区分によって入力可能項目を切り分けます。\
+<br />\
+<br />【受注補足情報】\
+<li>	1明細に対して見出し部の初期値から変更したい情報がある場合に変更を行います。\
+<li>	初期値は見出し部の情報がセットされています。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	伝票№は手入力、自動採番が設定可能です。\
+<li>	各種コードは検索ウィンドウからの検索入力が可能です。\
+<li>	マスタの設定により、得意先及び納品先、仕入先、商品の名称等手入力が可能です。\
+<li>	受発注形式の明細で発注情報を入力しなかった場合は、受注情報のみが作成されます。\
+<li>	倉庫は納品先に紐づいた倉庫、仕入先は商品に紐づいた商品仕入先が初期値として設定されます。設定がない場合でも受注受付情報の登録は可能ですが、仮伝票作成時にエラーとなります。\
+<li>	商品入力区分の設定によって、商品を相手品番で入力することができます。\
+<li>	保留区分で「保留する」に設定すると本伝票作成対象外伝票とすることができます。\
+<br />\
+<br />【受注補足情報】\
+<li>	納品先の諸口情報を明細単位で変更できます。\
+<li>	受注形式の場合、代表ロットでロットの指定が可能です。\
+<li>	受発注・直送形式の場合、発注の補足情報の入力が可能です。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	オンライン情報ウィンドウで表示される内容は得意先店毎に登録されている内容です。オンライン情報は明細単位での設定をすることはできません。\
+<li>	仮伝票番号からプログラムリンクで受注受付仮伝票確認を起動し、仮伝票情報を確認することができます。\
+<li>	本伝票番号からプログラムリンクで各計上PGを起動し、本伝票情報の確認・修正・削除ができます。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+受注受付登録&lt;JUUET01&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><a href="JavaScript:showhide('main')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面</a></li>
+<li><a href="JavaScript:showhide('sub')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">サブ画面</a></li>
+<li><a href="JavaScript:showhide('sub2')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">受注受付仮伝票確認</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/JUUET01.png">
+</div>
+<!----メイン画面ここまで---->
+<!----サブ画面---->
+<div id="sub">
+サブ画面<br>
+<img src="image/JUUET01_NNM.PNG">
+<br>
+<img src="image/JUUET01_OLN.PNG">
+<br>
+<img src="image/JUUET01_TNM.PNG">
+<br>
+<img src="image/JUUET01_UNT.PNG">
+<br>
+<img src="image/JUUET01_JUU.PNG">
+</div>
+<div id="sub2">
+受注受付仮伝票確認<br>
+<img src="image/JUUDL02.png">
+</div>
+<!----サブ画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

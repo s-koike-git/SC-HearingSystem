@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "原価シミュレーション", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	既存マスタに依存しない構成品や単価設定での試算原価を画面対話形式で確認します。\
+<li>	売上金額と製造原価より粗利益および利益率を確認できます。売上単価は変更可能です。\
+<li>	経費・労務費の設定で、科目に固定費と変動費を設定することで、原価利益、損益分岐点の確認が可能です。\
+<li>	生産活動を通して付加された価値と総工数より労働生産性を確認\
+できます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	見出部で工場・参照月度・対象ファイル等を指定することにより、実績データから製品の構成情報・生産数が取得可能です。\
+<li>	販売用商品コードを使用している場合、製品コードへ変換します。変換された製品には“*”が表示されます。\
+<li>	構成情報が未登録の場合は製品コードが赤文字で表示されます。\
+<li>	製品毎に直接賦課経費を設定できます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	試算番号の項目にてF5押下で試算管理番号一覧ウィンドウが起動\
+されます。\
+<li>	経費・労務費項目にてF5押下で各入力がプログラムリンクで起動さ\
+れます。\
+<li>	明細部の製品コードまたは生産数にてF8押下で構成登録がプログ\
+ラムリンクで起動されます。\
+<li>	直接賦課経費の項目にてF5押下で入力画面が表示されます。固定経費と変動経費を設定できます。\
+<li>	標準工数の項目にてF5押下で入力画面が表示されます。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+原価シミュレーション&lt;GSMET01&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><a href="JavaScript:showhide('main')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面</a></li>
+<li><a href="JavaScript:showhide('sub')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">サブ画面</a></li>
+<li><a href="JavaScript:showhide('sub2')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">経費入力(試算用)</a></li>
+<li><a href="JavaScript:showhide('sub3')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">労務費入力(試算用)</a></li>
+<li><a href="JavaScript:showhide('sub4')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">構成マスタ登録(試算用)</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/GSMET01.png">
+</div>
+<!----メイン画面ここまで---->
+<!----サブ画面---->
+<div id="sub">
+サブ画面<br>
+<img src="image/GSMET01_QGK.PNG">
+<br>
+<img src="image/GSMET01_QGH.PNG">
+</div>
+<div id="sub2">
+経費入力(試算用)<br>
+<img src="image/GSMET02.png">
+</div>
+<div id="sub3">
+労務費入力(試算用)<br>
+<img src="image/GSMET03.png">
+</div>
+<div id="sub4">
+構成マスタ登録(試算用)<br>
+<img src="image/GSMMT12.png">
+</div>
+<!----サブ画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

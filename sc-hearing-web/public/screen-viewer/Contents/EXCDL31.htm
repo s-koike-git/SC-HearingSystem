@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "自由帳票出力（簡易版）", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	お客様におけるデータ出力を支援します。\
+<li>	当機能では、「自由帳票リスト設定の簡易版定義」及び「自由帳票出力（簡易版）のカスタム設定」で設定された情報を元にしたデータ出力と、「自由帳票リスト設定の簡易版定義」を元にしたデータ出力の個人用リスト設定を行ないます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br />【データ抽出】\
+<li>	「簡易版定義」が登録されている「リスト」の条件に基づき、データの抽出を行います。\
+<li>	データ抽出の際の出力形式は、以下の５形式から選択することが出来ます。\
+<br />	　　　「グリッド（当機能上にて画面表示）」「EXCEL帳票」「EXCELブック」「CSV形式」「XML形式」\
+<li>	「リスト」に設定された条件以外に、「リスト」で設定した画面条件の条件項目で抽出条件を指定することが出来ます。\
+<br />\
+<br />【グリッド】\
+<li>	「データ抽出」にて「出力：”グリッド”」が指定された際、条件に基づき抽出された明細データをグリッド表示します。\
+<br />\
+<br />【カスタム設定】\
+<li>	「自由帳票リスト設定の簡易版定義」で登録された情報から、データ出力の個人用リスト設定を行ないます。ここで登録された情報は全て個人用リストとして保存されます。変更可能な情報は「出力項目（出力可否、並び順）」「出力順」「画面条件」「Excel帳票出力設定」となります。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br />【カスタム設定】\
+<li>	個人用のリストを設定した場合は、必ず「リストを保存して反映」を押下し設定情報を登録してください。登録後、設定したリスト情報で出力が可能です。\
+<li>	基となるリスト設定にて、Excel帳票出力設定の帳票テンプレートを設定していた場合は「テンプレート取得」を押下し、簡易版専用の帳票テンプレートフォルダに設定基テンプレートをコピーしてください。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+自由帳票出力(簡易版)&lt;EXCDL31&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><a href="JavaScript:showhide('main')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（データ抽出）</a></li>
+<li><a href="JavaScript:showhide('sub')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（グリッド）</a></li>
+<li><a href="JavaScript:showhide('sub2')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（カスタム設定）</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面（データ抽出）<br>
+<img src="image/EXCDL31.png">
+</div>
+<div id="sub">
+メイン画面（グリッド）<br>
+<img src="image/EXCDL31_T2.png">
+</div>
+<div id="sub2">
+メイン画面（カスタム設定）<br>
+<img src="image/EXCDL31_T3.png">
+</div>
+<!----メイン画面ここまで---->
+<!----サブ画面---->
+<!----サブ画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

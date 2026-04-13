@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "仕入先詳細登録", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	仕入先情報の詳細を登録／修正／削除ができます。\
+<br />\
+<br \>【基本取引情報】\
+<li>	設定内容を基本情報、債務管理、SC会計連携の３種に分類し、タブで切り替えます。\
+<li>	他の仕入先を参照して設定したい場合は、参照先の仕入先を画面表示した後、矢印キーなどで仕入先コードへカーソルを持っていき新規コードを入力します。\
+<br />\
+<br \>【債務管理情報】\
+<li>	債務管理情報を設定します。\
+<br />\
+<br />【汎用項目】\
+<li>	汎用項目を入力します。\
+<br />\
+<br \>【SC会計連携】\
+<li>	SC会計連携機能を使用する際に、会計側の取引先とデータ連携を行います。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br \>【基本取引情報】\
+<li>	仕入先先担当者の情報として、所属部署、役職、携帯番号、メールアドレスの設定が可能です。（予備項目）\
+<li>	計上時の商品検索で使用する検索方法の初期値を設定できます。\
+<br />	　①商品マスタ：商品マスタに登録されている商品一覧を表示\
+<br />	　②契約単価：契約単価が登録されている商品のみ表示\
+<br />	　③取引履歴：取引件数の多い商品を表示。\
+<br />	　（履歴検索期間にて取引期間を設定できます）\
+<br />\
+<br />【債務管理情報】\
+<li>	支払条件ボタンを押下して、支払条件を設定できます。支払予定表を運用する場合は必ず設定します。\
+<li>	支払締日、又は支払に関する情報の取引が発生している場合は変更できません。\
+<li>	支払親子を設定した場合に親子同期を要する項目（締め関連項目、支払項目、消費税、債務管理部門）があります。当画面でも子での内容変更を不可とする制御や、親の登録内容が変更された時、子を自動変更する機能があります。\
+<li>	支払書の宛先を別途指定できます。省略時は基本取引情報の仕入先名称、郵便番号、住所を使用します。敬称も指定できます。\
+<br />\
+<br />【汎用項目】\
+<li>	「マスタ汎用設定登録」で設定した汎用項目に対して入力を行うことができます。汎用文字列・汎用数値・汎用日付に各10項目ずつ入力が可能です。\
+<li>	「マスタ汎用設定登録」の設定に従い、入力時チェックや入力可能文字制御を行います。\
+<br />\
+<br \>【SC会計連携】\
+<li>	会計取引先コード：会計側の取引先を指定します。会計側に存在しないデータをセットした場合は、会計取引先マスタにデータが新規で作成されます。\
+<li>	マスタ連携備考：備考を記入します。会計側へ連携はされません。\
+<li>	SC会計債務支払条件：登録された会計取引先コードにて、会計側で債務支払情報が登録されていた場合に表示されます。\
+<li>	Core会計ポスグレ版でデータベースがPostgreSQLに変更されたことに伴い、Core会計ポスグレ版にて用意されている外部連携WebAPIを用いてデータ参照や更新を行います。\
+<li>	登録時はSC側の連携マスタのデータと共にCore会計ポスグレ版のマスタにも登録が同時に行われます。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<br \>【基本取引情報】\
+<li>	単価ランクは未使用です。 （掛率単価などの機能も未サポートです）\
+<li>	債務管理部門は請求書発行処理を部門別に行う場合や、買掛や支払一覧を部門で括っておきたいといった場合に各部門に設定します。部門管理なしのシステム設定では表示されません。共通部門での運用も可能です。（詳しくは、ユーザーガイドを参照して下さい）\
+<br />\
+<br \>【債務管理情報】\
+<li>	支払書の宛先は、基本情報からのコピー機能があります。参照作成が可能です。\
+<li>	支払書送付先の郵便番号、住所、宛名１、２の項目に値が設定されている場合に適用されますので、必要事項は全て設定してください。TEL、FAX、担当者は未使用です。\
+<li>	検収リードタイムの設定により、計上時に仕入予定日（仕入日）の算出を行います。入荷予定日（指定納期）起算で仕入日を算出します。\
+<br />\
+<br />【汎用項目】\
+<li>	「マスタ汎用設定登録」で対象マスタの利用区分が利用しないになっている場合や対象マスタに対する設定がない場合は表示されません。\
+<br />\
+<br \>【SC会計連携】\
+<li>	ユーザー情報管理テーブル登録の「SC会計マスタ連携」を「1:する」とした場合表示されます。\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+仕入先詳細登録&lt;SIRMR01&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+<li><a href="JavaScript:showhide('main')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（基本取引情報）</a></li>
+<li><a href="JavaScript:showhide('sub')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（債務管理情報）</a></li>
+<li><a href="JavaScript:showhide('sub2')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（汎用項目）</a></li>
+<li><a href="JavaScript:showhide('sub3')" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">メイン画面（SC会計連携）</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面（基本取引情報）<br>
+<img src="image/SIRMR01.png">
+</div>
+<div id="sub">
+メイン画面（債権管理情報）<br>
+<img src="image/SIRMR01_T2.PNG">
+</div>
+<div id="sub2">
+メイン画面（汎用項目）<br>
+<img src="image/SIRMR01_T3.PNG">
+</div>
+<div id="sub3">
+メイン画面（SC会計連携）<br>
+<img src="image/SIRMR01_T4.PNG">
+</div>
+<!----メイン画面ここまで---->
+<!----サブ画面---->
+<!----サブ画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>

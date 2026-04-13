@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title>スーパーカクテルCoreV10.0</title>
+<link rel="stylesheet" href="css/design-IE.css" type="text/css">
+<link rel="stylesheet" href="css/default.css" type="text/css">
+<link rel="stylesheet" href="css/alphacube.css" type="text/css">
+<script type="text/javascript" src="js/prototype.js"></script>
+<script type="text/javascript" src="js/effects.js"></script>
+<script type="text/javascript" src="js/window.js"> </script>
+<script type="text/javascript" src="js/window_effects.js"> </script>
+<script type="text/javascript"src="js/sc-scripts.js"></script>
+<script>
+function showtable() {
+var win = new Window({className: "alphacube", width:422, height:400, zIndex: 500, resizable: true, title: "生産計画所要量計算処理", draggable:true, wiredDrag: true})
+win.getContent().innerHTML ="\
+<table width='404px' cellpadding='2' cellspacing='0' style='position:relative;' align='left'>\
+<tr align='center' ><td class='t0'>\
+◆◇◆◇　処理概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	製品の生産計画情報より所要量を展開して、複数製品で共通使用されている半製品の必要数を集計し生産計画を自動作成します。\
+（機能としては、複数製品にまたがる共通半製品のみが対象ではなく、生産計画された製品の全ての構成半製品を対象に生産計画を作成します）\
+<br />	※当機能で導出される半製品の生産計画数は総所要量計算に基づく値となります。\
+<br />	※半製品の生産計画作成後、計画数調整（手作業）を経て「製造指示データ作成」機能により生産計画を製造指示に回します。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　機能概要　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	商品詳細登録にて「製造単位丸め区分：”する」と設定された半製品は、集計された生産計画数が該当半製品の製造単位（製造ロット）に丸められます。\
+<li>	製造指示への連動前であれば再計算が可能です。\
+<li>	必要数を集計する際の半製品のまとめ単位は「工場／製造日（もしくは納期）／ラインコード」となります。\
+<li>	当機能にて処理対象となる製品／半製品の条件は以下となります。\
+<br />	　　製品　　：　生産計画登録時に「仕掛区分：”１階層”」で登録されている製品。\
+<br />	　　半製品　：　「商品詳細登録」で「計算処理対象(生産計画)：”対象”」、かつ上位製品（半製品）が「仕掛区分：”１階層”」「下位有無：”あり”」と設定されている半製品。\
+<br /><br />\
+</ul></td></tr>\
+<tr align='center'><td class='t1'>\
+◆◇◆◇　備　　考　◇◆◇◆\
+</td></tr>\
+<tr><td class='t1'>\
+<ul>\
+<li>	確認方法（帳票）：生産計画一覧表\
+<li>	所要量計算実施後に「製品別生産計画調整入力」にて自動作成された半製品の生産計画数の変更が可能ですが、計画数量の変更を行っても該当半製品の下位層に構成される半製品の計画数は変更（再計算）されませんので運用上留意してください。\
+（生産計画所要量計算は、あくまでも最上位の「製品」生産計画数をベースに行われます）\
+<br /><br />\
+</ul></td></tr>\
+</table>";
+win.showCenter();
+}
+</script>
+</head>
+<body  onScroll="scrollmenu()">
+<!----タイトル---->
+<div class="title" id="menu" >
+生産計画所要量計算処理&lt;SEZFP05&gt;
+</div>
+<!----タイトルここまで---->
+<!----サイドメニュー---->
+<div class="sidemenu"  id="sidemenu">
+<A HREF="#" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_menu.gif" align="right" ></a>
+<div class="dt">
+<ul>
+<li><A  HREF="javascript:history.back()" ><img src="image/_sm-space.gif" class="h_spacer_s">メニューに戻る</a></li>
+<li><a  href="javascript:showtable()" onclick="javascript:slideLAYERs('sidemenu',-159,24,0,24,10,20)"><img src="image/_sm-space.gif" class="h_spacer_s">詳細説明の表示</a></li>
+</ul>
+</div>
+</div>
+<!----サイドメニューここまで---->
+
+<!----メイン画面---->
+
+<div id="main">
+メイン画面<br>
+<img src="image/SEZFP05.png">
+</div>
+<!----メイン画面ここまで---->
+<!----copyright---->
+<div class="copyrights">
+Copyright (C) UCHIDA YOKO Co.,ltd. All Rights Reserved.
+</div>
+<script>
+removeIEOutline();
+</script>
+</body>
+</html>
