@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace SCHearing.API.Models
 {
@@ -34,7 +35,12 @@ namespace SCHearing.API.Models
         public string ProgramName { get; set; } = string.Empty;
 
         /// <summary>
-        /// 基本工数
+        /// 設計工数
+        /// </summary>
+        public decimal DesignWorkHours { get; set; }
+
+        /// <summary>
+        /// 基本工数（実装工数）
         /// </summary>
         public decimal BaseWorkHours { get; set; }
 
@@ -44,7 +50,7 @@ namespace SCHearing.API.Models
         public decimal Factor { get; set; } = 1.0m;
 
         /// <summary>
-        /// 新規プログラムフラグ
+        /// 新規プログラムフラグ（廃止：すべて編集可能）
         /// </summary>
         public bool IsCustomProgram { get; set; } = false;
 
@@ -56,6 +62,7 @@ namespace SCHearing.API.Models
         /// <summary>
         /// 見積もりヘッダー
         /// </summary>
+        [JsonIgnore]
         public virtual ProgramEstimate? Estimate { get; set; }
     }
 }

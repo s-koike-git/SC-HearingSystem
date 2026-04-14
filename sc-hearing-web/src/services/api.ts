@@ -172,6 +172,28 @@ export interface Announcement {
   updatedAt: string
 }
 
+export interface ProgramEstimateItem {
+  id?: number
+  estimateId?: number
+  programId?: string
+  programName: string
+  designWorkHours: number
+  baseWorkHours: number
+  factor: number
+  isCustomProgram: boolean
+  displayOrder: number
+}
+ 
+export interface ProgramEstimate {
+  id?: number
+  userId: number
+  title: string
+  description?: string
+  totalHours: number
+  createdAt?: string
+  updatedAt?: string
+  items: ProgramEstimateItem[]
+}
 
 // Projects API
 
@@ -347,6 +369,75 @@ export const announcementsApi = {
     })
     if (!response.ok) {
       throw new Error('お知らせの削除に失敗しました')
+    }
+  },
+}
+
+export const programEstimatesApi = {
+  /**
+   * ユーザーの見積もり一覧を取得
+   */
+  getAll: async (userId: number): Promise<ProgramEstimate[]> => {
+    const response = await fetch(`${API_BASE_URL}/programestimates?userId=${userId}`)
+    if (!response.ok) {
+      throw new Error('見積もり一覧の取得に失敗しました')
+    }
+    return response.json()
+  },
+ 
+  /**
+   * 特定の見積もりを取得
+   */
+  getById: async (id: number, userId: number): Promise<ProgramEstimate> => {
+    const response = await fetch(`${API_BASE_URL}/programestimates/${id}?userId=${userId}`)
+    if (!response.ok) {
+      throw new Error('見積もりの取得に失敗しました')
+    }
+    return response.json()
+  },
+ 
+  /**
+   * 見積もりを新規作成
+   */
+  create: async (estimate: ProgramEstimate): Promise<ProgramEstimate> => {
+    const response = await fetch(`${API_BASE_URL}/programestimates`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(estimate),
+    })
+    if (!response.ok) {
+      throw new Error('見積もりの作成に失敗しました')
+    }
+    return response.json()
+  },
+ 
+  /**
+   * 見積もりを更新
+   */
+  update: async (id: number, estimate: ProgramEstimate): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/programestimates/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(estimate),
+    })
+    if (!response.ok) {
+      throw new Error('見積もりの更新に失敗しました')
+    }
+  },
+ 
+  /**
+   * 見積もりを削除
+   */
+  delete: async (id: number, userId: number): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/programestimates/${id}?userId=${userId}`, {
+      method: 'DELETE',
+    })
+    if (!response.ok) {
+      throw new Error('見積もりの削除に失敗しました')
     }
   },
 }

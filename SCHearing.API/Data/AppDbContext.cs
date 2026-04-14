@@ -147,6 +147,7 @@ namespace SCHearing.API.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.ProgramId).HasMaxLength(50);
                 entity.Property(e => e.ProgramName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.DesignWorkHours).HasColumnType("decimal(10,2)");      // 追加
                 entity.Property(e => e.BaseWorkHours).HasColumnType("decimal(10,2)");
                 entity.Property(e => e.Factor).HasColumnType("decimal(5,2)").HasDefaultValue(1.0m);
                 entity.Property(e => e.IsCustomProgram).HasDefaultValue(false);
