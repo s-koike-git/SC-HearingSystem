@@ -20,6 +20,7 @@ namespace SCHearing.API.Data
         public DbSet<ProgramMaster> Programs { get; set; }
         public DbSet<Business> Businesses { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Announcement> Announcements { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -94,18 +95,31 @@ namespace SCHearing.API.Data
                 // インデックス：検索高速化
                 entity.HasIndex(e => new { e.ProjectId, e.ProgramId }).IsUnique();
             });
-        modelBuilder.Entity<User>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Username).IsRequired().HasMaxLength(50);
-            entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.Role).IsRequired().HasMaxLength(20).HasDefaultValue("user");
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
-            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("datetime('now')");
-            entity.HasIndex(e => e.Username).IsUnique();
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Username).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Password).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Email).HasMaxLength(100);
+                entity.Property(e => e.Role).IsRequired().HasMaxLength(20).HasDefaultValue("user");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("datetime('now')");
+                entity.HasIndex(e => e.Username).IsUnique();
 
-        });
+            });
+            
+            // Announcementsテーブルの設定
+            modelBuilder.Entity<Announcement>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Content).IsRequired();
+                entity.Property(e => e.Priority).HasMaxLength(10).HasDefaultValue("通常");
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                
+                entity.HasIndex(e => e.PublishedAt);
+                entity.HasIndex(e => e.IsActive);
+            });
 
         }
     }

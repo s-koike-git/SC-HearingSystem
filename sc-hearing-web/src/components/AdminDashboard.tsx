@@ -5,8 +5,9 @@ import BusinessManagement from './admin/BusinessManagement'
 import QuestionManagement from './admin/QuestionManagement'
 import ProgramManagement from './admin/ProgramManagement'
 import SystemSettings from './admin/SystemSettings'
+import AnnouncementManagement from './admin/AnnouncementManagement'
 
-type TabType = 'users' | 'businesses' | 'questions' | 'programs' | 'settings'
+type TabType = 'users' | 'businesses' | 'questions' | 'programs' | 'settings' | 'announcements'
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('users')
@@ -16,6 +17,7 @@ function AdminDashboard() {
     { id: 'businesses' as TabType, name: '業務マスタ', icon: '📋' },
     { id: 'questions' as TabType, name: '質問マスタ', icon: '❓' },
     { id: 'programs' as TabType, name: 'プログラムマスタ', icon: '💻' },
+    { id: 'announcements' as TabType, name: 'お知らせ管理', icon: '📢' },
     { id: 'settings' as TabType, name: 'システム設定', icon: '⚙️' },
   ]
 
@@ -76,6 +78,7 @@ function AdminDashboard() {
             {activeTab === 'questions' && <QuestionManagement />}
             {activeTab === 'programs' && <ProgramManagement />}
             {activeTab === 'settings' && <SystemSettings />}
+            {activeTab === 'announcements' && <AnnouncementManagement />}
           </div>
         </div>
       </div>

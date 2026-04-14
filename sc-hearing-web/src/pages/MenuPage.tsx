@@ -1,8 +1,34 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
+import { announcementsApi, type Announcement } from '../services/api'
 
 function MenuPage() {
   const navigate = useNavigate()
+  const [announcements, setAnnouncements] = useState<Announcement[]>([])
+  const [expandedId, setExpandedId] = useState<number | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  // お知らせを取得
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        const data = await announcementsApi.getActive()
+        setAnnouncements(data)
+      } catch (error) {
+        console.error('お知らせの取得に失敗しました:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAnnouncements()
+  }, [])
+
+  // お知らせの展開/折りたたみ
+  const toggleAnnouncement = (id: number) => {
+    setExpandedId(expandedId === id ? null : id)
+  }
 
   return (
     <Layout>
@@ -34,6 +60,122 @@ function MenuPage() {
             実施する作業を選択してください
           </p>
         </div>
+
+        {/* お知らせセクション */}
+        {!loading && announcements.length > 0 && (
+          <div style={{
+            maxWidth: '800px',
+            width: '100%',
+            marginBottom: '2rem'
+          }}>
+            <h2 style={{
+              fontSize: '1.3rem',
+              color: '#2c3e50',
+              marginBottom: '1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}>
+              📢 お知らせ
+            </h2>
+            <div style={{
+              backgroundColor: 'white',
+              borderRadius: '12px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              overflow: 'hidden'
+            }}>
+              {announcements.map((announcement, index) => (
+                <div key={announcement.id}>
+                  {/* タイトル行（クリック可能） */}
+                  <div
+                    onClick={() => toggleAnnouncement(announcement.id)}
+                    style={{
+                      padding: '1.2rem 1.5rem',
+                      cursor: 'pointer',
+                      backgroundColor: expandedId === announcement.id ? '#f8f9fa' : 'white',
+                      borderBottom: index < announcements.length - 1 ? '1px solid #e9ecef' : 'none',
+                      transition: 'background-color 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (expandedId !== announcement.id) {
+                        e.currentTarget.style.backgroundColor = '#f8f9fa'
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (expandedId !== announcement.id) {
+                        e.currentTarget.style.backgroundColor = 'white'
+                      }
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flex: 1 }}>
+                      {/* 優先度バッジ */}
+                      {announcement.priority === '重要' && (
+                        <span style={{
+                          backgroundColor: '#e74c3c',
+                          color: 'white',
+                          padding: '0.25rem 0.6rem',
+                          borderRadius: '4px',
+                          fontSize: '0.75rem',
+                          fontWeight: 'bold'
+                        }}>
+                          重要
+                        </span>
+                      )}
+                      {/* タイトル */}
+                      <span style={{
+                        fontSize: '1rem',
+                        color: '#2c3e50',
+                        fontWeight: announcement.priority === '重要' ? 'bold' : 'normal'
+                      }}>
+                        {announcement.title}
+                      </span>
+                    </div>
+                    {/* 公開日 */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                      <span style={{
+                        fontSize: '0.85rem',
+                        color: '#95a5a6'
+                      }}>
+                        {new Date(announcement.publishedAt).toLocaleDateString('ja-JP')}
+                      </span>
+                      {/* 展開アイコン */}
+                      <span style={{
+                        fontSize: '1.2rem',
+                        color: '#7f8c8d',
+                        transition: 'transform 0.2s',
+                        transform: expandedId === announcement.id ? 'rotate(90deg)' : 'rotate(0deg)'
+                      }}>
+                        ▶
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 内容部分（展開時のみ表示） */}
+                  {expandedId === announcement.id && (
+                    <div style={{
+                      padding: '1.5rem',
+                      backgroundColor: '#f8f9fa',
+                      borderBottom: index < announcements.length - 1 ? '1px solid #e9ecef' : 'none',
+                      animation: 'slideDown 0.3s ease-out'
+                    }}>
+                      <div style={{
+                        color: '#34495e',
+                        lineHeight: '1.8',
+                        whiteSpace: 'pre-wrap',
+                        fontSize: '0.95rem'
+                      }}>
+                        {announcement.content}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* メニューカード */}
         <div style={{
@@ -151,6 +293,7 @@ function MenuPage() {
               ヒアリングを開始できます。
             </p>
           </div>
+
           {/* プログラム工数見積もり */}
           <div
             onClick={() => navigate('/program-estimate')}
@@ -199,6 +342,7 @@ function MenuPage() {
               概算の工数見積を行います。
             </p>
           </div>
+
           {/* 原価シミュレーション */}
           <div
             onClick={() => navigate('/cost-simulation')}
@@ -255,6 +399,22 @@ function MenuPage() {
           </div>
         </div>
       </div>
+
+      {/* アニメーションのCSS */}
+      <style>
+        {`
+          @keyframes slideDown {
+            from {
+              opacity: 0;
+              transform: translateY(-10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
     </Layout>
   )
 }

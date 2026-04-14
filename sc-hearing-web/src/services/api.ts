@@ -161,6 +161,17 @@ export interface Program {
   workHours: number
 }
 
+export interface Announcement {
+  id: number
+  title: string
+  content: string
+  priority: '重要' | '通常'
+  isActive: boolean
+  publishedAt: string
+  createdAt: string
+  updatedAt: string
+}
+
 
 // Projects API
 
@@ -269,6 +280,75 @@ export const costSimulationApi = {
   getHistory: () => api.get('/cost-simulation/history'),
   getById: (id: number) => api.get(`/cost-simulation/${id}`),
   delete: (id: number) => api.delete(`/cost-simulation/${id}`)
+}
+
+export const announcementsApi = {
+  /**
+   * 有効なお知らせ一覧を取得（メニュー画面用）
+   */
+  getActive: async (): Promise<Announcement[]> => {
+    const response = await fetch(`${API_BASE_URL}/announcements/active`)
+    if (!response.ok) {
+      throw new Error('お知らせの取得に失敗しました')
+    }
+    return response.json()
+  },
+
+  /**
+   * すべてのお知らせを取得（管理画面用）
+   */
+  getAll: async (): Promise<Announcement[]> => {
+    const response = await fetch(`${API_BASE_URL}/announcements`)
+    if (!response.ok) {
+      throw new Error('お知らせの取得に失敗しました')
+    }
+    return response.json()
+  },
+
+  /**
+   * お知らせを新規作成
+   */
+  create: async (announcement: Omit<Announcement, 'id' | 'createdAt' | 'updatedAt'>): Promise<Announcement> => {
+    const response = await fetch(`${API_BASE_URL}/announcements`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(announcement),
+    })
+    if (!response.ok) {
+      throw new Error('お知らせの作成に失敗しました')
+    }
+    return response.json()
+  },
+
+  /**
+   * お知らせを更新
+   */
+  update: async (id: number, announcement: Announcement): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/announcements/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(announcement),
+    })
+    if (!response.ok) {
+      throw new Error('お知らせの更新に失敗しました')
+    }
+  },
+
+  /**
+   * お知らせを削除
+   */
+  delete: async (id: number): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/announcements/${id}`, {
+      method: 'DELETE',
+    })
+    if (!response.ok) {
+      throw new Error('お知らせの削除に失敗しました')
+    }
+  },
 }
 
 export default api;
