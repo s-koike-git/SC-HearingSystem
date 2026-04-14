@@ -14,7 +14,7 @@ import CostSimulationPage from './pages/CostSimulationPage'
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <Router basename="/sc-hearing">
         <Routes>
           {/* ログイン画面（認証不要） */}
           <Route path="/login" element={<LoginPage />} />

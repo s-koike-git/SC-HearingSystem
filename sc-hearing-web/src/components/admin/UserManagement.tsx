@@ -1,12 +1,26 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../../contexts/AuthContext'
 import type { User } from '../../contexts/AuthContext'
 
 function UserManagement() {
-  const { users, addUser, updateUser, deleteUser } = useAuth()
+  const { users, addUser, updateUser, deleteUser, loadUsers } = useAuth()
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingUser, setEditingUser] = useState<(User & { password: string }) | null>(null)
   const [formData, setFormData] = useState({ username: '', email: '', role: 'user' as 'admin' | 'user', password: '' })
+
+  // 初回ロード時にユーザー一覧を取得
+  useEffect(() => {
+    loadUsers()
+  }, [])
+
+  // 初回ロード時にユーザー一覧を取得
+  useEffect(() => {
+    loadUsers()
+  }, [])
+
+  useEffect(() => {
+    loadUsers()
+  },[])
 
   const handleAddUser = () => {
     const newUser = {

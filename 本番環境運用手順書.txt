@@ -1,0 +1,295 @@
+﻿================================================================================
+SC-Hearing 本番環境（AWS EC2）運用手順書
+================================================================================
+
+目次
+----
+1. デプロイ手順
+2. サービス再起動
+3. サービス停止・起動
+4. ログ確認
+5. トラブルシューティング
+6. 緊急時の対応
+
+================================================================================
+1. デプロイ手順
+================================================================================
+
+前提条件
+--------
+- ローカルでビルドが成功している
+- SSH接続用の秘密鍵がある（tcs_dev_2023.pem）
+- deploy-to-aws.ps1 が作成済み
+
+【方法1: デプロイスクリプト使用（推奨）】
+
+PowerShellを開いて以下を実行:
+
+cd C:\Projects\SC-HearingSystem
+.\deploy-to-aws.ps1
+
+実行内容:
+  1. バックエンドビルド
+  2. フロントエンドビルド
+  3. EC2へファイルアップロード
+  4. サービス再起動
+  5. 完了確認
+
+完了メッセージ:
+  ✅ デプロイ完了！
+  🌐 アクセスURL: http://54.64.46.6/sc-hearing
+
+--------------------------------------------------------------------------------
+
+【方法2: 手動デプロイ】
+
+ステップ1: ローカルでビルド
+
+# バックエンドビルド
+cd C:\Projects\SC-HearingSystem\SCHearing.API
+dotnet clean
+dotnet publish -c Release -o publish
+
+# フロントエンドビルド
+cd C:\Projects\SC-HearingSystem\sc-hearing-web
+Remove-Item -Recurse -Force dist
+npm run build
+
+ステップ2: EC2へアップロード
+
+# EC2に一時ディレクトリ作成
+ssh -i D:\TEMP\AWS\tcs_dev_2023.pem ec2-user@54.64.46.6 "mkdir -p /tmp/api-update /tmp/web-update"
+
+# バックエンドアップロード
+scp -i D:\TEMP\AWS\tcs_dev_2023.pem -r C:\Projects\SC-HearingSystem\SCHearing.API\publish\* ec2-user@54.64.46.6:/tmp/api-update/
+
+# フロントエンドアップロード
+scp -i D:\TEMP\AWS\tcs_dev_2023.pem -r C:\Projects\SC-HearingSystem\sc-hearing-web\dist\* ec2-user@54.64.46.6:/tmp/web-update/
+
+ステップ3: EC2でデプロイ実行
+
+# EC2にSSH接続
+ssh -i D:\TEMP\AWS\tcs_dev_2023.pem ec2-user@54.64.46.6
+
+# 以下、EC2上で実行
+sudo systemctl stop sc-hearing
+sudo cp -r /tmp/api-update/* /var/www/sc-hearing/
+sudo rm -rf /var/www/sc-hearing/wwwroot/*
+sudo cp -r /tmp/web-update/* /var/www/sc-hearing/wwwroot/
+sudo chcon -R -t httpd_sys_content_t /var/www/sc-hearing/wwwroot
+sudo systemctl start sc-hearing
+rm -rf /tmp/api-update /tmp/web-update
+exit
+
+================================================================================
+2. サービス再起動
+================================================================================
+
+【方法1: EC2にSSH接続して実行】
+
+# SSH接続
+ssh -i D:\TEMP\AWS\tcs_dev_2023.pem ec2-user@54.64.46.6
+
+# サービス再起動
+sudo systemctl restart sc-hearing
+
+# ステータス確認
+sudo systemctl status sc-hearing
+
+# exit で切断
+exit
+
+--------------------------------------------------------------------------------
+
+【方法2: ワンライナー（SSH接続せずに実行）】
+
+ssh -i D:\TEMP\AWS\tcs_dev_2023.pem ec2-user@54.64.46.6 "sudo systemctl restart sc-hearing && sudo systemctl status sc-hearing --no-pager"
+
+================================================================================
+3. サービス停止・起動
+================================================================================
+
+【3-1. サービス停止】
+
+# SSH接続
+ssh -i D:\TEMP\AWS\tcs_dev_2023.pem ec2-user@54.64.46.6
+
+# サービス停止
+sudo systemctl stop sc-hearing
+
+# 停止確認
+sudo systemctl status sc-hearing
+
+停止メッセージ:
+  ● sc-hearing.service - SC-Hearing API Service
+     Active: inactive (dead)
+
+--------------------------------------------------------------------------------
+
+【3-2. サービス起動】
+
+# サービス起動
+sudo systemctl start sc-hearing
+
+# 起動確認
+sudo systemctl status sc-hearing
+
+起動メッセージ:
+  ● sc-hearing.service - SC-Hearing API Service
+     Active: active (running)
+
+================================================================================
+4. ログ確認
+================================================================================
+
+【4-1. サービスログ確認】
+
+# SSH接続
+ssh -i D:\TEMP\AWS\tcs_dev_2023.pem ec2-user@54.64.46.6
+
+# リアルタイムログ表示
+sudo journalctl -u sc-hearing -f
+
+# 最新100行表示
+sudo journalctl -u sc-hearing -n 100
+
+# 今日のログ表示
+sudo journalctl -u sc-hearing --since today
+
+# Ctrl + C で終了
+
+--------------------------------------------------------------------------------
+
+【4-2. Apacheログ確認】
+
+# アクセスログ
+sudo tail -f /var/log/httpd/access_log
+
+# エラーログ
+sudo tail -f /var/log/httpd/error_log
+
+================================================================================
+5. トラブルシューティング
+================================================================================
+
+【5-1. サービスが起動しない】
+
+確認項目:
+
+# 1. ステータス確認
+sudo systemctl status sc-hearing
+
+# 2. 詳細ログ確認
+sudo journalctl -u sc-hearing -n 50
+
+# 3. ファイルの存在確認
+ls -la /var/www/sc-hearing/SCHearing.API.dll
+ls -la /var/www/sc-hearing/data/SCHearing.db
+
+# 4. ポート確認
+sudo netstat -tlnp | grep 5000
+
+対処法:
+
+# SELinux設定確認
+sudo ls -Z /var/www/sc-hearing/data/SCHearing.db
+sudo chcon -t httpd_sys_rw_content_t /var/www/sc-hearing/data/SCHearing.db
+
+# サービス再起動
+sudo systemctl restart sc-hearing
+
+--------------------------------------------------------------------------------
+
+【5-2. Webページが表示されない（404エラー）】
+
+確認項目:
+
+# 1. Apache設定確認
+sudo cat /etc/httpd/conf.d/sc-hearing.conf
+
+# 2. wwwrootファイル確認
+ls -la /var/www/sc-hearing/wwwroot/
+
+# 3. Apache再起動
+sudo systemctl restart httpd
+
+--------------------------------------------------------------------------------
+
+【5-3. API呼び出しが失敗する（502エラー）】
+
+確認項目:
+
+# 1. バックエンドサービス確認
+sudo systemctl status sc-hearing
+
+# 2. ポート確認
+curl http://localhost:5000/api/Projects
+
+対処法:
+
+# サービス再起動
+sudo systemctl restart sc-hearing
+
+# ログ確認
+sudo journalctl -u sc-hearing -n 50
+
+================================================================================
+6. 緊急時の対応
+================================================================================
+
+【6-1. サービスが完全に停止した場合】
+
+# 1. SSH接続
+ssh -i D:\TEMP\AWS\tcs_dev_2023.pem ec2-user@54.64.46.6
+
+# 2. すべて再起動
+sudo systemctl restart sc-hearing
+sudo systemctl restart httpd
+
+# 3. 確認
+sudo systemctl status sc-hearing
+sudo systemctl status httpd
+
+--------------------------------------------------------------------------------
+
+【6-2. データベースバックアップ】
+
+# EC2からローカルにダウンロード
+scp -i D:\TEMP\AWS\tcs_dev_2023.pem ec2-user@54.64.46.6:/var/www/sc-hearing/data/SCHearing.db C:\Backups\SCHearing_YYYYMMDD.db
+
+================================================================================
+環境情報
+================================================================================
+
+【サーバー情報】
+EC2 IP:       54.64.46.6
+OS:           Amazon Linux 2023
+Webサーバー:   Apache (ポート80)
+バックエンド:  ASP.NET Core 8.0 (ポート5000)
+フロントエンド: React (静的ファイル)
+
+【ディレクトリ構造】
+/var/www/sc-hearing/
+├── SCHearing.API.dll       (バックエンド)
+├── appsettings.Production.json
+├── data/
+│   └── SCHearing.db        (データベース)
+└── wwwroot/                (フロントエンド)
+    ├── index.html
+    ├── assets/
+    └── screen-viewer/
+
+【URL】
+本番URL:  http://54.64.46.6/sc-hearing
+API URL:  http://54.64.46.6/sc-hearing/api
+
+================================================================================
+ログイン情報
+================================================================================
+
+ユーザー名 | パスワード | 権限
+-----------|-----------|----------
+admin      | admin     | 管理者
+test       | 5963      | 一般ユーザー
+
+================================================================================

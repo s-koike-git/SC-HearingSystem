@@ -87,7 +87,7 @@ function JudgmentResults() {
   const [previewReportFile, setPreviewReportFile] =
     useState<string | null>(null);
     
-  const REPORT_BASE_PATH = '/screen-viewer/Contents/image/rpt';
+  const REPORT_BASE_PATH = '/sc-hearing/screen-viewer/Contents/image/rpt';
 
 
   // ==================================================
@@ -114,7 +114,7 @@ function JudgmentResults() {
   
   // ✅ 帳票存在確認（PDFのみ・csv.pdf 等も考慮）
   async function checkReportExists(programId: string): Promise<string[]> {
-    const basePath = '/screen-viewer/Contents/image/rpt';
+    const basePath = '/sc-hearing/screen-viewer/Contents/image/rpt';
 
     const candidates = [
       `${programId}.pdf`,
@@ -888,7 +888,7 @@ function JudgmentResults() {
                             {/* V100画面 */}
                             {selectedProgramId && selectedScreenId ? (
                               <iframe
-                                src={`/screen-viewer/Start.htm?screen=${selectedScreenId}`}
+                                src={`/sc-hearing/screen-viewer/Start.htm?screen=${selectedScreenId}`}
                                 style={{
                                   width: '100%',
                                   height: '100%',
