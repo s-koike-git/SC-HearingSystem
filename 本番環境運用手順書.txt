@@ -28,6 +28,17 @@ PowerShellを開いて以下を実行:
 cd C:\Projects\SC-HearingSystem
 .\deploy-to-aws.ps1
 
+
+【注意】ローカルDB反映デプロイ用
+cd C:\Projects\SC-HearingSystem
+.\deploy-to-aws.ps1 -InitDb
+
+# フロントエンドのみデプロイ
+.\deploy-to-aws.ps1 -FrontendOnly
+
+# DBのみ反映
+.\deploy-to-aws.ps1 -InitDb -SkipFrontend  # ※このオプションがあれば
+
 実行内容:
   1. バックエンドビルド
   2. フロントエンドビルド
