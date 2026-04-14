@@ -1,61 +1,62 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SCHearing.API.Models
 {
     /// <summary>
-    /// プログラム工数見積もり明細
+    /// プログラム工数見積もりヘッダー
     /// </summary>
-    public class ProgramEstimateItem
+    public class ProgramEstimate
     {
         /// <summary>
-        /// 明細ID
+        /// 見積もりID
         /// </summary>
         [Key]
         public int Id { get; set; }
 
         /// <summary>
-        /// 見積もりID
+        /// ユーザーID（作成者）
         /// </summary>
         [Required]
-        public int EstimateId { get; set; }
+        public int UserId { get; set; }
 
         /// <summary>
-        /// プログラムID（既存プログラムの場合）
-        /// </summary>
-        [MaxLength(50)]
-        public string? ProgramId { get; set; }
-
-        /// <summary>
-        /// プログラム名
+        /// 見積もりタイトル
         /// </summary>
         [Required]
         [MaxLength(200)]
-        public string ProgramName { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
-        /// 基本工数
+        /// 説明
         /// </summary>
-        public decimal BaseWorkHours { get; set; }
+        [MaxLength(1000)]
+        public string? Description { get; set; }
 
         /// <summary>
-        /// 難易度係数
+        /// 合計工数
         /// </summary>
-        public decimal Factor { get; set; } = 1.0m;
+        public decimal TotalHours { get; set; }
 
         /// <summary>
-        /// 新規プログラムフラグ
+        /// 作成日時
         /// </summary>
-        public bool IsCustomProgram { get; set; } = false;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         /// <summary>
-        /// 表示順序
+        /// 更新日時
         /// </summary>
-        public int DisplayOrder { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         /// <summary>
-        /// 見積もりヘッダー
+        /// 見積もり明細
         /// </summary>
-        public virtual ProgramEstimate? Estimate { get; set; }
+        public virtual ICollection<ProgramEstimateItem> Items { get; set; } = new List<ProgramEstimateItem>();
+
+        /// <summary>
+        /// ユーザー
+        /// </summary>
+        public virtual User? User { get; set; }
     }
 }
