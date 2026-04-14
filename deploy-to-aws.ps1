@@ -74,7 +74,7 @@ if (-not $FrontendOnly) {
             Remove-Item $dbDeployLocal -Force
         }
 
-        sqlite3 $dbLocal ".backup '$dbDeployLocal'"
+        & "C:\Projects\SC-HearingSystem\sqlite\sqlite3.exe" $dbLocal ".backup '$dbDeployLocal'"
         if (-not (Test-Path $dbDeployLocal)) {
             throw "Failed to create deploy DB"
         }

@@ -18,6 +18,9 @@ SC-Hearing ローカル環境 運用手順書
 - .NET 8.0 SDK インストール済み
 - Node.js インストール済み
 - データベース（App.db）が存在する
+- sqlite3ダウンロード済み
+→https://www.sqlite.org/download.html　公式サイトからダウンロード(sqlite-tools-win-x64-3530000.zip)
+→展開後右記のパスに配置C:\sqlite\sqlite3.exe
 
 手順
 ----
