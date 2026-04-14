@@ -136,3 +136,4 @@ C:\Projects\SC-HearingSystem\SCHearing.API\obj\Debug\net8.0\refint\SCHearing.API
 C:\Projects\SC-HearingSystem\SCHearing.API\obj\Debug\net8.0\SCHearing.API.pdb
 C:\Projects\SC-HearingSystem\SCHearing.API\obj\Debug\net8.0\SCHearing.API.genruntimeconfig.cache
 C:\Projects\SC-HearingSystem\SCHearing.API\obj\Debug\net8.0\ref\SCHearing.API.dll
+C:\Projects\SC-HearingSystem\SCHearing.API\bin\Debug\net8.0\package-lock.json
