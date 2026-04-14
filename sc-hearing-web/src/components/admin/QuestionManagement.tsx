@@ -224,6 +224,7 @@ function QuestionManagement() {
       choicePrograms: {},
       yesPrograms: [],
       noPrograms: [],
+      textPrograms: [],
       implementation: '',
       settings: '',
       priority: '中'
@@ -256,11 +257,13 @@ function QuestionManagement() {
           // yes/no プログラム
           const yesProgs = parts[14]
           const noProgs = parts[15]
+          
+          const textProgs = parts[16]
 
           // ✅ ← ここが今回の修正ポイント（後半列はインデックス指定）
-          const implementation = parts[16] ?? ''
-          const settings = parts[17] ?? ''
-          const priorityRaw = parts[18]
+          const implementation = parts[17] ?? ''
+          const settings = parts[18] ?? ''
+          const priorityRaw = parts[19]
 
           const priority =
             priorityRaw === '高' || priorityRaw === '中' || priorityRaw === '低'
@@ -291,6 +294,7 @@ function QuestionManagement() {
               choicePrograms: type === 'choice' && Object.keys(choicePrograms).length > 0 ? choicePrograms : undefined,
               yesPrograms: type === 'yesno' && yesProgs ? yesProgs.split(';').filter(Boolean) : undefined,
               noPrograms: type === 'yesno' && noProgs ? noProgs.split(';').filter(Boolean) : undefined,
+              textPrograms: type === 'text' && textProgs ? textProgs.split(';').filter(Boolean) : undefined,
               implementation,
               settings,
               priority,
@@ -319,9 +323,10 @@ function QuestionManagement() {
   }
 
   const handleDownloadTemplate = () => {
-    const csv = '業務,質問No,質問内容,タイプ,選択肢1,選択肢2,選択肢3,選択肢4,選択肢5,プログラムID1,プログラムID2,プログラムID3,プログラムID4,プログラムID5,○プログラムID,×プログラムID,SC実現方法,設定内容,重要度\n' +
-      '見積,Q1,見積パターンを使用しますか？,yesno,,,,,,,,,,P001;P002,P003,見積パターン機能,設定内容,高\n' +
-      '受注,Q1,受注方式を選択してください,choice,通常受注,直送受注,預り在庫受注,,P004,P005,P006,,,,,受注区分機能,設定内容,高\n'
+    const csv = '業務,質問No,質問内容,タイプ,選択肢1,選択肢2,選択肢3,選択肢4,選択肢5,プログラムID1,プログラムID2,プログラムID3,プログラムID4,プログラムID5,○プログラムID,×プログラムID,テキストプログラムID,SC実現方法,設定内容,重要度\n' +
+      '見積,Q1,見積パターンを使用しますか？,yesno,,,,,,,,,,P001;P002,P003,,見積パターン機能,設定内容,高\n' +
+      '受注,Q1,受注方式を選択してください,choice,通常受注,直送受注,預り在庫受注,,P004,P005,P006,,,,,,受注区分機能,設定内容,高\n' +
+      '出荷,Q1,備考を入力してください,text,,,,,,,,,,,,,P007;P008,備考入力機能,設定内容,中\n'
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement('a')
     link.href = URL.createObjectURL(blob)
