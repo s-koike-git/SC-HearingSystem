@@ -331,27 +331,27 @@ const ProgramEstimatePage = () => {
                       <td style={{ padding: '0.75rem' }}>
                         {item.programName}
                       </td>
-                      <td style={{ padding: '0.75rem' }}>
+                      <td style={{ padding: '0.75rem', whiteSpace: 'nowrap' }}>
                         <input
                           type="number"
                           min={0}
                           step={0.1}
                           value={item.designWorkHours}
                           onChange={e => updateItem(idx, { designWorkHours: Number(e.target.value) })}
-                          style={{ width: '90px', textAlign: 'right', padding: '0.3rem' }}
+                          style={{ width: '80px', textAlign: 'right', padding: '0.3rem' }}
                         />
-                        <span style={{ marginLeft: '0.3rem' }}>H</span>
+                        <span style={{ marginLeft: '0.2rem' }}>H</span>
                       </td>
-                      <td style={{ padding: '0.75rem' }}>
+                      <td style={{ padding: '0.75rem', whiteSpace: 'nowrap' }}>
                         <input
                           type="number"
                           min={0}
                           step={0.1}
                           value={item.baseWorkHours}
                           onChange={e => updateItem(idx, { baseWorkHours: Number(e.target.value) })}
-                          style={{ width: '90px', textAlign: 'right', padding: '0.3rem' }}
+                          style={{ width: '80px', textAlign: 'right', padding: '0.3rem' }}
                         />
-                        <span style={{ marginLeft: '0.3rem' }}>H</span>
+                        <span style={{ marginLeft: '0.2rem' }}>H</span>
                       </td>
                       <td style={{ padding: '0.75rem' }}>
                         <select
