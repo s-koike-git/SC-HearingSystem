@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SCHearing.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+659fda3c664497a8449e1b88162c8b0e63d9cbe6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b5772ec9ec98d86a37fb465f6f5bc3097a8c5c3e")]
 [assembly: System.Reflection.AssemblyProductAttribute("SCHearing.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SCHearing.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

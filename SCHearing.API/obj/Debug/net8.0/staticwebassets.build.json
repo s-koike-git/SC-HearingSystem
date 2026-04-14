@@ -1,1 +1,11 @@
-{"Version":1,"Hash":"qN3qkws2D/tQu8Vb2llG7n7DfndBc4q3Y4yD8jl0V/4=","Source":"SCHearing.API","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "BKanEHQnWXRLhtWakdYuPUv8knkx9DCjPIMK9XdS9cM=",
+  "Source": "SCHearing.API",
+  "BasePath": "_content/SCHearing.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

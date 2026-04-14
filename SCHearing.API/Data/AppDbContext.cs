@@ -21,6 +21,8 @@ namespace SCHearing.API.Data
         public DbSet<Business> Businesses { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Announcement> Announcements { get; set; }
+        public DbSet<ProgramEstimate> ProgramEstimates { get; set; }
+        public DbSet<ProgramEstimateItem> ProgramEstimateItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -120,6 +122,43 @@ namespace SCHearing.API.Data
                 entity.HasIndex(e => e.PublishedAt);
                 entity.HasIndex(e => e.IsActive);
             });
+            
+            // ProgramEstimate設定
+            modelBuilder.Entity<ProgramEstimate>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.Description).HasMaxLength(1000);
+                entity.Property(e => e.TotalHours).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("datetime('now')");
+
+                entity.HasOne(e => e.User)
+                      .WithMany()
+                      .HasForeignKey(e => e.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.UserId);
+            });
+
+            // ProgramEstimateItem設定
+            modelBuilder.Entity<ProgramEstimateItem>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ProgramId).HasMaxLength(50);
+                entity.Property(e => e.ProgramName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.BaseWorkHours).HasColumnType("decimal(10,2)");
+                entity.Property(e => e.Factor).HasColumnType("decimal(5,2)").HasDefaultValue(1.0m);
+                entity.Property(e => e.IsCustomProgram).HasDefaultValue(false);
+
+                entity.HasOne(e => e.Estimate)
+                      .WithMany(pe => pe.Items)
+                      .HasForeignKey(e => e.EstimateId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.EstimateId);
+            });
+            
 
         }
     }
