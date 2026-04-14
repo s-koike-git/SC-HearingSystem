@@ -195,6 +195,18 @@ export interface ProgramEstimate {
   items: ProgramEstimateItem[]
 }
 
+export interface BusinessFlowMapping {
+  id: number
+  businessType: string
+  stepId: string
+  nodeId: string
+  displayOrder: number
+  isActive: number
+  createdAt: string
+  updatedAt: string
+}
+
+
 // Projects API
 
 export const projectsApi = {
@@ -440,6 +452,12 @@ export const programEstimatesApi = {
       throw new Error('見積もりの削除に失敗しました')
     }
   },
+}
+
+export const businessFlowMappingsApi = {
+  getAll: async () => { /* ... */ },
+  getByBusinessType: async (businessType: string) => { /* ... */ },
+  // ...
 }
 
 export default api;

@@ -23,6 +23,7 @@ namespace SCHearing.API.Data
         public DbSet<Announcement> Announcements { get; set; }
         public DbSet<ProgramEstimate> ProgramEstimates { get; set; }
         public DbSet<ProgramEstimateItem> ProgramEstimateItems { get; set; }
+        public DbSet<BusinessFlowMapping> BusinessFlowMappings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -158,6 +159,17 @@ namespace SCHearing.API.Data
                       .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasIndex(e => e.EstimateId);
+            });
+            
+            modelBuilder.Entity<BusinessFlowMapping>(entity =>
+            {
+                entity.ToTable("BusinessFlowMapping");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.BusinessType).IsRequired();
+                entity.Property(e => e.StepId).IsRequired();
+                entity.Property(e => e.NodeId).IsRequired();
+                entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
+                entity.Property(e => e.IsActive).HasDefaultValue(1);
             });
             
 

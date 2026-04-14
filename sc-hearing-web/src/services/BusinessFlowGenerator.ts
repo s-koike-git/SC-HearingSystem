@@ -1,7 +1,8 @@
-
-import type { Answer, Judgment, Program } from './api';
+import type { Answer, Judgment, Program, BusinessFlowMapping } from './api';
 
 export class BusinessFlowGenerator {
+  private mappings: BusinessFlowMapping[] = [];
+
   constructor(
     private answers: Answer[],
     private judgments: Judgment[],
@@ -9,7 +10,28 @@ export class BusinessFlowGenerator {
   ) {}
 
   /**
-   * 実行された工程を判定
+   * マッピングデータをロード（初期化時に呼び出す）
+   */
+  async loadMappings(): Promise<void> {
+    try {
+      const API_BASE = import.meta.env.PROD
+        ? '/sc-hearing/api'
+        : 'http://localhost:5176';
+
+      const response = await fetch(`${API_BASE}/api/BusinessFlowMappings`);
+      const result = await response.json();
+      
+      if (result.success) {
+        this.mappings = result.data;
+      }
+    } catch (error) {
+      console.error('マッピングデータの読み込みに失敗:', error);
+      // エラー時は空配列のまま続行（フォールバック処理）
+    }
+  }
+
+  /**
+   * 実行された工程を判定（マスタベース）
    */
   private getActiveSteps(): Set<string> {
     const active = new Set<string>();
@@ -25,26 +47,37 @@ export class BusinessFlowGenerator {
 
       if (!isEnabled) return;
 
-      if (j.businessType === '見積') active.add('estimate');
-      if (j.businessType === '受注') active.add('order');
-      if (j.businessType === '引当') active.add('allocation');
-      if (j.businessType === '出荷準備' || j.businessType === '出荷')
-        active.add('shipping');
-      if (j.businessType === '売上') active.add('sales');
-      if (j.businessType === '請求') active.add('billing');
-      if (j.businessType === '売掛') active.add('receivable');
-      if (
-        j.businessType === '発注' ||
-        j.businessType === '入荷' ||
-        j.businessType === '仕入'
-      ) {
-        active.add('purchase');
+      // ✅ マッピングテーブルから業務タイプに対応するStepIdを取得
+      const mapping = this.mappings.find(m => m.businessType === j.businessType);
+      if (mapping) {
+        active.add(mapping.stepId);
       }
     });
 
     return active;
   }
-  
+
+  /**
+   * StepIdに対応するノードIDリストを取得（マスタベース）
+   */
+  private getStepNodes(stepId: string): string[] {
+    return this.mappings
+      .filter(m => m.stepId === stepId)
+      .sort((a, b) => a.displayOrder - b.displayOrder)
+      .map(m => m.nodeId)
+      // 重複削除
+      .filter((nodeId, index, self) => self.indexOf(nodeId) === index);
+  }
+
+  /**
+   * すべてのユニークなノードIDを取得（マスタベース）
+   */
+  private getAllNodes(): string[] {
+    return this.mappings
+      .map(m => m.nodeId)
+      .filter((nodeId, index, self) => self.indexOf(nodeId) === index);
+  }
+
   /**
    * 物流OPが導入されているか判定
    */
@@ -53,10 +86,10 @@ export class BusinessFlowGenerator {
       j.isCustom &&
       (j.businessType === '出荷' ||
        j.businessType === '入荷' ||
-       j.businessType === '移動')
+       j.businessType === '移動' ||
+       j.businessType.includes('物流OP'))
     );
   }
-  
 
   /**
    * 標準業務フロー（固定）
@@ -197,52 +230,64 @@ flowchart LR
   LEGEND_CUSTOM["🔧 カスタム対応"]:::custom
   LEGEND_OP["🔧 物流OP"]:::logistics_op
   `;
-  
-  
-  const STEP_NODES: Record<string, string[]> = {
-    estimate: ['A01', 'A02'],
-    order: ['A03', 'A04'],
-    allocation: ['A05'],
-    shipping: ['A06', 'A07', 'A08', 'A09'],
-    sales: ['A10', 'A11'],
-    billing: ['A12', 'A13'],
-    receivable: ['A14'],
-    purchase: [
-      'B01','B02','B03','B04','B05',
-      'B06','B07','B08','B09'
-    ],
-  };
-  
+
   // =====================================================
-  // 判定結果をフロー状態に反映（Mermaid 正式仕様）
+  // 判定結果をフロー状態に反映（マスタベース）
   // =====================================================
   const activeSteps = this.getActiveSteps();
+  const allNodes = this.getAllNodes();
 
-  // ① まず全ノードを inactive（薄紫）
-  Object.values(STEP_NODES).flat().forEach(nodeId => {
+  // ① まず全ノードを inactive（灰色）
+  allNodes.forEach(nodeId => {
     flow += `\nclass ${nodeId} inactive`;
   });
 
   // ② 実行された工程に属するノードだけ active（緑）
-  activeSteps.forEach(step => {
-    STEP_NODES[step]?.forEach(nodeId => {
+  activeSteps.forEach(stepId => {
+    const nodes = this.getStepNodes(stepId);
+    nodes.forEach(nodeId => {
       flow += `\nclass ${nodeId} active`;
     });
   });
 
   // ③ 物流OP の ON / OFF
+  const logisticsNodes = ['OP01', 'OP02', 'OP03'];
   if (this.hasLogisticsOP()) {
-    ['OP01','OP02','OP03'].forEach(id => {
+    logisticsNodes.forEach(id => {
       flow += `\nclass ${id} active`;
     });
   } else {
-    ['OP01','OP02','OP03'].forEach(id => {
+    logisticsNodes.forEach(id => {
       flow += `\nclass ${id} inactive`;
     });
   }
 
   // ★ 最後に必ず return
   return flow;
-  
+  }
+
+  /**
+   * テキストフロー生成（互換性のため残す）
+   */
+  generateTextFlow(): string {
+    const activeSteps = this.getActiveSteps();
+    let text = '【実行される業務フロー】\n\n';
+
+    activeSteps.forEach(stepId => {
+      const nodes = this.getStepNodes(stepId);
+      const businessTypes = this.mappings
+        .filter(m => m.stepId === stepId)
+        .map(m => m.businessType)
+        .filter((type, index, self) => self.indexOf(type) === index)
+        .join(', ');
+
+      text += `■ ${businessTypes} (${stepId})\n`;
+      nodes.forEach(nodeId => {
+        text += `  - ${nodeId}\n`;
+      });
+      text += '\n';
+    });
+
+    return text;
   }
 }

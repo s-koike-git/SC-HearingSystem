@@ -57,16 +57,21 @@ function BusinessFlowViewer({ answers, judgments, programs, companyName, onClose
 
   
   const generateFlow = async () => {
-    try {
-      const generator =
-        flowType === 'business'
-          ? new BusinessFlowGenerator(answers, judgments, programs)
-          : new FlowGenerator(answers, judgments, programs)
+  try {
+    const generator =
+      flowType === 'business'
+        ? new BusinessFlowGenerator(answers, judgments, programs)
+        : new FlowGenerator(answers, judgments, programs)
 
-      const code =
-        flowType === 'business'
-          ? generator.generateBusinessFlow()
-          : generator.generateSystemFlow()
+    // ✅ マッピングデータをロード
+    if (flowType === 'business') {
+      await (generator as BusinessFlowGenerator).loadMappings()
+    }
+
+    const code =
+      flowType === 'business'
+        ? generator.generateBusinessFlow()
+        : generator.generateSystemFlow()
 
       setMermaidCode(code)
 
