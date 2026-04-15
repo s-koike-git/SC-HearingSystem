@@ -178,10 +178,12 @@ export class BusinessFlowGenerator {
         if (conn.connectionType === 'dotted') {
           arrow = '-.->';
         } else if (conn.connectionType === 'conditional') {
-          arrow = '--';
+          arrow = '-->';  // conditional も矢印あり
         }
 
-        const label = conn.conditionLabel ? ` ${conn.conditionLabel} ` : '';
+        // Mermaid のエッジラベルは |ラベル| で囲む必要がある
+        // 例: A -->|条件| B  / A -.->|参照| B
+        const label = conn.conditionLabel ? `|${conn.conditionLabel}|` : '';
         flow += `  ${conn.fromNodeId} ${arrow}${label} ${conn.toNodeId}\n`;
       });
 
