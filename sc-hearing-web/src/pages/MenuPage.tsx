@@ -3,401 +3,118 @@ import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import { announcementsApi, type Announcement } from '../services/api'
 
-function MenuPage() {
+const MENU_CARDS = [
+  { id: 'projects',     path: '/projects',          icon: '📋', label: '案件一覧',         description: '進行中・過去の案件を検索・管理します',        accent: '#1e40af', bg: 'linear-gradient(135deg,#1e3a8a,#1e40af)', tag: '案件管理' },
+  { id: 'new-project',  path: '/projects/new',       icon: '＋', label: '新規案件作成',     description: '会社情報を入力してヒアリングを開始します',    accent: '#059669', bg: 'linear-gradient(135deg,#064e3b,#059669)', tag: 'はじめる' },
+  { id: 'estimate',     path: '/program-estimate',   icon: '🧮', label: '工数見積もり',     description: 'プログラム単位で概算工数を算出します',        accent: '#0284c7', bg: 'linear-gradient(135deg,#0c4a6e,#0284c7)', tag: '見積' },
+  { id: 'cost',         path: '/cost-simulation',    icon: '💰', label: '原価シミュレーション', description: '顧客指定単価での利益率を試算します',      accent: '#d97706', bg: 'linear-gradient(135deg,#78350f,#d97706)', tag: '分析' },
+]
+
+export default function MenuPage() {
   const navigate = useNavigate()
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [expandedId, setExpandedId] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null)
 
-  // お知らせを取得
   useEffect(() => {
-    const fetchAnnouncements = async () => {
-      try {
-        const data = await announcementsApi.getActive()
-        setAnnouncements(data)
-      } catch (error) {
-        console.error('お知らせの取得に失敗しました:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchAnnouncements()
+    announcementsApi.getActive().then(setAnnouncements).catch(() => {}).finally(() => setLoading(false))
   }, [])
 
-  // お知らせの展開/折りたたみ
-  const toggleAnnouncement = (id: number) => {
-    setExpandedId(expandedId === id ? null : id)
-  }
+  const now = new Date()
+  const h = now.getHours()
+  const greeting = h < 11 ? 'おはようございます' : h < 17 ? 'こんにちは' : 'お疲れ様です'
 
   return (
     <Layout>
-      <div style={{
-        padding: '2rem',
-        minHeight: 'calc(100vh - 80px)'
-      }}>
-        {/* ページタイトル */}
-        <div style={{
-          textAlign: 'center',
-          marginBottom: '3rem'
-        }}>
-          <h1 style={{
-            fontSize: '2.5rem',
-            color: '#2c3e50',
-            margin: 0,
-            marginBottom: '0.5rem'
-          }}>
-            メニュー
-          </h1>
-          <p style={{
-            fontSize: '1.1rem',
-            color: '#7f8c8d',
-            margin: 0
-          }}>
-            実施する作業を選択してください
-          </p>
+      <div style={{ minHeight: 'calc(100vh - 80px)', background: '#f1f5f9', padding: '2rem 2.5rem', fontFamily: '"Noto Sans JP", sans-serif' }}>
+
+        {/* ヘッダー */}
+        <div style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div>
+            <p style={{ margin: 0, color: '#64748b', fontSize: '0.88rem', fontWeight: 500 }}>{greeting}</p>
+            <h1 style={{ margin: '0.2rem 0 0', color: '#0f172a', fontSize: '1.8rem', fontWeight: 800, letterSpacing: '-0.02em' }}>何をしますか？</h1>
+          </div>
+          <div style={{ color: '#94a3b8', fontSize: '0.83rem' }}>
+            {now.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' })}
+          </div>
         </div>
 
-        {/* メインコンテンツ（2カラムレイアウト） */}
-        <div style={{
-          display: 'flex',
-          gap: '2rem',
-          maxWidth: '1400px',
-          margin: '0 auto',
-          alignItems: 'flex-start'
-        }}>
-          {/* 左側：メニューカード */}
-          <div style={{
-            flex: 1,
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '2rem',
-            minWidth: 0
-          }}>
-            {/* 案件一覧 */}
-            <div
-              onClick={() => navigate('/projects')}
-              style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                padding: '2.5rem',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                textAlign: 'center'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)'
-                e.currentTarget.style.boxShadow = '0 15px 40px rgba(0,0,0,0.25)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.15)'
-              }}
-            >
-              <div style={{
-                width: '80px',
-                height: '80px',
-                margin: '0 auto 1.5rem',
-                backgroundColor: '#3498db',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '2.5rem'
-              }}>
-                📋
-              </div>
-              <h3 style={{
-                margin: '0 0 1rem 0',
-                fontSize: '1.5rem',
-                color: '#2c3e50',
-                fontWeight: 'bold'
-              }}>
-                案件一覧
-              </h3>
-              <p style={{
-                margin: 0,
-                color: '#7f8c8d',
-                fontSize: '0.95rem',
-                lineHeight: '1.6'
-              }}>
-                既存の案件を確認・編集します。<br />
-                進行中の案件や過去の案件を<br />
-                一覧で確認できます。
-              </p>
-            </div>
+        <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start', maxWidth: 1400 }}>
 
-            {/* 新規案件作成 */}
-            <div
-              onClick={() => navigate('/projects/new')}
-              style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                padding: '2.5rem',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                textAlign: 'center',
-                border: '2px solid #27ae60'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)'
-                e.currentTarget.style.boxShadow = '0 15px 40px rgba(39, 174, 96, 0.3)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.15)'
-              }}
-            >
-              <div style={{
-                width: '80px',
-                height: '80px',
-                margin: '0 auto 1.5rem',
-                backgroundColor: '#27ae60',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '2.5rem'
-              }}>
-                ➕
-              </div>
-              <h3 style={{
-                margin: '0 0 1rem 0',
-                fontSize: '1.5rem',
-                color: '#2c3e50',
-                fontWeight: 'bold'
-              }}>
-                新規案件作成
-              </h3>
-              <p style={{
-                margin: 0,
-                color: '#7f8c8d',
-                fontSize: '0.95rem',
-                lineHeight: '1.6'
-              }}>
-                新しい案件を作成します。<br />
-                会社情報を登録後、<br />
-                ヒアリングを開始できます。
-              </p>
-            </div>
-
-            {/* プログラム工数見積もり */}
-            <div
-              onClick={() => navigate('/program-estimate')}
-              style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                padding: '2.5rem',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                textAlign: 'center',
-                border: '2px solid #2980b9',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)'
-                e.currentTarget.style.boxShadow = '0 15px 40px rgba(41, 128, 185, 0.35)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.15)'
-              }}
-            >
-              <span
-                style={{
-                  width: '80px',
-                  height: '80px',
-                  margin: '0 auto 1.5rem',
-                  backgroundColor: '#dcd6f7',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '2.5rem',
-                }}
-              >
-                🧮
-              </span>
-
-              <h4 style={{ marginTop: '1rem' }}>
-                プログラム工数見積もり
-              </h4>
-
-              <p style={{ fontSize: '0.9rem', color: '#555' }}>
-                プログラム単位で
-                <br />
-                概算の工数見積を行います。
-              </p>
-            </div>
-
-            {/* 原価シミュレーション */}
-            <div
-              onClick={() => navigate('/cost-simulation')}
-              style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                padding: '2.5rem',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
-                cursor: 'pointer',
-                transition: 'all 0.3s',
-                textAlign: 'center',
-                border: '2px solid #e67e22'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-8px)'
-                e.currentTarget.style.boxShadow = '0 15px 40px rgba(230, 126, 34, 0.3)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.15)'
-              }}
-            >
-              <div style={{
-                width: '80px',
-                height: '80px',
-                margin: '0 auto 1.5rem',
-                backgroundColor: '#e67e22',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '2.5rem'
-              }}>
-                💰
-              </div>
-              <h3 style={{
-                margin: '0 0 1rem 0',
-                fontSize: '1.5rem',
-                color: '#2c3e50',
-                fontWeight: 'bold'
-              }}>
-                原価シミュレーション
-              </h3>
-              <p style={{
-                margin: 0,
-                color: '#7f8c8d',
-                fontSize: '0.95rem',
-                lineHeight: '1.6'
-              }}>
-                顧客指定単価での<br />
-                利益シミュレーションを行います。<br />
-                原価内訳と利益率を確認できます。
-              </p>
-            </div>
+          {/* メニューカード */}
+          <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '1.25rem' }}>
+            {MENU_CARDS.map(card => {
+              const isHov = hoveredCard === card.id
+              return (
+                <div
+                  key={card.id}
+                  onClick={() => navigate(card.path)}
+                  onMouseEnter={() => setHoveredCard(card.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  style={{
+                    background: 'white', borderRadius: 16, padding: '1.75rem',
+                    cursor: 'pointer',
+                    border: `2px solid ${isHov ? card.accent : 'transparent'}`,
+                    boxShadow: isHov ? `0 12px 40px rgba(0,0,0,0.12),0 0 0 1px ${card.accent}20` : '0 2px 8px rgba(0,0,0,0.06)',
+                    transition: 'all 0.2s ease',
+                    transform: isHov ? 'translateY(-4px)' : 'none',
+                    position: 'relative', overflow: 'hidden',
+                  }}
+                >
+                  <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 4, background: card.bg, borderRadius: '16px 0 0 16px' }} />
+                  <div style={{ marginLeft: '0.5rem' }}>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', background: `${card.accent}15`, color: card.accent, borderRadius: 6, padding: '0.18rem 0.55rem', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '0.9rem' }}>
+                      {card.tag}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                      <div style={{ width: 48, height: 48, flexShrink: 0, background: card.bg, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, boxShadow: `0 4px 12px ${card.accent}40` }}>
+                        {card.icon}
+                      </div>
+                      <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', lineHeight: 1.2 }}>{card.label}</h3>
+                    </div>
+                    <p style={{ margin: 0, color: '#64748b', fontSize: '0.86rem', lineHeight: 1.6 }}>{card.description}</p>
+                    <div style={{ marginTop: '1rem', color: card.accent, fontSize: '0.82rem', fontWeight: 700, opacity: isHov ? 1 : 0, transition: 'opacity 0.2s' }}>
+                      開く →
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
 
-          {/* 右側：お知らせ */}
+          {/* お知らせ */}
           {!loading && announcements.length > 0 && (
-            <div style={{
-              width: '400px',
-              flexShrink: 0
-            }}>
-              <h2 style={{
-                fontSize: '1.3rem',
-                color: '#2c3e50',
-                marginBottom: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
-                📢 お知らせ
-              </h2>
-              <div style={{
-                backgroundColor: 'white',
-                borderRadius: '12px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                overflow: 'hidden',
-                maxHeight: 'calc(100vh - 250px)',
-                overflowY: 'auto'
-              }}>
-                {announcements.map((announcement, index) => (
-                  <div key={announcement.id}>
-                    {/* タイトル行（クリック可能） */}
+            <div style={{ width: 360, flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <span style={{ fontSize: 18 }}>📢</span>
+                <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: '#0f172a' }}>お知らせ</h2>
+                <span style={{ background: '#ef4444', color: 'white', borderRadius: 99, padding: '0.1rem 0.55rem', fontSize: '0.7rem', fontWeight: 700 }}>{announcements.length}</span>
+              </div>
+              <div style={{ background: 'white', borderRadius: 12, border: '1px solid #e2e8f0', overflow: 'hidden', maxHeight: 'calc(100vh - 280px)', overflowY: 'auto' }}>
+                {announcements.map((ann, idx) => (
+                  <div key={ann.id}>
                     <div
-                      onClick={() => toggleAnnouncement(announcement.id)}
+                      onClick={() => setExpandedId(expandedId === ann.id ? null : ann.id)}
                       style={{
-                        padding: '1.2rem 1.5rem',
-                        cursor: 'pointer',
-                        backgroundColor: expandedId === announcement.id ? '#f8f9fa' : 'white',
-                        borderBottom: index < announcements.length - 1 || expandedId === announcement.id ? '1px solid #e9ecef' : 'none',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (expandedId !== announcement.id) {
-                          e.currentTarget.style.backgroundColor = '#f8f9fa'
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (expandedId !== announcement.id) {
-                          e.currentTarget.style.backgroundColor = 'white'
-                        }
+                        padding: '1rem 1.25rem', cursor: 'pointer',
+                        borderBottom: idx < announcements.length - 1 || expandedId === ann.id ? '1px solid #f1f5f9' : 'none',
+                        background: expandedId === ann.id ? '#f8fafc' : 'white',
+                        transition: 'background 0.15s',
                       }}
                     >
-                      <div style={{ marginBottom: '0.5rem' }}>
-                        {/* 優先度バッジ */}
-                        {announcement.priority === '重要' && (
-                          <span style={{
-                            backgroundColor: '#e74c3c',
-                            color: 'white',
-                            padding: '0.25rem 0.6rem',
-                            borderRadius: '4px',
-                            fontSize: '0.75rem',
-                            fontWeight: 'bold',
-                            marginBottom: '0.5rem',
-                            display: 'inline-block'
-                          }}>
-                            重要
-                          </span>
-                        )}
-                      </div>
-                      {/* タイトル */}
-                      <div style={{
-                        fontSize: '1rem',
-                        color: '#2c3e50',
-                        fontWeight: announcement.priority === '重要' ? 'bold' : 'normal',
-                        marginBottom: '0.5rem',
-                        lineHeight: '1.4'
-                      }}>
-                        {announcement.title}
-                      </div>
-                      {/* 公開日と展開アイコン */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{
-                          fontSize: '0.85rem',
-                          color: '#95a5a6'
-                        }}>
-                          {new Date(announcement.publishedAt).toLocaleDateString('ja-JP')}
-                        </span>
-                        {/* 展開アイコン */}
-                        <span style={{
-                          fontSize: '1rem',
-                          color: '#7f8c8d',
-                          transition: 'transform 0.2s',
-                          transform: expandedId === announcement.id ? 'rotate(90deg)' : 'rotate(0deg)'
-                        }}>
-                          ▶
-                        </span>
+                      {ann.priority === '重要' && (
+                        <span style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca', borderRadius: 4, padding: '0.15rem 0.5rem', fontSize: '0.7rem', fontWeight: 700, display: 'inline-block', marginBottom: '0.4rem' }}>重要</span>
+                      )}
+                      <div style={{ fontSize: '0.88rem', fontWeight: ann.priority === '重要' ? 700 : 500, color: '#1e293b', lineHeight: 1.4 }}>{ann.title}</div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.4rem' }}>
+                        <span style={{ fontSize: '0.76rem', color: '#94a3b8' }}>{new Date(ann.publishedAt).toLocaleDateString('ja-JP')}</span>
+                        <span style={{ color: '#94a3b8', fontSize: '0.78rem', transform: expandedId === ann.id ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s', display: 'inline-block' }}>▶</span>
                       </div>
                     </div>
-
-                    {/* 内容部分（展開時のみ表示） */}
-                    {expandedId === announcement.id && (
-                      <div style={{
-                        padding: '1.5rem',
-                        backgroundColor: '#f8f9fa',
-                        borderBottom: index < announcements.length - 1 ? '1px solid #e9ecef' : 'none',
-                        animation: 'slideDown 0.3s ease-out'
-                      }}>
-                        <div style={{
-                          color: '#34495e',
-                          lineHeight: '1.8',
-                          whiteSpace: 'pre-wrap',
-                          fontSize: '0.95rem'
-                        }}>
-                          {announcement.content}
-                        </div>
+                    {expandedId === ann.id && (
+                      <div style={{ padding: '1rem 1.25rem', background: '#f8fafc', borderBottom: idx < announcements.length - 1 ? '1px solid #f1f5f9' : 'none', fontSize: '0.86rem', color: '#334155', lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
+                        {ann.content}
                       </div>
                     )}
                   </div>
@@ -407,24 +124,6 @@ function MenuPage() {
           )}
         </div>
       </div>
-
-      {/* アニメーションのCSS */}
-      <style>
-        {`
-          @keyframes slideDown {
-            from {
-              opacity: 0;
-              transform: translateY(-10px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-        `}
-      </style>
     </Layout>
   )
 }
-
-export default MenuPage
