@@ -455,9 +455,43 @@ export const programEstimatesApi = {
 }
 
 export const businessFlowMappingsApi = {
-  getAll: async () => { /* ... */ },
-  getByBusinessType: async (businessType: string) => { /* ... */ },
-  // ...
+  /**
+   * 全ての業務フローマッピングを取得
+   */
+  getAll: async (): Promise<BusinessFlowMapping[]> => {
+    const response = await api.get('/BusinessFlowMappings')
+    return response.data
+  },
+
+  /**
+   * 業務タイプ別にマッピングを取得
+   */
+  getByBusinessType: async (businessType: string): Promise<BusinessFlowMapping[]> => {
+    const response = await api.get(`/BusinessFlowMappings/business/${businessType}`)
+    return response.data
+  },
+
+  /**
+   * マッピングを作成
+   */
+  create: async (mapping: Omit<BusinessFlowMapping, 'id' | 'createdAt' | 'updatedAt'>): Promise<BusinessFlowMapping> => {
+    const response = await api.post('/BusinessFlowMappings', mapping)
+    return response.data
+  },
+
+  /**
+   * マッピングを更新
+   */
+  update: async (id: number, mapping: Partial<BusinessFlowMapping>): Promise<void> => {
+    await api.put(`/BusinessFlowMappings/${id}`, mapping)
+  },
+
+  /**
+   * マッピングを削除
+   */
+  delete: async (id: number): Promise<void> => {
+    await api.delete(`/BusinessFlowMappings/${id}`)
+  },
 }
 
 export default api;

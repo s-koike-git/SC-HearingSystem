@@ -18,7 +18,7 @@ export class BusinessFlowGenerator {
         ? '/sc-hearing/api'
         : 'http://localhost:5176';
 
-      const response = await fetch(`${API_BASE}/api/BusinessFlowMappings`);
+      const response = await fetch(`${API_BASE}/BusinessFlowMappings`);
       const result = await response.json();
       
       if (result.success) {
