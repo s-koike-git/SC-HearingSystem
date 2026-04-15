@@ -1,0 +1,1 @@
+scp -i "D:\TEMP\AWS\tcs_dev_2023.pem" ec2-user@54.64.46.6:/var/www/sc-hearing/data/SCHearing.db C:\Users\TCSK730\Desktop\SCHearing.db
