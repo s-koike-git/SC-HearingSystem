@@ -5,6 +5,9 @@ import BusinessFlowViewer from './BusinessFlowViewer'
 import type { Answer } from '../services/api'
 import type { Project } from '../services/api'
 import { projectsApi } from '../services/api'
+import { BusinessFlowGenerator } from '../services/BusinessFlowGenerator'
+import { FlowGenerator } from '../services/FlowGenerator'
+import { HelpModal, HelpButton, judgmentResultsHelpPages } from './HelpModal'
 
 
 interface Question {
@@ -57,6 +60,7 @@ function JudgmentResults() {
   const [showFlowViewer, setShowFlowViewer] = useState(false)
   const [answers, setAnswers] = useState<Answer[]>([])
   const [project, setProject] = useState<Project | null>(null)
+  const [showHelp, setShowHelp] = useState(false)
   
   const [reportFiles, setReportFiles] = useState<string[]>([]);
   
@@ -279,6 +283,49 @@ function JudgmentResults() {
       
       setJudgments(results)
       
+      // ========================================
+      // 🆕 フローマスタデータ読み込み
+      // ========================================
+      try {
+        console.log('🔄 フローマスタデータ読み込み開始...')
+        
+        // 業務フロージェネレーター初期化
+        const businessFlowGen = new BusinessFlowGenerator(
+          answersRes.data,
+          results.map(r => ({
+            businessType: r.businessType,
+            answer: r.answer,
+            isUsed: r.programIds.length > 0,
+            isCustom: r.isCustom
+          })) as any,
+          programsRes.data
+        )
+        
+        // マスタデータ読み込み
+        await businessFlowGen.loadMasterData()
+        console.log('✅ 業務フローマスタ読み込み完了')
+        
+        // システムフロージェネレーター初期化
+        const systemFlowGen = new FlowGenerator(
+          answersRes.data,
+          results.map(r => ({
+            businessType: r.businessType,
+            answer: r.answer,
+            isUsed: r.programIds.length > 0,
+            programIds: r.programIds
+          })) as any,
+          programsRes.data
+        )
+        
+        // マスタデータ読み込み
+        await systemFlowGen.loadMasterData()
+        console.log('✅ システムフローマスタ読み込み完了')
+        
+      } catch (flowError) {
+        console.error('⚠️ フローマスタの読み込みに失敗しました:', flowError)
+        // フローマスタ読み込み失敗は警告のみ（判定結果表示は継続）
+      }
+      
     } catch (error) {
       console.error('データ読み込みエラー:', error)
       alert('データの読み込みに失敗しました')
@@ -407,12 +454,12 @@ function JudgmentResults() {
       setSortOrder('asc')
     }
   }
-
+  
   const getSortIndicator = (field: SortField) => {
     if (sortField !== field) return ' '
     return sortOrder === 'asc' ? ' ↑' : ' ↓'
   }
-
+ 
   const handleExportFlow = () => {
     // 業務ごとにグループ化
     const businessGroups: Record<string, Judgment[]> = {}
@@ -636,6 +683,7 @@ function JudgmentResults() {
             alignItems: 'center',
           }}
         >
+          <HelpButton onClick={() => setShowHelp(true)} />
           <button
             onClick={() => setShowFlowViewer(true)}
             style={actionButtonStyle('#27ae60')}
@@ -996,6 +1044,8 @@ function JudgmentResults() {
       )}
       
       {/* ✅ 業務フローモーダル（タブとは独立して常に描画対象にする） */}
+        {showHelp && <HelpModal pages={judgmentResultsHelpPages} onClose={() => setShowHelp(false)} />}
+
         {showFlowViewer && (
           <BusinessFlowViewer
             answers={answers}

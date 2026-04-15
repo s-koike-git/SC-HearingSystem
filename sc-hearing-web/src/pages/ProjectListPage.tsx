@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import { projectsApi } from '../services/api'
+import { HelpModal, HelpButton, projectListHelpPages } from '../components/HelpModal'
 
 interface Project {
   id: number
@@ -21,6 +22,7 @@ function ProjectListPage() {
   const [searchText, setSearchText] = useState('')
   const [sortField, setSortField] = useState<SortField>('createdAt')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
+  const [showHelp, setShowHelp] = useState(false)
 
   useEffect(() => {
     loadProjects()
@@ -117,7 +119,9 @@ function ProjectListPage() {
           marginBottom: '2rem'
         }}>
           <h1 style={{ margin: 0, color: '#2c3e50' }}>案件一覧</h1>
-          <button onClick={() => navigate('/projects/new')} style={{
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <HelpButton onClick={() => setShowHelp(true)} />
+            <button onClick={() => navigate('/projects/new')} style={{
             padding: '0.75rem 1.5rem',
             backgroundColor: '#3498db',
             color: 'white',
@@ -127,7 +131,10 @@ function ProjectListPage() {
             fontWeight: 'bold',
             fontSize: '1rem'
           }}>＋ 新規案件作成</button>
+          </div>
         </div>
+
+        {showHelp && <HelpModal pages={projectListHelpPages} onClose={() => setShowHelp(false)} />}
 
         {/* 検索 */}
         <div style={{

@@ -7,15 +7,26 @@ interface PrivateRouteProps {
 }
 
 function PrivateRoute({ children, adminOnly = false }: PrivateRouteProps) {
-  const { isAuthenticated, isAdmin } = useAuth()
+  const { isAuthenticated, isAdmin, isLoading } = useAuth()
+
+  // ✅ localStorage からの復元が完了するまで待つ
+  // これがないと「復元前に未認証」と判定されてログイン画面に飛ぶ
+  if (isLoading) {
+    return (
+      <div style={{
+        display: 'flex', justifyContent: 'center', alignItems: 'center',
+        height: '100vh', color: '#7f8c8d', fontSize: '1rem',
+      }}>
+        読み込み中...
+      </div>
+    )
+  }
 
   if (!isAuthenticated) {
-    // 未ログインの場合、ログイン画面にリダイレクト
     return <Navigate to="/login" replace />
   }
 
   if (adminOnly && !isAdmin) {
-    // 管理者専用ページに一般ユーザーがアクセスした場合、メニューにリダイレクト
     return <Navigate to="/menu" replace />
   }
 

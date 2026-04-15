@@ -24,6 +24,11 @@ namespace SCHearing.API.Data
         public DbSet<ProgramEstimate> ProgramEstimates { get; set; }
         public DbSet<ProgramEstimateItem> ProgramEstimateItems { get; set; }
         public DbSet<BusinessFlowMapping> BusinessFlowMappings { get; set; }
+        public DbSet<BusinessFlowStep> BusinessFlowSteps { get; set; }
+        public DbSet<SystemFlowStep> SystemFlowSteps { get; set; }
+        public DbSet<FlowQuestionMapping> FlowQuestionMappings { get; set; }
+        public DbSet<FlowProgramMapping> FlowProgramMappings { get; set; }
+        public DbSet<FlowConnection> FlowConnections { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -170,6 +175,103 @@ namespace SCHearing.API.Data
                 entity.Property(e => e.NodeId).IsRequired();
                 entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
                 entity.Property(e => e.IsActive).HasDefaultValue(1);
+            });
+            
+            // BusinessFlowSteps設定
+            modelBuilder.Entity<BusinessFlowStep>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.StepId).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.StepName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.NodeId).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.NodeLabel).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.NodeType).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
+                entity.Property(e => e.ParentNodeId).HasMaxLength(50);
+                entity.Property(e => e.ConnectionType).HasMaxLength(50).HasDefaultValue("normal");
+                entity.Property(e => e.MermaidStyle).HasMaxLength(50);
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("datetime('now')");
+
+                // 一意制約：StepId + NodeId の組み合わせ
+                entity.HasIndex(e => new { e.StepId, e.NodeId }).IsUnique();
+                entity.HasIndex(e => e.DisplayOrder);
+            });
+
+            // SystemFlowSteps設定
+            modelBuilder.Entity<SystemFlowStep>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.StepId).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.StepName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.BusinessType).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
+                entity.Property(e => e.IsSubgraph).HasDefaultValue(false);
+                entity.Property(e => e.SubgraphLabel).HasMaxLength(100);
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("datetime('now')");
+
+                // 一意制約：StepId
+                entity.HasIndex(e => e.StepId).IsUnique();
+                entity.HasIndex(e => e.BusinessType);
+                entity.HasIndex(e => e.DisplayOrder);
+            });
+
+            // FlowQuestionMappings設定
+            modelBuilder.Entity<FlowQuestionMapping>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.BusinessType).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.QuestionNo).IsRequired().HasMaxLength(10);
+                entity.Property(e => e.AnswerCondition).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.FlowStepId).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.FlowType).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Priority).HasDefaultValue(0);
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("datetime('now')");
+
+                // インデックス
+                entity.HasIndex(e => new { e.BusinessType, e.QuestionNo });
+                entity.HasIndex(e => e.FlowStepId);
+            });
+
+            // FlowProgramMappings設定
+            modelBuilder.Entity<FlowProgramMapping>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FlowStepId).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.ProgramId).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
+                entity.Property(e => e.IsRequired).HasDefaultValue(true);
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("datetime('now')");
+
+                // インデックス
+                entity.HasIndex(e => e.FlowStepId);
+                entity.HasIndex(e => e.ProgramId);
+            });
+
+            // FlowConnections設定
+            modelBuilder.Entity<FlowConnection>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FromNodeId).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.ToNodeId).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.ConnectionType).IsRequired().HasMaxLength(50).HasDefaultValue("normal");
+                entity.Property(e => e.ConditionLabel).HasMaxLength(100);
+                entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
+                entity.Property(e => e.IsActive).HasDefaultValue(true);
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("datetime('now')");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("datetime('now')");
+
+                // インデックス
+                entity.HasIndex(e => e.FromNodeId);
+                entity.HasIndex(e => e.ToNodeId);
+                entity.HasIndex(e => e.DisplayOrder);
             });
             
 

@@ -65,7 +65,7 @@ function BusinessFlowViewer({ answers, judgments, programs, companyName, onClose
 
     // ✅ マッピングデータをロード
     if (flowType === 'business') {
-      await (generator as BusinessFlowGenerator).loadMappings()
+      await generator.loadMasterData()
     }
 
     const code =

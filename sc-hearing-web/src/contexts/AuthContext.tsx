@@ -15,6 +15,7 @@ interface AuthContextType {
   logout: () => void
   isAuthenticated: boolean
   isAdmin: boolean
+  isLoading: boolean  // ✅ 追加: localStorage復元完了前はtrue
   addUser: (user: User & { password: string }) => Promise<void>
   updateUser: (id: number, user: Partial<User & { password: string }>) => Promise<void>
   deleteUser: (id: number) => Promise<void>
@@ -30,6 +31,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [users, setUsers] = useState<Array<User & { password: string }>>([])
+  const [isLoading, setIsLoading] = useState(true)  // ✅ 追加
 
   // 初回ロード時にLocalStorageからユーザー情報を復元
   useEffect(() => {
@@ -37,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (savedUser) {
       setUser(JSON.parse(savedUser))
     }
+    setIsLoading(false)  // ✅ 復元完了（ユーザーがいてもいなくても）
   }, [])
 
   // ユーザー一覧をAPIから取得
@@ -115,6 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout,
         isAuthenticated: !!user,
         isAdmin: user?.role === 'admin',
+        isLoading,  // ✅ 追加
         addUser,
         updateUser,
         deleteUser,
