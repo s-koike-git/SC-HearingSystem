@@ -26,7 +26,7 @@ const labelStyle: React.CSSProperties = {
   fontSize: 10,
   fontWeight: 700,
   letterSpacing: '0.08em',
-  color: '#64748b',
+  color: '#cbd5e1',
   textTransform: 'uppercase' as const,
   marginBottom: 3,
   display: 'block',
@@ -49,7 +49,7 @@ export default function NodePropertyPanel({
         background: '#0f172a',
         borderLeft: '1px solid #1e3a5f',
         padding: '16px 14px',
-        color: '#475569',
+        color: '#e2e8f0',
         fontSize: 12,
         display: 'flex',
         flexDirection: 'column',
@@ -76,7 +76,7 @@ export default function NodePropertyPanel({
     }}>
       <div style={{
         fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
-        color: '#475569', textTransform: 'uppercase', marginBottom: 12,
+        color: '#e2e8f0', textTransform: 'uppercase', marginBottom: 12,
       }}>
         {node ? 'ノード設定' : 'エッジ設定'}
       </div>
@@ -95,7 +95,7 @@ export default function NodePropertyPanel({
               }}>
                 {meta.icon} {meta.label}
               </span>
-              <div style={{ fontSize: 9, color: '#334155', marginTop: 4 }}>ID: {node.id}</div>
+              <div style={{ fontSize: 9, color: '#94a3b8', marginTop: 4 }}>ID: {node.id}</div>
             </div>
 
             {/* ラベル */}
@@ -166,9 +166,9 @@ export default function NodePropertyPanel({
       {edge && (
         <>
           <div style={sectionStyle}>
-            <div style={{ fontSize: 11, color: '#64748b' }}>
+            <div style={{ fontSize: 11, color: '#cbd5e1' }}>
               <span style={{ color: '#60a5fa' }}>{edge.source}</span>
-              <span style={{ color: '#475569' }}> → </span>
+              <span style={{ color: '#e2e8f0' }}> → </span>
               <span style={{ color: '#34d399' }}>{edge.target}</span>
             </div>
           </div>

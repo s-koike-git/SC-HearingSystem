@@ -39,12 +39,9 @@ const tdStyle: React.CSSProperties = { padding: '0.5rem 0.8rem', fontSize: '0.9r
 
 // ─── タブ定義 ─────────────────────────────────────────────────────
 const MAIN_TABS = [
-  { id: 'business-flow', label: '📈 業務フロー設定' },
-  { id: 'system-flow',   label: '🔧 システムフロー設定' },
+  { id: 'flow-master-lab', label: '🔀 フローマスタ' },
   { id: 'question-map',  label: '❓ 質問紐づけ' },
   { id: 'program-map',   label: '💻 プログラム紐づけ' },
-  { id: 'flow-preview',  label: '👁 フロー確認' },
-  { id: 'flow-master-lab', label: '🧪 フローマスタ(仮)' },
 ] as const
 type MainTab = typeof MAIN_TABS[number]['id']
 
@@ -968,7 +965,7 @@ function FlowPreview({ businessFlowSteps, systemFlowSteps, connections, programs
 // メインコンポーネント
 // ===================================================================
 function FlowMasterManagement() {
-  const [activeTab, setActiveTab] = useState<MainTab>('business-flow')
+  const [activeTab, setActiveTab] = useState<MainTab>('flow-master-lab')
   const [showHelp, setShowHelp] = useState(false)
   const [businesses, setBusinesses] = useState<Business[]>([])
   const [questions, setQuestions] = useState<Question[]>([])
@@ -1006,7 +1003,7 @@ function FlowMasterManagement() {
 
   const handleTabChange = (tab: MainTab) => {
     setActiveTab(tab)
-    if (tab === 'question-map' || tab === 'program-map' || tab === 'flow-preview') refreshSteps()
+    if (tab === 'question-map' || tab === 'program-map') refreshSteps()
   }
 
   return (
@@ -1014,7 +1011,7 @@ function FlowMasterManagement() {
       <div style={{ display: 'flex', alignItems: 'stretch', borderBottom: '2px solid #ecf0f1', marginBottom: '1.5rem' }}>
         <div style={{ display: 'flex', overflowX: 'auto', flex: 1 }}>
           {MAIN_TABS.map(tab => (
-            <button key={tab.id} onClick={() => handleTabChange(tab.id)} style={{ padding: '0.9rem 1.2rem', border: 'none', borderBottom: activeTab === tab.id ? '3px solid #3498db' : '3px solid transparent', backgroundColor: 'transparent', color: activeTab === tab.id ? '#3498db' : '#2c3e50', fontWeight: activeTab === tab.id ? 'bold' : 'normal', cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '0.95rem' }}>
+            <button key={tab.id} onClick={() => handleTabChange(tab.id)} style={{ padding: '0.9rem 1.2rem', border: 'none', borderBottom: activeTab === tab.id ? '3px solid #3498db' : '3px solid transparent', backgroundColor: 'transparent', color: activeTab === tab.id ? '#3498db' : '#ffffff', fontWeight: activeTab === tab.id ? 'bold' : 'normal', cursor: 'pointer', whiteSpace: 'nowrap', fontSize: '0.95rem' }}>
               {tab.label}
             </button>
           ))}
@@ -1024,12 +1021,9 @@ function FlowMasterManagement() {
         </button>
       </div>
 
-      {activeTab === 'business-flow' && <BusinessFlowSettings />}
-      {activeTab === 'system-flow'   && <SystemFlowSettings businesses={businesses} />}
+      {activeTab === 'flow-master-lab' && <FlowMasterLab />}
       {activeTab === 'question-map'  && <QuestionMappingSettings businesses={businesses} questions={questions} businessFlowSteps={businessFlowSteps} systemFlowSteps={systemFlowSteps} />}
       {activeTab === 'program-map'   && <ProgramMappingSettings programs={programs} businessFlowSteps={businessFlowSteps} systemFlowSteps={systemFlowSteps} />}
-      {activeTab === 'flow-preview'  && <FlowPreview businessFlowSteps={businessFlowSteps} systemFlowSteps={systemFlowSteps} connections={connections} programs={programs} />}
-      {activeTab === 'flow-master-lab' && <FlowMasterLab />}
 
       {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
     </div>

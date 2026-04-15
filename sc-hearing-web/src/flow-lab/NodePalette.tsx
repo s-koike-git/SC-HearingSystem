@@ -28,7 +28,7 @@ export default function NodePalette({ onAddNode }: Props) {
         fontSize: 10,
         fontWeight: 700,
         letterSpacing: '0.1em',
-        color: '#475569',
+        color: '#e2e8f0',
         marginBottom: 4,
         textTransform: 'uppercase',
       }}>
@@ -78,7 +78,7 @@ export default function NodePalette({ onAddNode }: Props) {
       <div style={{
         marginTop: 8,
         fontSize: 10,
-        color: '#334155',
+        color: '#94a3b8',
         lineHeight: 1.5,
       }}>
         クリックまたは<br />
