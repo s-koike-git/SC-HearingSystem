@@ -206,6 +206,70 @@ export interface BusinessFlowMapping {
   updatedAt: string
 }
 
+export interface BusinessFlowStep {
+  id?: number
+  stepId: string
+  stepName: string
+  nodeId: string
+  nodeLabel: string
+  nodeType: string
+  displayOrder: number
+  parentNodeId?: string
+  connectionType?: string
+  mermaidStyle?: string
+  isActive: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface SystemFlowStep {
+  id?: number
+  stepId: string
+  stepName: string
+  businessType: string
+  displayOrder: number
+  isSubgraph: boolean
+  subgraphLabel?: string
+  isActive: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface FlowQuestionMapping {
+  id?: number
+  businessType: string
+  questionNo: string
+  answerCondition: string
+  flowStepId: string
+  flowType: string
+  priority: number
+  isActive: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface FlowProgramMapping {
+  id?: number
+  flowStepId: string
+  programId: string
+  displayOrder: number
+  isRequired: boolean
+  isActive: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface FlowConnection {
+  id?: number
+  fromNodeId: string
+  toNodeId: string
+  connectionType: string
+  conditionLabel?: string
+  displayOrder: number
+  isActive: boolean
+  createdAt?: string
+  updatedAt?: string
+}
 
 // Projects API
 
@@ -492,6 +556,82 @@ export const businessFlowMappingsApi = {
   delete: async (id: number): Promise<void> => {
     await api.delete(`/BusinessFlowMappings/${id}`)
   },
+}
+
+export const businessFlowStepsApi = {
+  getAll: () => api.get<BusinessFlowStep[]>('/BusinessFlowSteps'),
+  getById: (id: number) => api.get<BusinessFlowStep>(`/BusinessFlowSteps/${id}`),
+  create: (step: Omit<BusinessFlowStep, 'id' | 'createdAt' | 'updatedAt'>) => 
+    api.post<BusinessFlowStep>('/BusinessFlowSteps', step),
+  update: (id: number, step: Partial<BusinessFlowStep>) => 
+    api.put(`/BusinessFlowSteps/${id}`, step),
+  delete: (id: number) => api.delete(`/BusinessFlowSteps/${id}`),
+  saveBulk: (steps: BusinessFlowStep[]) => 
+    api.post('/BusinessFlowSteps/bulk', steps),
+}
+
+export const systemFlowStepsApi = {
+  getAll: () => api.get<SystemFlowStep[]>('/SystemFlowSteps'),
+  getById: (id: number) => api.get<SystemFlowStep>(`/SystemFlowSteps/${id}`),
+  getByBusinessType: (businessType: string) => 
+    api.get<SystemFlowStep[]>(`/SystemFlowSteps/business/${businessType}`),
+  create: (step: Omit<SystemFlowStep, 'id' | 'createdAt' | 'updatedAt'>) => 
+    api.post<SystemFlowStep>('/SystemFlowSteps', step),
+  update: (id: number, step: Partial<SystemFlowStep>) => 
+    api.put(`/SystemFlowSteps/${id}`, step),
+  delete: (id: number) => api.delete(`/SystemFlowSteps/${id}`),
+  saveBulk: (steps: SystemFlowStep[]) => 
+    api.post('/SystemFlowSteps/bulk', steps),
+}
+
+export const flowQuestionMappingsApi = {
+  getAll: () => api.get<FlowQuestionMapping[]>('/FlowQuestionMappings'),
+  getById: (id: number) => api.get<FlowQuestionMapping>(`/FlowQuestionMappings/${id}`),
+  getByQuestion: (businessType: string, questionNo: string) => 
+    api.get<FlowQuestionMapping[]>('/FlowQuestionMappings/by-question', { 
+      params: { businessType, questionNo } 
+    }),
+  getByFlowStep: (flowStepId: string) => 
+    api.get<FlowQuestionMapping[]>(`/FlowQuestionMappings/by-flow-step/${flowStepId}`),
+  create: (mapping: Omit<FlowQuestionMapping, 'id' | 'createdAt' | 'updatedAt'>) => 
+    api.post<FlowQuestionMapping>('/FlowQuestionMappings', mapping),
+  update: (id: number, mapping: Partial<FlowQuestionMapping>) => 
+    api.put(`/FlowQuestionMappings/${id}`, mapping),
+  delete: (id: number) => api.delete(`/FlowQuestionMappings/${id}`),
+  saveBulk: (mappings: FlowQuestionMapping[]) => 
+    api.post('/FlowQuestionMappings/bulk', mappings),
+}
+
+export const flowProgramMappingsApi = {
+  getAll: () => api.get<FlowProgramMapping[]>('/FlowProgramMappings'),
+  getById: (id: number) => api.get<FlowProgramMapping>(`/FlowProgramMappings/${id}`),
+  getByFlowStep: (flowStepId: string) => 
+    api.get<FlowProgramMapping[]>(`/FlowProgramMappings/by-flow-step/${flowStepId}`),
+  getByProgram: (programId: string) => 
+    api.get<FlowProgramMapping[]>(`/FlowProgramMappings/by-program/${programId}`),
+  create: (mapping: Omit<FlowProgramMapping, 'id' | 'createdAt' | 'updatedAt'>) => 
+    api.post<FlowProgramMapping>('/FlowProgramMappings', mapping),
+  update: (id: number, mapping: Partial<FlowProgramMapping>) => 
+    api.put(`/FlowProgramMappings/${id}`, mapping),
+  delete: (id: number) => api.delete(`/FlowProgramMappings/${id}`),
+  saveBulk: (mappings: FlowProgramMapping[]) => 
+    api.post('/FlowProgramMappings/bulk', mappings),
+}
+
+export const flowConnectionsApi = {
+  getAll: () => api.get<FlowConnection[]>('/FlowConnections'),
+  getById: (id: number) => api.get<FlowConnection>(`/FlowConnections/${id}`),
+  getByFromNode: (fromNodeId: string) => 
+    api.get<FlowConnection[]>(`/FlowConnections/from/${fromNodeId}`),
+  getByToNode: (toNodeId: string) => 
+    api.get<FlowConnection[]>(`/FlowConnections/to/${toNodeId}`),
+  create: (connection: Omit<FlowConnection, 'id' | 'createdAt' | 'updatedAt'>) => 
+    api.post<FlowConnection>('/FlowConnections', connection),
+  update: (id: number, connection: Partial<FlowConnection>) => 
+    api.put(`/FlowConnections/${id}`, connection),
+  delete: (id: number) => api.delete(`/FlowConnections/${id}`),
+  saveBulk: (connections: FlowConnection[]) => 
+    api.post('/FlowConnections/bulk', connections),
 }
 
 export default api;

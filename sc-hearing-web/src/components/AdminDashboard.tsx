@@ -7,7 +7,8 @@ import ProgramManagement from './admin/ProgramManagement'
 import SystemSettings from './admin/SystemSettings'
 import AnnouncementManagement from './admin/AnnouncementManagement'
 
-type TabType = 'users' | 'businesses' | 'questions' | 'programs' | 'settings' | 'announcements'
+// ✅ flow-master を追加
+type TabType = 'users' | 'businesses' | 'questions' | 'programs' | 'settings' | 'announcements' | 'flow-master'
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('users')
@@ -19,6 +20,7 @@ function AdminDashboard() {
     { id: 'programs' as TabType, name: 'プログラムマスタ', icon: '💻' },
     { id: 'announcements' as TabType, name: 'お知らせ管理', icon: '📢' },
     { id: 'settings' as TabType, name: 'システム設定', icon: '⚙️' },
+    { id: 'flow-master' as TabType, name: 'フローマスタ', icon: '🔀' },  // ✅ label → name に修正、as TabType 追加
   ]
 
   return (
@@ -79,6 +81,39 @@ function AdminDashboard() {
             {activeTab === 'programs' && <ProgramManagement />}
             {activeTab === 'settings' && <SystemSettings />}
             {activeTab === 'announcements' && <AnnouncementManagement />}
+            {/* ✅ フローマスタの表示を追加 */}
+            {activeTab === 'flow-master' && (
+              <div style={{
+                padding: '2rem',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '8px',
+                textAlign: 'center'
+              }}>
+                <h2 style={{ color: '#2c3e50', marginBottom: '1rem' }}>🔀 フローマスタ</h2>
+                <p style={{ color: '#7f8c8d', marginBottom: '2rem' }}>
+                  業務フロー・システムフローの設定を管理します
+                </p>
+                <div style={{
+                  backgroundColor: 'white',
+                  padding: '3rem',
+                  borderRadius: '8px',
+                  border: '2px dashed #bdc3c7'
+                }}>
+                  <p style={{ fontSize: '1.2rem', color: '#95a5a6', marginBottom: '1rem' }}>
+                    📋 フローマスタ管理機能
+                  </p>
+                  <p style={{ color: '#7f8c8d' }}>
+                    業務フロー設定、システムフロー設定、質問紐づけ、プログラム紐づけ機能は<br />
+                    今後のバージョンで実装予定です
+                  </p>
+                  <div style={{ marginTop: '2rem' }}>
+                    <p style={{ fontSize: '0.9rem', color: '#95a5a6' }}>
+                      ※ 現在は判定結果画面でフローを確認できます
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
