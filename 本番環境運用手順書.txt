@@ -92,6 +92,9 @@ sudo systemctl start sc-hearing
 rm -rf /tmp/api-update /tmp/web-update
 exit
 
+# パーミッション・SELinux修正（デプロイ後に毎回必要）
+ssh -i "D:\TEMP\AWS\tcs_dev_2023.pem" ec2-user@54.64.46.6 "sudo chown -R apache:apache /var/www/sc-hearing/wwwroot && sudo chmod -R 755 /var/www/sc-hearing/wwwroot && sudo restorecon -R /var/www/sc-hearing/wwwroot && sudo systemctl restart httpd"
+
 ================================================================================
 2. サービス再起動
 ================================================================================
