@@ -17,6 +17,7 @@ import {
   type Question,
   type Program,
 } from '../../services/api'
+import { FlowMasterLabWrapper as FlowMasterLab } from "../../flow-lab/FlowMasterLab";
 
 // ─── 共通スタイル ─────────────────────────────────────────────────
 const btnStyle = (color: string, disabled = false): React.CSSProperties => ({
@@ -43,6 +44,7 @@ const MAIN_TABS = [
   { id: 'question-map',  label: '❓ 質問紐づけ' },
   { id: 'program-map',   label: '💻 プログラム紐づけ' },
   { id: 'flow-preview',  label: '👁 フロー確認' },
+  { id: 'flow-master-lab', label: '🧪 フローマスタ(仮)' },
 ] as const
 type MainTab = typeof MAIN_TABS[number]['id']
 
@@ -1027,6 +1029,7 @@ function FlowMasterManagement() {
       {activeTab === 'question-map'  && <QuestionMappingSettings businesses={businesses} questions={questions} businessFlowSteps={businessFlowSteps} systemFlowSteps={systemFlowSteps} />}
       {activeTab === 'program-map'   && <ProgramMappingSettings programs={programs} businessFlowSteps={businessFlowSteps} systemFlowSteps={systemFlowSteps} />}
       {activeTab === 'flow-preview'  && <FlowPreview businessFlowSteps={businessFlowSteps} systemFlowSteps={systemFlowSteps} connections={connections} programs={programs} />}
+      {activeTab === 'flow-master-lab' && <FlowMasterLab />}
 
       {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
     </div>
