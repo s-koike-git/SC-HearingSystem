@@ -8,8 +8,8 @@ import {
   answersApi,
   questionsApi,
 } from '../services/api'
-
 import type { Project, Answer } from '../services/api'
+import { HelpModal, HelpButton, hearingSheetHelpPages } from './HelpModal'
 
 type QuestionType = 'yesno' | 'choice' | 'text'
 
@@ -47,6 +47,7 @@ function HearingSheet() {
 
   const [showResults, setShowResults] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [showHelp, setShowHelp] = useState(false)
   
   // ✅ 質問マスタをすべて取得
   useEffect(() => {
@@ -186,11 +187,18 @@ function HearingSheet() {
           padding: '1.5rem',
           marginBottom: '2rem'
         }}>
-          <h2 style={{ margin: 0 }}>{project.companyName} - ヒアリングシート</h2>
-          <div style={{ color: '#7f8c8d', marginTop: '0.5rem' }}>
-            業種: {project.industry} ／ 担当者: {project.contactPerson}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div>
+              <h2 style={{ margin: 0 }}>{project.companyName} - ヒアリングシート</h2>
+              <div style={{ color: '#7f8c8d', marginTop: '0.5rem' }}>
+                業種: {project.industry} ／ 担当者: {project.contactPerson}
+              </div>
+            </div>
+            <HelpButton onClick={() => setShowHelp(true)} />
           </div>
         </div>
+
+        {showHelp && <HelpModal pages={hearingSheetHelpPages} onClose={() => setShowHelp(false)} />}
 
         {/* ====== 業務タブ ====== */}
         <div style={{

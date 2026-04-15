@@ -7,6 +7,7 @@ import type { Project } from '../services/api'
 import { projectsApi } from '../services/api'
 import { BusinessFlowGenerator } from '../services/BusinessFlowGenerator'
 import { FlowGenerator } from '../services/FlowGenerator'
+import { HelpModal, HelpButton, judgmentResultsHelpPages } from './HelpModal'
 
 
 interface Question {
@@ -59,6 +60,7 @@ function JudgmentResults() {
   const [showFlowViewer, setShowFlowViewer] = useState(false)
   const [answers, setAnswers] = useState<Answer[]>([])
   const [project, setProject] = useState<Project | null>(null)
+  const [showHelp, setShowHelp] = useState(false)
   
   const [reportFiles, setReportFiles] = useState<string[]>([]);
   
@@ -681,6 +683,7 @@ function JudgmentResults() {
             alignItems: 'center',
           }}
         >
+          <HelpButton onClick={() => setShowHelp(true)} />
           <button
             onClick={() => setShowFlowViewer(true)}
             style={actionButtonStyle('#27ae60')}
@@ -1041,6 +1044,8 @@ function JudgmentResults() {
       )}
       
       {/* ✅ 業務フローモーダル（タブとは独立して常に描画対象にする） */}
+        {showHelp && <HelpModal pages={judgmentResultsHelpPages} onClose={() => setShowHelp(false)} />}
+
         {showFlowViewer && (
           <BusinessFlowViewer
             answers={answers}
