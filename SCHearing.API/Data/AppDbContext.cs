@@ -29,6 +29,7 @@ namespace SCHearing.API.Data
         public DbSet<FlowQuestionMapping> FlowQuestionMappings { get; set; }
         public DbSet<FlowProgramMapping> FlowProgramMappings { get; set; }
         public DbSet<FlowConnection> FlowConnections { get; set; }
+        public DbSet<Inquiry> Inquiries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

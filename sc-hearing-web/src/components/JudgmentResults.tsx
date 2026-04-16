@@ -627,8 +627,11 @@ function JudgmentResults() {
   }
   
   
-  const selectedScreenId =
-    programs.find(p => p.programId === selectedProgramId)?.screenId;
+  const selectedScreenId = (() => {
+    const prog = programs.find(p => p.programId === selectedProgramId)
+    // screenId が未設定の場合は programId をフォールバックとして使用
+    return prog?.screenId || prog?.programId || null
+  })()
   
   const actionButtonStyle = (bgColor: string): React.CSSProperties => ({
     display: 'flex',
@@ -657,7 +660,17 @@ function JudgmentResults() {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: '2rem'
+        marginBottom: '2rem',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        background: '#f1f5f9',
+        paddingTop: '0.5rem',
+        paddingBottom: '0.5rem',
+        marginLeft: '-2rem',
+        marginRight: '-2rem',
+        paddingLeft: '2rem',
+        paddingRight: '2rem',
       }}>
         <h1 style={{ margin: 0, color: '#2c3e50' }}>判定結果</h1>
         {/* ✅ タブ切り替え */}

@@ -1,14 +1,16 @@
 
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/sc-hearing/api';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-});
+})
+
 
 // 型定義
 export interface Project {
@@ -159,6 +161,7 @@ export interface Program {
   programId: string
   programName: string
   workHours: number
+  screenId?: string
 }
 
 export interface Announcement {
@@ -635,3 +638,31 @@ export const flowConnectionsApi = {
 }
 
 export default api;
+
+// ─── 問合せAPI ─────────────────────────────────────────────────
+export interface Inquiry {
+  id: number
+  title: string
+  content: string
+  imageData?: string
+  status: '未対応' | '対応中' | '対応済'
+  createdBy: string
+  createdAt: string
+  updatedAt: string
+}
+
+export const inquiriesApi = {
+  getAll: () => api.get<Inquiry[]>('/Inquiries'),
+
+  create: (data: { title: string; content: string; imageData?: string | null }) =>
+    api.post<Inquiry>('/Inquiries', data),
+
+  update: (id: number, data: { title: string; content: string }) =>
+    api.put<Inquiry>(`/Inquiries/${id}`, data),
+
+  updateStatus: (id: number, status: string) =>
+    api.put<Inquiry>(`/Inquiries/${id}/status`, { status }),
+
+  delete: (id: number) =>
+    api.delete(`/Inquiries/${id}`),
+}

@@ -105,33 +105,33 @@ function HelpModal({ onClose }: { onClose: () => void }) {
 
   const pages = [
     {
-      title: '🗺 フローマスタ 登録手順ガイド',
+      title: '🗺 フローマスタ 操作ガイド',
       content: (
         <div>
           <p style={{ color: '#7f8c8d', marginBottom: '1.5rem' }}>
-            フローマスタは以下の順序で登録してください。依存関係があるため順番が重要です。
+            フローマスタ画面では、ビジュアルエディタでフロー図を直接編集できます。
           </p>
           {[
-            { step: 1, tab: '📈 業務フロー設定 › ノード管理', color: '#3498db',
-              desc: '業務フローのノード（箱）を登録します。工程ID・ノードID・ラベルを設定します。',
-              example: '工程ID: STEP_ESTIMATE / ノードID: EST01 / ラベル: 見積登録' },
-            { step: 2, tab: '📈 業務フロー設定 › 接続管理', color: '#2980b9',
-              desc: 'ノード同士の接続（矢印）を登録します。ノード管理の登録が先に必要です。',
-              example: '接続元: EST01 / 接続先: ORD01 / 種別: normal' },
-            { step: 3, tab: '🔧 システムフロー設定', color: '#8e44ad',
-              desc: 'システムフローの工程（業務区分ごとのステップ）を登録します。業務マスタが先に必要です。',
-              example: '工程ID: SYS_ESTIMATE / 業務区分: 見積 / 表示順: 10' },
-            { step: 4, tab: '❓ 質問紐づけ', color: '#16a085',
-              desc: '質問の回答とフロー工程を紐づけます。質問マスタ・ノード管理の両方が先に必要です。',
-              example: '業務: 見積 / Q1 / 回答: ○ → 工程ID: STEP_ESTIMATE（業務フロー）' },
-            { step: 5, tab: '💻 プログラム紐づけ', color: '#e67e22',
-              desc: 'フロー工程とプログラムを紐づけます。システムフロー設定・プログラムマスタが先に必要です。',
-              example: '工程ID: SYS_ESTIMATE → P001（見積登録）' },
-          ].map(({ step, tab, color, desc, example }) => (
-            <div key={step} style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px', padding: '0.75rem', borderLeft: `4px solid ${color}` }}>
+            { step: 1, icon: '📈', label: '業務フロー / 🔧 システムフロー タブ切り替え', color: '#3b82f6',
+              desc: 'ツールバーのタブで業務フローとシステムフローを切り替えます。それぞれ独立したキャンバスです。',
+              example: 'ツールバー左側の「📈 業務フロー」または「🔧 システムフロー」ボタンをクリック' },
+            { step: 2, icon: '➕', label: 'ノードパレットからノードを追加', color: '#059669',
+              desc: '画面左のパレットにある種別（処理・開始・終了・判断・I/O・グループ）をクリックまたはキャンバスへドラッグして追加します。',
+              example: '「処理」をドラッグ → キャンバス上の好きな位置にドロップ' },
+            { step: 3, icon: '🔗', label: 'ノード同士を接続', color: '#8b5cf6',
+              desc: 'ノードにカーソルを合わせるとハンドル（●）が現れます。ハンドルからドラッグして別のノードへ接続します。上下左右どの方向からでも接続可能です。',
+              example: 'ノードの右ハンドルから次のノードの左ハンドルへドラッグ' },
+            { step: 4, icon: '⚙️', label: 'プロパティパネルで設定', color: '#d97706',
+              desc: 'ノードまたはエッジをクリックすると右側のプロパティパネルが開きます。ラベル・工程ID・種別・接続スタイルを編集できます。',
+              example: 'ノードをクリック → 右パネルでラベルを「見積登録」に変更' },
+            { step: 5, icon: '💾', label: 'DBに保存', color: '#1d4ed8',
+              desc: 'ツールバーの「💾 DBに保存」ボタンで変更内容をDBに書き込みます。ノードの配置位置はブラウザのローカルストレージに保存されます。',
+              example: '編集後に「💾 DBに保存」ボタンをクリック' },
+          ].map(({ step, icon, label, color, desc, example }) => (
+            <div key={step} style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px', padding: '0.75rem', borderLeft: '4px solid ' + color }}>
               <div style={{ minWidth: '2rem', height: '2rem', borderRadius: '50%', backgroundColor: color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', flexShrink: 0 }}>{step}</div>
               <div>
-                <div style={{ fontWeight: 'bold', color, marginBottom: '0.25rem' }}>{tab}</div>
+                <div style={{ fontWeight: 'bold', color, marginBottom: '0.25rem' }}>{icon} {label}</div>
                 <div style={{ fontSize: '0.9rem', color: '#2c3e50', marginBottom: '0.25rem' }}>{desc}</div>
                 <div style={{ fontSize: '0.8rem', color: '#7f8c8d', fontFamily: 'monospace', backgroundColor: 'white', padding: '0.25rem 0.5rem', borderRadius: '4px' }}>例: {example}</div>
               </div>
@@ -141,75 +141,53 @@ function HelpModal({ onClose }: { onClose: () => void }) {
       ),
     },
     {
-      title: '🔷 業務フロー設定 — 項目説明',
+      title: '🎨 ノード種別と使い方',
       content: (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ backgroundColor: '#ebf5fb', padding: '1rem', borderRadius: '8px' }}>
-            <strong style={{ color: '#2980b9' }}>ノード管理 — 主な項目</strong>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '0.75rem', fontSize: '0.85rem' }}>
-              <tbody>
-                {[
-                  ['工程ID', 'stepId', '同じ工程に属するノードをグループ化するID', 'STEP_ESTIMATE'],
-                  ['ノードID', 'nodeId', 'Mermaid図上のユニークID（英数字のみ）', 'EST01'],
-                  ['ノードラベル', 'nodeLabel', 'フロー図に表示するテキスト', '見積登録'],
-                  ['Mermaidスタイル', 'mermaidStyle', 'step / active / inactive / custom', 'step'],
-                  ['表示順', 'displayOrder', '数字が小さいほど先に表示', '10'],
-                ].map(([name, key, desc, ex]) => (
-                  <tr key={key} style={{ borderBottom: '1px solid #d6eaf8' }}>
-                    <td style={{ padding: '0.4rem', fontWeight: 'bold', width: '110px' }}>{name}</td>
-                    <td style={{ padding: '0.4rem', fontFamily: 'monospace', color: '#2980b9', width: '130px' }}>{key}</td>
-                    <td style={{ padding: '0.4rem', color: '#555' }}>{desc}　<span style={{ color: '#95a5a6' }}>例: {ex}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div style={{ backgroundColor: '#eaf4fb', padding: '1rem', borderRadius: '8px' }}>
-            <strong style={{ color: '#2980b9' }}>接続管理 — 主な項目</strong>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '0.75rem', fontSize: '0.85rem' }}>
-              <tbody>
-                {[
-                  ['接続元ノードID', 'fromNodeId', '矢印の始点（ノードIDを使用）', 'EST01'],
-                  ['接続先ノードID', 'toNodeId', '矢印の終点（ノードIDを使用）', 'ORD01'],
-                  ['接続種別', 'connectionType', 'normal（実線）/ dotted（点線）/ conditional（条件）', 'normal'],
-                  ['条件ラベル', 'conditionLabel', '矢印に表示するテキスト（任意）', '承認時'],
-                ].map(([name, key, desc, ex]) => (
-                  <tr key={key} style={{ borderBottom: '1px solid #d6eaf8' }}>
-                    <td style={{ padding: '0.4rem', fontWeight: 'bold', width: '110px' }}>{name}</td>
-                    <td style={{ padding: '0.4rem', fontFamily: 'monospace', color: '#2980b9', width: '130px' }}>{key}</td>
-                    <td style={{ padding: '0.4rem', color: '#555' }}>{desc}　<span style={{ color: '#95a5a6' }}>例: {ex}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <p style={{ color: '#7f8c8d', marginBottom: '0.5rem' }}>左パレットの各ノード種別の用途と見た目の説明です。</p>
+          {[
+            { kind: '開始', color: '#065f46', border: '#10b981', shape: '丸角（スタジアム型）', use: 'フロー開始点', ex: '受注受付開始' },
+            { kind: '処理', color: '#1e40af', border: '#3b82f6', shape: '四角形', use: '通常の業務処理・操作', ex: '見積登録、出荷確定' },
+            { kind: '判断', color: '#78350f', border: '#f59e0b', shape: 'ひし形', use: '条件分岐・選択肢', ex: '在庫引当OK/NG' },
+            { kind: 'I/O', color: '#4c1d95', border: '#8b5cf6', shape: '平行四辺形', use: '帳票・データ入出力', ex: '見積書発行、注文書出力' },
+            { kind: '終了', color: '#7f1d1d', border: '#ef4444', shape: '丸角（スタジアム型）', use: 'フロー終了点', ex: '売掛管理完了' },
+            { kind: 'グループ', color: '#1e3a5f', border: '#60a5fa', shape: '点線枠', use: '関連ノードのグループ化', ex: '出荷グループ' },
+          ].map(({ kind, color, border, shape, use, ex }) => (
+            <div key={kind} style={{ display: 'flex', alignItems: 'center', gap: '1rem', backgroundColor: '#f8f9fa', padding: '0.6rem 0.75rem', borderRadius: '6px' }}>
+              <div style={{ width: 56, height: 28, background: color, border: '2px solid ' + border, borderRadius: kind === '開始' || kind === '終了' ? 999 : 4, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.72rem', fontWeight: 700, flexShrink: 0 }}>{kind}</div>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontWeight: 'bold', color, fontSize: '0.85rem' }}>{shape}</span>
+                <span style={{ color: '#64748b', fontSize: '0.82rem' }}>{'　→　'}{use}{'　'}</span>
+                <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontFamily: 'monospace' }}>{'例: '}{ex}</span>
+              </div>
+            </div>
+          ))}
+          <div style={{ backgroundColor: '#eff6ff', padding: '0.75rem', borderRadius: '6px', fontSize: '0.85rem', color: '#1e40af', marginTop: '0.5rem' }}>
+            💡 <strong>接続のコツ：</strong>ノードにカーソルを乗せると上下左右に●ハンドルが出ます。Deleteキーで選択中のノード・接続を削除できます。Shiftで複数選択も可能です。
           </div>
         </div>
       ),
     },
     {
-      title: '🔧 システムフロー / ❓ 質問紐づけ / 💻 プログラム紐づけ — 項目説明',
+      title: '❓ 質問紐づけ / 💻 プログラム紐づけ',
       content: (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {[
-            { title: 'システムフロー設定', color: '#8e44ad', rows: [
-              ['工程ID', 'stepId', 'SYS_XXX 形式を推奨', 'SYS_ESTIMATE'],
-              ['業務区分', 'businessType', '業務マスタに登録済みの業務名を使用', '見積'],
-              ['サブグラフ', 'isSubgraph', 'true にするとMermaid図でグループ表示', 'true'],
-            ]},
-            { title: '質問紐づけ', color: '#16a085', rows: [
+            { title: '❓ 質問紐づけ', color: '#16a085', rows: [
               ['業務区分', 'businessType', '質問マスタの業務区分と一致させる', '見積'],
               ['質問No', 'questionNo', '質問マスタのQuestionNoと一致させる', 'Q1'],
               ['回答条件', 'answerCondition', 'yesno型: ○ or ×　choice型: 選択肢テキスト', '○'],
               ['フロー種別', 'flowType', 'business（業務フロー）or system（システムフロー）', 'business'],
-              ['フロー工程ID', 'flowStepId', '業務/システムフロー設定で登録した工程ID', 'STEP_ESTIMATE'],
+              ['フロー工程ID', 'flowStepId', 'フローマスタで登録した工程ID（StepId）', '見積'],
             ]},
-            { title: 'プログラム紐づけ', color: '#e67e22', rows: [
-              ['フロー工程ID', 'flowStepId', 'システムフロー設定で登録した工程ID', 'SYS_ESTIMATE'],
-              ['プログラムID', 'programId', 'プログラムマスタのIDを使用', 'P001'],
-              ['表示順', 'displayOrder', '同じ工程内でのプログラムの表示順', '10'],
+            { title: '💻 プログラム紐づけ', color: '#e67e22', rows: [
+              ['フロー工程ID', 'flowStepId', 'フローマスタで登録した工程ID', '見積処理'],
+              ['プログラムID', 'programId', 'プログラムマスタのIDを使用', 'ESTET01'],
+              ['表示順', 'displayOrder', '同じ工程内でのプログラムの表示順', '1'],
+              ['必須', 'isRequired', '必須プログラムかどうか', 'true'],
             ]},
           ].map(({ title, color, rows }) => (
-            <div key={title} style={{ backgroundColor: '#f8f9fa', padding: '0.75rem', borderRadius: '8px', borderLeft: `4px solid ${color}` }}>
+            <div key={title} style={{ backgroundColor: '#f8f9fa', padding: '0.75rem', borderRadius: '8px', borderLeft: '4px solid ' + color }}>
               <strong style={{ color }}>{title}</strong>
               <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '0.5rem', fontSize: '0.85rem' }}>
                 <tbody>
@@ -217,7 +195,7 @@ function HelpModal({ onClose }: { onClose: () => void }) {
                     <tr key={key} style={{ borderBottom: '1px solid #ecf0f1' }}>
                       <td style={{ padding: '0.3rem', fontWeight: 'bold', width: '100px' }}>{name}</td>
                       <td style={{ padding: '0.3rem', fontFamily: 'monospace', color, width: '130px' }}>{key}</td>
-                      <td style={{ padding: '0.3rem', color: '#555' }}>{desc}　<span style={{ color: '#95a5a6' }}>例: {ex}</span></td>
+                      <td style={{ padding: '0.3rem', color: '#555' }}>{desc}{' '}<span style={{ color: '#95a5a6' }}>{'例: '}{ex}</span></td>
                     </tr>
                   ))}
                 </tbody>
@@ -708,7 +686,7 @@ function QuestionMappingSettings({ businesses, questions, businessFlowSteps, sys
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-        <h3 style={{ margin: 0 }}>質問紐づけ（{displayed.length}件）</h3>
+        <h3 style={{ margin: 0, color: '#ffffff' }}>質問紐づけ（{displayed.length}件）</h3>
         <select value={filterBiz} onChange={e => setFilterBiz(e.target.value)} style={{ ...inputStyle, width: 'auto' }}>
           <option value="">全業務</option>
           {businesses.map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
@@ -847,7 +825,7 @@ function ProgramMappingSettings({ programs, businessFlowSteps, systemFlowSteps }
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-        <h3 style={{ margin: 0 }}>プログラム紐づけ（{displayed.length}件）</h3>
+        <h3 style={{ margin: 0, color: '#ffffff' }}>プログラム紐づけ（{displayed.length}件）</h3>
         <select value={filterStep} onChange={e => setFilterStep(e.target.value)} style={{ ...inputStyle, width: 'auto' }}>
           <option value="">全工程</option>
           {allStepIds.map(s => <option key={s} value={s}>{s}</option>)}

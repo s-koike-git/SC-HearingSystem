@@ -131,14 +131,6 @@ function HearingSheet() {
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button
-              onClick={() => navigate('/projects')}
-              style={{
-                background: 'none', border: '1px solid #e2e8f0', borderRadius: 8,
-                color: '#64748b', padding: '0.4rem 0.8rem', cursor: 'pointer',
-                fontSize: '0.83rem', flexShrink: 0,
-              }}
-            >← 一覧へ</button>
             <div>
               <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#0f172a' }}>
                 {project.companyName}

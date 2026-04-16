@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using SCHearing.API.Data;
 using SCHearing.API.Services;
+using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +22,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // =========================
-// SQLite接続（通常の接続文字列）
+// SQLite接続
 // =========================
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(
@@ -26,8 +30,28 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
-// 判定サービス登録
+// =========================
+// 判定サービス
+// =========================
 builder.Services.AddScoped<IJudgmentService, JudgmentService>();
+
+// =========================
+// 🔴 認証設定（ここが重要）
+// =========================
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = false,
+
+            // ★ User.Identity.Name に入る Claim を指定
+            NameClaimType = ClaimTypes.Name
+        };
+    });
 
 // =========================
 // CORS設定
@@ -46,7 +70,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // =========================
-// DB初期化 + PRAGMA設定（ここが重要）
+// DB初期化 + PRAGMA設定
 // =========================
 using (var scope = app.Services.CreateScope())
 {
@@ -55,17 +79,11 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
 
-        // DB作成
         context.Database.EnsureCreated();
-
-        // ✅ WALを使わず、常に App.db に書き込む
         context.Database.ExecuteSqlRaw("PRAGMA journal_mode=DELETE;");
-
-        // 初期データ投入
         SeedData.Initialize(context);
 
         Console.WriteLine("✓ データベース初期化完了");
-        Console.WriteLine($"✓ 条件データ件数: {context.Conditions.Count()}件");
     }
     catch (Exception ex)
     {
@@ -74,7 +92,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 // =========================
-// Middleware設定
+// Middleware設定（順序重要）
 // =========================
 if (app.Environment.IsDevelopment())
 {
@@ -83,8 +101,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowLocalDevelopment");
+
 app.UseHttpsRedirection();
+
+// 🔴 認証 → 認可 の順番厳守
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 Console.WriteLine("✓ SCヒアリングシステム API 起動完了");

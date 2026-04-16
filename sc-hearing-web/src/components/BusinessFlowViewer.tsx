@@ -64,9 +64,8 @@ function BusinessFlowViewer({ answers, judgments, programs, companyName, onClose
         : new FlowGenerator(answers, judgments, programs)
 
     // ✅ マッピングデータをロード
-    if (flowType === 'business') {
-      await generator.loadMasterData()
-    }
+    // 業務・システム両方でマスタデータをロード
+    await generator.loadMasterData()
 
     const code =
       flowType === 'business'
@@ -251,8 +250,8 @@ function BusinessFlowViewer({ answers, judgments, programs, companyName, onClose
             onClick={() => setFlowType('business')}
             style={{
               padding: '0.5rem 1rem',
-              backgroundColor: flowType === 'business' ? '#3498db' : '#ecf0f1',
-              color: flowType === 'business' ? 'white' : '#2c3e50',
+              backgroundColor: flowType === 'business' ? '#3498db' : '#1e3a5f',
+              color: 'white',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
@@ -264,8 +263,8 @@ function BusinessFlowViewer({ answers, judgments, programs, companyName, onClose
             onClick={() => setFlowType('system')}
             style={{
               padding: '0.5rem 1rem',
-              backgroundColor: flowType === 'system' ? '#3498db' : '#ecf0f1',
-              color: flowType === 'system' ? 'white' : '#2c3e50',
+              backgroundColor: flowType === 'system' ? '#3498db' : '#1e3a5f',
+              color: 'white',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
