@@ -58,6 +58,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // =========================
 builder.Services.AddCors(options =>
 {
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+        // 注意: AllowAnyOrigin と AllowCredentials は同時使用不可
+        // 本番でCredentialsが必要な場合は WithOrigins に本番URLを追加
+    });
+
+    // ローカル開発用（Credentialsが必要な場合はこちら）
     options.AddPolicy("AllowLocalDevelopment", policy =>
     {
         policy.WithOrigins("http://localhost:5173", "http://localhost:3000")
@@ -100,11 +110,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowLocalDevelopment");
+// 本番・ローカル両対応：全オリジン許可
+app.UseCors("AllowAll");
 
-app.UseHttpsRedirection();
+// HTTPSリダイレクトはコメントアウト（本番HTTPサーバー環境で問題になるため）
+// app.UseHttpsRedirection();
 
-// 🔴 認証 → 認可 の順番厳守
 app.UseAuthentication();
 app.UseAuthorization();
 

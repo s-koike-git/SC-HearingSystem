@@ -129,6 +129,7 @@ function HearingSheet() {
           background: 'white', borderRadius: 12, padding: '1.25rem 1.75rem',
           marginBottom: '1.25rem', border: '1px solid #e2e8f0',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem',
+          position: 'sticky', top: 0, zIndex: 50,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div>
@@ -179,12 +180,14 @@ function HearingSheet() {
         {showHelp && <HelpModal pages={hearingSheetHelpPages} onClose={() => setShowHelp(false)} />}
 
         {/* ─── メインカード ─── */}
-        <div style={{ background: 'white', borderRadius: 12, border: '1px solid #e2e8f0', overflow: 'hidden' }}>
+        <div style={{ background: 'white', borderRadius: 12, border: '1px solid #e2e8f0' }}>
 
           {/* ─── 業務タブバー ─── */}
           <div style={{
             background: '#f8fafc', borderBottom: '2px solid #e2e8f0',
             display: 'flex', overflowX: 'auto', padding: '0.5rem 0.75rem 0', gap: '0.25rem',
+            position: 'sticky', top: 88, zIndex: 40,
+            borderRadius: '12px 12px 0 0',
           }}>
             {businesses.map(b => {
               const isActive = activeBusiness === b && !showResults

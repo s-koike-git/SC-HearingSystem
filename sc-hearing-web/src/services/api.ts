@@ -654,7 +654,7 @@ export interface Inquiry {
 export const inquiriesApi = {
   getAll: () => api.get<Inquiry[]>('/Inquiries'),
 
-  create: (data: { title: string; content: string; imageData?: string | null }) =>
+  create: (data: { title: string; content: string; imageData?: string | null; createdBy?: string }) =>
     api.post<Inquiry>('/Inquiries', data),
 
   update: (id: number, data: { title: string; content: string }) =>
