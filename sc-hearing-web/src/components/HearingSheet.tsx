@@ -130,6 +130,7 @@ function HearingSheet() {
           marginBottom: '1.25rem', border: '1px solid #e2e8f0',
           display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem',
           position: 'sticky', top: 0, zIndex: 50,
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div>
@@ -182,11 +183,11 @@ function HearingSheet() {
         {/* ─── メインカード ─── */}
         <div style={{ background: 'white', borderRadius: 12, border: '1px solid #e2e8f0' }}>
 
-          {/* ─── 業務タブバー ─── */}
+          {/* ─── 業務タブバー（sticky） ─── */}
           <div style={{
             background: '#f8fafc', borderBottom: '2px solid #e2e8f0',
             display: 'flex', overflowX: 'auto', padding: '0.5rem 0.75rem 0', gap: '0.25rem',
-            position: 'sticky', top: 88, zIndex: 40,
+            position: 'sticky', top: 90, zIndex: 40,
             borderRadius: '12px 12px 0 0',
           }}>
             {businesses.map(b => {

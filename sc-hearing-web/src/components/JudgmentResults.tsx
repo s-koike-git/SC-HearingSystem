@@ -661,9 +661,6 @@ function JudgmentResults() {
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: '2rem',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
         background: '#f1f5f9',
         paddingTop: '0.5rem',
         paddingBottom: '0.5rem',
@@ -755,10 +752,9 @@ function JudgmentResults() {
         backgroundColor: 'white',
         borderRadius: '8px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        overflow: 'hidden'
       }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
+          <thead style={{ position: 'sticky', top: 140, zIndex: 30 }}>
             <tr style={{ backgroundColor: '#34495e', color: 'white' }}>
               <th style={{ width: '32px' }}></th>
               <th 

@@ -143,7 +143,7 @@ function Layout({ children }: LayoutProps) {
       </div>
 
       {/* メインコンテンツエリア */}
-      <div style={{ marginLeft: sideMenuOpen ? '250px' : '0', flex: 1, display: 'flex', flexDirection: 'column', transition: 'margin-left 0.3s ease' }}>
+      <div style={{ marginLeft: sideMenuOpen ? '250px' : '0', flex: 1, display: 'flex', flexDirection: 'column', transition: 'margin-left 0.3s ease', height: '100vh', overflow: 'hidden' }}>
         {/* ヘッダー */}
         <header style={{
           backgroundColor: 'white',
@@ -209,7 +209,7 @@ function Layout({ children }: LayoutProps) {
         </header>
 
         {/* メインコンテンツ */}
-        <main style={{ flex: 1, overflowY: 'auto' }}>
+        <main style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
           {children}
         </main>
       </div>
