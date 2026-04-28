@@ -752,11 +752,21 @@ function JudgmentResults() {
         backgroundColor: 'white',
         borderRadius: '8px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        width: '100%',
       }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+          <colgroup>
+            <col style={{ width: '32px' }} />
+            <col style={{ width: '110px' }} />
+            <col style={{ width: '90px' }} />
+            <col />
+            <col style={{ width: '70px' }} />
+            <col style={{ width: '220px' }} />
+            <col style={{ width: '80px' }} />
+          </colgroup>
           <thead style={{ position: 'sticky', top: 140, zIndex: 30 }}>
             <tr style={{ backgroundColor: '#34495e', color: 'white' }}>
-              <th style={{ width: '32px' }}></th>
+              <th></th>
               <th 
                 onClick={() => handleSort('businessType')}
                 style={{ padding: '1rem', textAlign: 'left', cursor: 'pointer', userSelect: 'none' }}>
@@ -821,29 +831,59 @@ function JudgmentResults() {
                     </td>
 
                     {/* 業務 */}
-                    <td>{judgment.businessType}</td>
+                    <td style={{ padding: '0.75rem', wordBreak: 'break-word' }}>{judgment.businessType}</td>
 
                     {/* 質問No */}
-                    <td>{judgment.questionNo}</td>
+                    <td style={{ padding: '0.75rem', wordBreak: 'break-all', fontSize: '0.85rem', fontFamily: 'monospace' }}>{judgment.questionNo}</td>
 
                     {/* 質問内容 */}
-                    <td>{judgment.questionText}</td>
+                    <td style={{ padding: '0.75rem', wordBreak: 'break-word', whiteSpace: 'normal', lineHeight: '1.4' }}>{judgment.questionText}</td>
 
                     {/* 回答 */}
-                    <td style={{ textAlign: 'center' }}>
+                    <td style={{ textAlign: 'center', padding: '0.75rem' }}>
                       {formatAnswer(judgment)}
                     </td>
-                   {/* プログラムID */}
-                   <td style={{ textAlign: 'center', fontWeight: 'bold' }}>
+                   {/* プログラムID（バッジ表示・折り返し対応） */}
+                   <td style={{ padding: '0.5rem', verticalAlign: 'middle' }}>
                      {judgment.programIds && judgment.programIds.length > 0 ? (
-                       judgment.programIds.map(pid => (
-                         <span
-                           key={pid}
-                           style={{ marginRight: '0.5rem', color: '#555' }}
-                         >
-                           {pid}
-                         </span>
-                       ))
+                       <div style={{
+                         display: 'flex',
+                         flexWrap: 'wrap',
+                         gap: '4px',
+                         justifyContent: 'flex-start',
+                         alignItems: 'center'
+                       }}>
+                         {judgment.programIds.slice(0, isOpen ? judgment.programIds.length : 3).map(pid => (
+                           <span
+                             key={pid}
+                             style={{
+                               padding: '2px 8px',
+                               backgroundColor: '#ecf0f1',
+                               border: '1px solid #bdc3c7',
+                               borderRadius: '4px',
+                               fontSize: '0.8rem',
+                               fontFamily: 'monospace',
+                               color: '#2c3e50',
+                               whiteSpace: 'nowrap',
+                             }}
+                           >
+                             {pid}
+                           </span>
+                         ))}
+                         {!isOpen && judgment.programIds.length > 3 && (
+                           <span style={{
+                             padding: '2px 8px',
+                             backgroundColor: '#3498db',
+                             color: 'white',
+                             borderRadius: '4px',
+                             fontSize: '0.8rem',
+                             fontWeight: 'bold',
+                             whiteSpace: 'nowrap',
+                           }}>
+                             +{judgment.programIds.length - 3}
+                           </span>
+                         )}
+                       </div>
                      ) : (
                        <span style={{ color: '#999' }}>-</span>
                      )}
@@ -922,52 +962,117 @@ function JudgmentResults() {
                               position: 'relative',
                               width: '100%',
                               height: '100%',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '8px',
                             }}
                           >
-                            {/* 帳票表示ボタン */}
-                            {selectedProgramId && (
-                              <button
-                                onClick={() => {
-                                  setReportFiles(availableReportFiles);
-                                  setReportProgramId(selectedProgramId);
-                                }}
-                                disabled={!hasReport}
-                                style={{
-                                  position: 'absolute',
-                                  top: '0px',
-                                  right: '16px',
-                                  zIndex: 10,
-                                  padding: '4px 12px',
+                            {/* プログラム選択プルダウン + 帳票表示ボタン */}
+                            {judgment.programIds && judgment.programIds.length > 0 && (
+                              <div style={{
+                                display: 'flex',
+                                gap: '8px',
+                                alignItems: 'center',
+                                padding: '8px 12px',
+                                backgroundColor: 'white',
+                                border: '1px solid #d0d7de',
+                                borderRadius: '6px',
+                                boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                              }}>
+                                <label style={{
+                                  fontSize: '0.85rem',
+                                  fontWeight: 'bold',
+                                  color: '#555',
                                   whiteSpace: 'nowrap',
-                                  cursor: hasReport ? 'pointer' : 'not-allowed',
-                                  opacity: hasReport ? 1 : 0.4,
-                                }}
-                              >
-                                帳票表示
-                              </button>
-                            )}
-                            {/* V100画面 */}
-                            {selectedProgramId && selectedScreenId ? (
-                              <iframe
-                                src={`${import.meta.env.PROD ? '/sc-hearing' : ''}/screen-viewer/Start.htm?screen=${selectedScreenId}`}
-                                style={{
-                                  width: '100%',
-                                  height: '100%',
-                                  border: 'none',
-                                }}
-                              />
-                            ) : (
-                              <div
-                                style={{
-                                  color: '#999',
-                                  fontSize: '0.9rem',
-                                  textAlign: 'center',
-                                  marginTop: '2rem',
-                                }}
-                              >
-                                プログラムが設定されていません
+                                }}>
+                                  🖥️ 表示画面：
+                                </label>
+                                <select
+                                  value={selectedProgramId || ''}
+                                  onChange={(e) => setSelectedProgramId(e.target.value || null)}
+                                  style={{
+                                    flex: 1,
+                                    padding: '6px 8px',
+                                    border: '1px solid #ccc',
+                                    borderRadius: '4px',
+                                    fontSize: '0.9rem',
+                                    fontFamily: 'monospace',
+                                    backgroundColor: 'white',
+                                    cursor: 'pointer',
+                                    minWidth: 0,
+                                  }}
+                                >
+                                  {judgment.programIds.map(pid => {
+                                    const prog = programs.find(p => p.programId === pid)
+                                    return (
+                                      <option key={pid} value={pid}>
+                                        {pid}{prog ? ` - ${prog.programName}` : ''}
+                                      </option>
+                                    )
+                                  })}
+                                </select>
+                                <span style={{
+                                  fontSize: '0.75rem',
+                                  color: '#7f8c8d',
+                                  whiteSpace: 'nowrap',
+                                }}>
+                                  ({judgment.programIds.length}件)
+                                </span>
+                                <button
+                                  onClick={() => {
+                                    setReportFiles(availableReportFiles);
+                                    setReportProgramId(selectedProgramId);
+                                  }}
+                                  disabled={!hasReport}
+                                  style={{
+                                    padding: '6px 12px',
+                                    backgroundColor: hasReport ? '#3498db' : '#bdc3c7',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '4px',
+                                    cursor: hasReport ? 'pointer' : 'not-allowed',
+                                    fontSize: '0.85rem',
+                                    whiteSpace: 'nowrap',
+                                    fontWeight: 'bold',
+                                  }}
+                                >
+                                  📄 帳票表示
+                                </button>
                               </div>
                             )}
+
+                            {/* V100画面プレビュー */}
+                            <div style={{
+                              flex: 1,
+                              border: '1px solid #d0d7de',
+                              borderRadius: '6px',
+                              overflow: 'hidden',
+                              backgroundColor: '#fff',
+                              minHeight: '600px',
+                            }}>
+                              {selectedProgramId && selectedScreenId ? (
+                                <iframe
+                                  src={`${import.meta.env.PROD ? '/sc-hearing' : ''}/screen-viewer/Start.htm?screen=${selectedScreenId}`}
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    border: 'none',
+                                    display: 'block',
+                                  }}
+                                />
+                              ) : (
+                                <div
+                                  style={{
+                                    color: '#999',
+                                    fontSize: '0.9rem',
+                                    textAlign: 'center',
+                                    padding: '4rem 1rem',
+                                  }}
+                                >
+                                  プログラムが設定されていません
+                                </div>
+                              )}
+                            </div>
 
                           </div>
 

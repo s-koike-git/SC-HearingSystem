@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 
@@ -211,15 +210,25 @@ export interface BusinessFlowMapping {
 
 export interface BusinessFlowStep {
   id?: number
+  /** 業務処理ID (例: 'estimate_create', 'order_receive') */
   stepId: string
+  /** 業務処理名 (例: '見積作成', '受注受付') */
   stepName: string
+  /** ノードID (StepIdと同じ) */
   nodeId: string
+  /** ノードラベル (StepNameと同じ) */
   nodeLabel: string
   nodeType: string
   displayOrder: number
   parentNodeId?: string
   connectionType?: string
   mermaidStyle?: string
+  /** 業務プロセス(第1階層) StepIdへの参照 */
+  businessProcessStepId?: string
+  /** ReactFlow位置X (F5で追加) */
+  positionX?: number
+  /** ReactFlow位置Y (F5で追加) */
+  positionY?: number
   isActive: boolean
   createdAt?: string
   updatedAt?: string
@@ -230,9 +239,99 @@ export interface SystemFlowStep {
   stepId: string
   stepName: string
   businessType: string
+  /** 業務フローStepIdへの参照 (NEW: Phase 0 で追加) */
+  businessFlowStepId?: string
   displayOrder: number
   isSubgraph: boolean
   subgraphLabel?: string
+  isActive: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+/**
+ * システムフローノード（NEW: Phase 1で導入）
+ * PRGID/データストア/外部エンティティを統一管理
+ */
+export interface SystemFlowNode {
+  id?: number
+  /** グローバル一意ノードID (例: SF_ESTET01, SF_DS_受注, SF_EXT_得意先) */
+  nodeId: string
+  /** 所属するSystemFlowSteps.StepId */
+  flowStepId: string
+  /** 表示ラベル (例: ESTET01, 受注, 得意先) */
+  nodeLabel: string
+  /** ノード種別 */
+  nodeType: 'process' | 'io' | 'group' | 'start' | 'end' | 'decision'
+  /** ソース種別 */
+  sourceType: 'program' | 'data_store' | 'external_entity' | 'decision'
+  /** programならPRGID、data_storeなら論理テーブル名、external_entityなら取引先種別 */
+  sourceRef?: string
+  displayOrder: number
+  /** standard/new/customize/_data付き/external */
+  mermaidStyle?: string
+  /** ReactFlow位置X */
+  positionX?: number
+  /** ReactFlow位置Y */
+  positionY?: number
+  description?: string
+  isActive: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+
+/**
+ * 業務プロセスフロー工程 (第1階層)
+ */
+export interface BusinessProcessFlowStep {
+  id?: number
+  stepId: string
+  stepName: string
+  category: string
+  displayOrder: number
+  description?: string
+  positionX?: number
+  positionY?: number
+  mermaidStyle?: string
+  isActive: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+export interface BusinessProcessFlowConnection {
+  id?: number
+  fromStepId: string
+  toStepId: string
+  connectionType: string
+  conditionLabel?: string
+  displayOrder: number
+  isActive: boolean
+  createdAt?: string
+  updatedAt?: string
+}
+
+/**
+ * 機能フロー工程 (第3階層、F5で導入)
+ * 旧BusinessFlowStepの中身がこちら
+ */
+export interface FunctionalFlowStep {
+  id?: number
+  stepId: string
+  stepName: string
+  nodeId: string
+  nodeLabel: string
+  nodeType: string
+  displayOrder: number
+  parentNodeId?: string
+  connectionType?: string
+  mermaidStyle?: string
+  /** 業務フロー(第2階層) StepIdへの参照 */
+  businessFlowStepId?: string
+  /** 業務プロセス(第1階層) StepIdへの参照 */
+  businessProcessStepId?: string
+  positionX?: number
+  positionY?: number
   isActive: boolean
   createdAt?: string
   updatedAt?: string
@@ -269,6 +368,8 @@ export interface FlowConnection {
   connectionType: string
   conditionLabel?: string
   displayOrder: number
+  /** 'business' or 'system' (NEW: Phase 0 で追加) */
+  flowType?: string
   isActive: boolean
   createdAt?: string
   updatedAt?: string
@@ -301,11 +402,7 @@ export const answersApi = {
 // Conditions API
 export const conditionsApi = {
   getAll: () => api.get<Condition[]>('/conditions'),
-  getById: (id: number) => api.get<Condition>(`/conditions/${id}`),
-  getByQuestion: (businessType: string, questionNo: string) =>
-    api.get<Condition[]>('/conditions/by-question', {
-      params: { businessType, questionNo },
-    }),
+  getByBusinessType: (businessType: string) => api.get<Condition[]>(`/conditions/business/${businessType}`),
   create: (condition: Condition) => api.post<Condition>('/conditions', condition),
   update: (id: number, condition: Condition) => api.put(`/conditions/${id}`, condition),
   delete: (id: number) => api.delete(`/conditions/${id}`),
@@ -314,56 +411,61 @@ export const conditionsApi = {
 // Judgments API
 export const judgmentsApi = {
   getByProject: (projectId: number) => api.get<Judgment[]>(`/judgments/project/${projectId}`),
-  reExecute: (projectId: number) => api.post(`/judgments/project/${projectId}/re-execute`),
+  save: (judgment: Judgment) => api.post<Judgment>('/judgments', judgment),
+  saveBulk: (judgments: Judgment[]) => api.post('/judgments/bulk', judgments),
+  delete: (id: number) => api.delete(`/judgments/${id}`),
+  execute: (projectId: number) => api.post(`/judgments/execute/${projectId}`)
 };
 
+// Businesses API
 export const businessesApi = {
-  getAll: () => api.get<Business[]>('/businesses'),
-  create: (b: Business) => api.post<Business>('/businesses', b),
-  update: (id: number, b: Business) => api.put(`/businesses/${id}`, b),
-  delete: (id: number) => api.delete(`/businesses/${id}`),
-  saveBulk: (list: Business[]) => api.post('/businesses/bulk', list),
-}
+  getAll: () => api.get<Business[]>('/Businesses'),
+  getById: (id: number) => api.get<Business>(`/Businesses/${id}`),
+  create: (business: Business) => api.post<Business>('/Businesses', business),
+  update: (id: number, business: Business) => api.put(`/Businesses/${id}`, business),
+  delete: (id: number) => api.delete(`/Businesses/${id}`),
+};
 
+// Questions API
 export const questionsApi = {
-  // 質問マスタ用（全件取得）
-  getAll: () => api.get<Question[]>('/questions/all'),
+  /** 質問マスタ画面用：全件取得 */
+  getAll: () => api.get<Question[]>('/Questions/all'),
 
-  // ヒアリング用（業務別）
-  getByBusiness: (businessType: string) =>
-    api.get<Question[]>('/questions', { params: { businessType } }),
+  getById: (id: number) => api.get<Question>(`/Questions/${id}`),
 
-  // 質問削除
-  delete: (id: number) => api.delete(`/questions/${id}`),
+  /** ヒアリング用：業務別取得 */
+  getByBusinessType: (businessType: string) =>
+    api.get<Question[]>(`/Questions?businessType=${encodeURIComponent(businessType)}`),
 
-  // ✅ CSVインポート用（一括保存）
-  saveBulk: (list: Question[]) =>
-    api.post('/questions/bulk', list),
-}
+  create: (question: Question) => api.post<Question>('/Questions', question),
+  update: (id: number, question: Question) => api.put(`/Questions/${id}`, question),
+  delete: (id: number) => api.delete(`/Questions/${id}`),
+};
 
+// Programs API
 export const programsApi = {
-  getAll: () => api.get<Program[]>('/programs'),
-  create: (p: Program) => api.post<Program>('/programs', p),
-  update: (id: number, p: Program) => api.put(`/programs/${id}`, p),
-  delete: (id: number) => api.delete(`/programs/${id}`),
-  saveBulk: (list: Program[]) => api.post('/programs/bulk', list),
-}
+  getAll: () => api.get<Program[]>('/Programs'),
+  getById: (id: number) => api.get<Program>(`/Programs/${id}`),
+  create: (program: Program) => api.post<Program>('/Programs', program),
+  update: (id: number, program: Program) => api.put(`/Programs/${id}`, program),
+  delete: (id: number) => api.delete(`/Programs/${id}`),
+};
+
 // 商品マスタAPI
 export const productsApi = {
   getAll: () => api.get('/products'),
   getById: (id: number) => api.get(`/products/${id}`),
-  getByCode: (code: string) => api.get(`/products/code/${code}`),
   create: (data: Omit<Product, 'id'>) => api.post('/products', data),
   update: (id: number, data: Partial<Product>) => api.put(`/products/${id}`, data),
   delete: (id: number) => api.delete(`/products/${id}`)
 }
 
-// 材料マスタAPI
+// 材料マスタAPI（仮）
 export const materialsApi = {
   getAll: () => api.get('/materials'),
   getById: (id: number) => api.get(`/materials/${id}`),
-  create: (data: Omit<Material, 'id'>) => api.post('/materials', data),
-  update: (id: number, data: Partial<Material>) => api.put(`/materials/${id}`, data),
+  create: (data: any) => api.post('/materials', data),
+  update: (id: number, data: any) => api.put(`/materials/${id}`, data),
   delete: (id: number) => api.delete(`/materials/${id}`)
 }
 
@@ -384,9 +486,6 @@ export const costSimulationApi = {
 }
 
 export const announcementsApi = {
-  /**
-   * 有効なお知らせ一覧を取得（メニュー画面用）
-   */
   getActive: async (): Promise<Announcement[]> => {
     const response = await fetch(`${API_BASE_URL}/announcements/active`)
     if (!response.ok) {
@@ -395,9 +494,6 @@ export const announcementsApi = {
     return response.json()
   },
 
-  /**
-   * すべてのお知らせを取得（管理画面用）
-   */
   getAll: async (): Promise<Announcement[]> => {
     const response = await fetch(`${API_BASE_URL}/announcements`)
     if (!response.ok) {
@@ -406,9 +502,6 @@ export const announcementsApi = {
     return response.json()
   },
 
-  /**
-   * お知らせを新規作成
-   */
   create: async (announcement: Omit<Announcement, 'id' | 'createdAt' | 'updatedAt'>): Promise<Announcement> => {
     const response = await fetch(`${API_BASE_URL}/announcements`, {
       method: 'POST',
@@ -423,9 +516,6 @@ export const announcementsApi = {
     return response.json()
   },
 
-  /**
-   * お知らせを更新
-   */
   update: async (id: number, announcement: Announcement): Promise<void> => {
     const response = await fetch(`${API_BASE_URL}/announcements/${id}`, {
       method: 'PUT',
@@ -439,9 +529,6 @@ export const announcementsApi = {
     }
   },
 
-  /**
-   * お知らせを削除
-   */
   delete: async (id: number): Promise<void> => {
     const response = await fetch(`${API_BASE_URL}/announcements/${id}`, {
       method: 'DELETE',
@@ -453,9 +540,6 @@ export const announcementsApi = {
 }
 
 export const programEstimatesApi = {
-  /**
-   * ユーザーの見積もり一覧を取得
-   */
   getAll: async (userId: number): Promise<ProgramEstimate[]> => {
     const response = await fetch(`${API_BASE_URL}/programestimates?userId=${userId}`)
     if (!response.ok) {
@@ -463,10 +547,7 @@ export const programEstimatesApi = {
     }
     return response.json()
   },
- 
-  /**
-   * 特定の見積もりを取得
-   */
+
   getById: async (id: number, userId: number): Promise<ProgramEstimate> => {
     const response = await fetch(`${API_BASE_URL}/programestimates/${id}?userId=${userId}`)
     if (!response.ok) {
@@ -474,10 +555,7 @@ export const programEstimatesApi = {
     }
     return response.json()
   },
- 
-  /**
-   * 見積もりを新規作成
-   */
+
   create: async (estimate: ProgramEstimate): Promise<ProgramEstimate> => {
     const response = await fetch(`${API_BASE_URL}/programestimates`, {
       method: 'POST',
@@ -491,10 +569,7 @@ export const programEstimatesApi = {
     }
     return response.json()
   },
- 
-  /**
-   * 見積もりを更新
-   */
+
   update: async (id: number, estimate: ProgramEstimate): Promise<void> => {
     const response = await fetch(`${API_BASE_URL}/programestimates/${id}`, {
       method: 'PUT',
@@ -507,10 +582,7 @@ export const programEstimatesApi = {
       throw new Error('見積もりの更新に失敗しました')
     }
   },
- 
-  /**
-   * 見積もりを削除
-   */
+
   delete: async (id: number, userId: number): Promise<void> => {
     const response = await fetch(`${API_BASE_URL}/programestimates/${id}?userId=${userId}`, {
       method: 'DELETE',
@@ -522,118 +594,227 @@ export const programEstimatesApi = {
 }
 
 export const businessFlowMappingsApi = {
-  /**
-   * 全ての業務フローマッピングを取得
-   */
   getAll: async (): Promise<BusinessFlowMapping[]> => {
     const response = await api.get('/BusinessFlowMappings')
     return response.data
   },
 
-  /**
-   * 業務タイプ別にマッピングを取得
-   */
   getByBusinessType: async (businessType: string): Promise<BusinessFlowMapping[]> => {
     const response = await api.get(`/BusinessFlowMappings/business/${businessType}`)
     return response.data
   },
 
-  /**
-   * マッピングを作成
-   */
   create: async (mapping: Omit<BusinessFlowMapping, 'id' | 'createdAt' | 'updatedAt'>): Promise<BusinessFlowMapping> => {
     const response = await api.post('/BusinessFlowMappings', mapping)
     return response.data
   },
 
-  /**
-   * マッピングを更新
-   */
   update: async (id: number, mapping: Partial<BusinessFlowMapping>): Promise<void> => {
     await api.put(`/BusinessFlowMappings/${id}`, mapping)
   },
 
-  /**
-   * マッピングを削除
-   */
   delete: async (id: number): Promise<void> => {
     await api.delete(`/BusinessFlowMappings/${id}`)
   },
 }
 
 export const businessFlowStepsApi = {
-  getAll: () => api.get<BusinessFlowStep[]>('/BusinessFlowSteps'),
+  getAll: (businessProcessStepId?: string) => {
+    const qs = businessProcessStepId ? `?businessProcessStepId=${encodeURIComponent(businessProcessStepId)}` : ''
+    return api.get<BusinessFlowStep[]>(`/BusinessFlowSteps${qs}`)
+  },
   getById: (id: number) => api.get<BusinessFlowStep>(`/BusinessFlowSteps/${id}`),
-  create: (step: Omit<BusinessFlowStep, 'id' | 'createdAt' | 'updatedAt'>) => 
+  getByStepId: (stepId: string) => api.get<BusinessFlowStep>(`/BusinessFlowSteps/by-step-id/${encodeURIComponent(stepId)}`),
+  getByProcess: (businessProcessStepId: string) =>
+    api.get<BusinessFlowStep[]>(`/BusinessFlowSteps/by-process/${encodeURIComponent(businessProcessStepId)}`),
+  create: (step: Omit<BusinessFlowStep, 'id' | 'createdAt' | 'updatedAt'>) =>
     api.post<BusinessFlowStep>('/BusinessFlowSteps', step),
-  update: (id: number, step: Partial<BusinessFlowStep>) => 
+  update: (id: number, step: Partial<BusinessFlowStep>) =>
     api.put(`/BusinessFlowSteps/${id}`, step),
+  updatePosition: (id: number, x: number, y: number) =>
+    api.put(`/BusinessFlowSteps/${id}/position`, { x, y }),
+  updatePositionsBulk: (positions: Array<{ stepId: string; x: number; y: number }>) =>
+    api.post('/BusinessFlowSteps/positions', positions),
   delete: (id: number) => api.delete(`/BusinessFlowSteps/${id}`),
-  saveBulk: (steps: BusinessFlowStep[]) => 
+  saveBulk: (steps: BusinessFlowStep[]) =>
     api.post('/BusinessFlowSteps/bulk', steps),
 }
 
 export const systemFlowStepsApi = {
   getAll: () => api.get<SystemFlowStep[]>('/SystemFlowSteps'),
   getById: (id: number) => api.get<SystemFlowStep>(`/SystemFlowSteps/${id}`),
-  getByBusinessType: (businessType: string) => 
+  getByBusinessType: (businessType: string) =>
     api.get<SystemFlowStep[]>(`/SystemFlowSteps/business/${businessType}`),
-  create: (step: Omit<SystemFlowStep, 'id' | 'createdAt' | 'updatedAt'>) => 
+  create: (step: Omit<SystemFlowStep, 'id' | 'createdAt' | 'updatedAt'>) =>
     api.post<SystemFlowStep>('/SystemFlowSteps', step),
-  update: (id: number, step: Partial<SystemFlowStep>) => 
+  update: (id: number, step: Partial<SystemFlowStep>) =>
     api.put(`/SystemFlowSteps/${id}`, step),
   delete: (id: number) => api.delete(`/SystemFlowSteps/${id}`),
-  saveBulk: (steps: SystemFlowStep[]) => 
+  saveBulk: (steps: SystemFlowStep[]) =>
     api.post('/SystemFlowSteps/bulk', steps),
+}
+
+/**
+ * SystemFlowNodes API（NEW: Phase 1で導入）
+ * システムフローのノード（PRGID/データストア/外部エンティティ）を統一管理
+ */
+export const systemFlowNodesApi = {
+  /** 全ノード取得（flowStepIdとsourceTypeで絞り込み可） */
+  getAll: (params?: { flowStepId?: string; sourceType?: string }) => {
+    const qs = params
+      ? '?' + Object.entries(params).filter(([, v]) => v).map(([k, v]) => `${k}=${encodeURIComponent(v!)}`).join('&')
+      : ''
+    return api.get<SystemFlowNode[]>(`/SystemFlowNodes${qs}`)
+  },
+  getById: (id: number) => api.get<SystemFlowNode>(`/SystemFlowNodes/${id}`),
+  getByNodeId: (nodeId: string) =>
+    api.get<SystemFlowNode>(`/SystemFlowNodes/by-node-id/${encodeURIComponent(nodeId)}`),
+  getByFlowStep: (flowStepId: string) =>
+    api.get<SystemFlowNode[]>(`/SystemFlowNodes/by-flow-step/${encodeURIComponent(flowStepId)}`),
+  create: (node: Omit<SystemFlowNode, 'id' | 'createdAt' | 'updatedAt'>) =>
+    api.post<SystemFlowNode>('/SystemFlowNodes', node),
+  update: (id: number, node: Partial<SystemFlowNode>) =>
+    api.put(`/SystemFlowNodes/${id}`, node),
+  /** ドラッグ完了時の単一ノード位置更新 */
+  updatePosition: (id: number, x: number, y: number) =>
+    api.put(`/SystemFlowNodes/${id}/position`, { x, y }),
+  /** ドラッグ完了時の一括位置更新（推奨） */
+  updatePositionsBulk: (positions: Array<{ nodeId: string; x: number; y: number }>) =>
+    api.post('/SystemFlowNodes/positions', positions),
+  delete: (id: number) => api.delete(`/SystemFlowNodes/${id}`),
+  saveBulk: (nodes: SystemFlowNode[]) =>
+    api.post('/SystemFlowNodes/bulk', nodes),
 }
 
 export const flowQuestionMappingsApi = {
   getAll: () => api.get<FlowQuestionMapping[]>('/FlowQuestionMappings'),
   getById: (id: number) => api.get<FlowQuestionMapping>(`/FlowQuestionMappings/${id}`),
-  getByQuestion: (businessType: string, questionNo: string) => 
-    api.get<FlowQuestionMapping[]>('/FlowQuestionMappings/by-question', { 
-      params: { businessType, questionNo } 
+  getByQuestion: (businessType: string, questionNo: string) =>
+    api.get<FlowQuestionMapping[]>('/FlowQuestionMappings/by-question', {
+      params: { businessType, questionNo }
     }),
-  getByFlowStep: (flowStepId: string) => 
+  getByFlowStep: (flowStepId: string) =>
     api.get<FlowQuestionMapping[]>(`/FlowQuestionMappings/by-flow-step/${flowStepId}`),
-  create: (mapping: Omit<FlowQuestionMapping, 'id' | 'createdAt' | 'updatedAt'>) => 
+  create: (mapping: Omit<FlowQuestionMapping, 'id' | 'createdAt' | 'updatedAt'>) =>
     api.post<FlowQuestionMapping>('/FlowQuestionMappings', mapping),
-  update: (id: number, mapping: Partial<FlowQuestionMapping>) => 
+  update: (id: number, mapping: Partial<FlowQuestionMapping>) =>
     api.put(`/FlowQuestionMappings/${id}`, mapping),
   delete: (id: number) => api.delete(`/FlowQuestionMappings/${id}`),
-  saveBulk: (mappings: FlowQuestionMapping[]) => 
+  saveBulk: (mappings: FlowQuestionMapping[]) =>
     api.post('/FlowQuestionMappings/bulk', mappings),
 }
 
 export const flowProgramMappingsApi = {
   getAll: () => api.get<FlowProgramMapping[]>('/FlowProgramMappings'),
   getById: (id: number) => api.get<FlowProgramMapping>(`/FlowProgramMappings/${id}`),
-  getByFlowStep: (flowStepId: string) => 
+  getByFlowStep: (flowStepId: string) =>
     api.get<FlowProgramMapping[]>(`/FlowProgramMappings/by-flow-step/${flowStepId}`),
-  getByProgram: (programId: string) => 
+  getByProgram: (programId: string) =>
     api.get<FlowProgramMapping[]>(`/FlowProgramMappings/by-program/${programId}`),
-  create: (mapping: Omit<FlowProgramMapping, 'id' | 'createdAt' | 'updatedAt'>) => 
+  create: (mapping: Omit<FlowProgramMapping, 'id' | 'createdAt' | 'updatedAt'>) =>
     api.post<FlowProgramMapping>('/FlowProgramMappings', mapping),
-  update: (id: number, mapping: Partial<FlowProgramMapping>) => 
+  update: (id: number, mapping: Partial<FlowProgramMapping>) =>
     api.put(`/FlowProgramMappings/${id}`, mapping),
   delete: (id: number) => api.delete(`/FlowProgramMappings/${id}`),
-  saveBulk: (mappings: FlowProgramMapping[]) => 
+  saveBulk: (mappings: FlowProgramMapping[]) =>
     api.post('/FlowProgramMappings/bulk', mappings),
 }
 
+
+/**
+ * BusinessProcessFlowSteps API (第1階層)
+ */
+export const businessProcessFlowStepsApi = {
+  getAll: (category?: string) => {
+    const qs = category ? `?category=${encodeURIComponent(category)}` : ''
+    return api.get<BusinessProcessFlowStep[]>(`/BusinessProcessFlowSteps${qs}`)
+  },
+  getById: (id: number) => api.get<BusinessProcessFlowStep>(`/BusinessProcessFlowSteps/${id}`),
+  getByStepId: (stepId: string) =>
+    api.get<BusinessProcessFlowStep>(`/BusinessProcessFlowSteps/by-step-id/${encodeURIComponent(stepId)}`),
+  getByCategory: (category: string) =>
+    api.get<BusinessProcessFlowStep[]>(`/BusinessProcessFlowSteps/by-category/${encodeURIComponent(category)}`),
+  create: (step: Omit<BusinessProcessFlowStep, 'id' | 'createdAt' | 'updatedAt'>) =>
+    api.post<BusinessProcessFlowStep>('/BusinessProcessFlowSteps', step),
+  update: (id: number, step: Partial<BusinessProcessFlowStep>) =>
+    api.put(`/BusinessProcessFlowSteps/${id}`, step),
+  updatePosition: (id: number, x: number, y: number) =>
+    api.put(`/BusinessProcessFlowSteps/${id}/position`, { x, y }),
+  updatePositionsBulk: (positions: Array<{ stepId: string; x: number; y: number }>) =>
+    api.post('/BusinessProcessFlowSteps/positions', positions),
+  delete: (id: number) => api.delete(`/BusinessProcessFlowSteps/${id}`),
+  saveBulk: (steps: BusinessProcessFlowStep[]) =>
+    api.post('/BusinessProcessFlowSteps/bulk', steps),
+}
+
+export const businessProcessFlowConnectionsApi = {
+  getAll: () => api.get<BusinessProcessFlowConnection[]>('/BusinessProcessFlowConnections'),
+  getById: (id: number) => api.get<BusinessProcessFlowConnection>(`/BusinessProcessFlowConnections/${id}`),
+  getByFromStep: (fromStepId: string) =>
+    api.get<BusinessProcessFlowConnection[]>(`/BusinessProcessFlowConnections/from/${encodeURIComponent(fromStepId)}`),
+  getByToStep: (toStepId: string) =>
+    api.get<BusinessProcessFlowConnection[]>(`/BusinessProcessFlowConnections/to/${encodeURIComponent(toStepId)}`),
+  create: (connection: Omit<BusinessProcessFlowConnection, 'id' | 'createdAt' | 'updatedAt'>) =>
+    api.post<BusinessProcessFlowConnection>('/BusinessProcessFlowConnections', connection),
+  update: (id: number, connection: Partial<BusinessProcessFlowConnection>) =>
+    api.put(`/BusinessProcessFlowConnections/${id}`, connection),
+  delete: (id: number) => api.delete(`/BusinessProcessFlowConnections/${id}`),
+  saveBulk: (connections: BusinessProcessFlowConnection[]) =>
+    api.post('/BusinessProcessFlowConnections/bulk', connections),
+}
+
+/**
+ * FunctionalFlowSteps API (第3階層、F5で導入)
+ */
+export const functionalFlowStepsApi = {
+  getAll: (filter?: { businessFlowStepId?: string; businessProcessStepId?: string }) => {
+    const params: string[] = []
+    if (filter?.businessFlowStepId) params.push(`businessFlowStepId=${encodeURIComponent(filter.businessFlowStepId)}`)
+    if (filter?.businessProcessStepId) params.push(`businessProcessStepId=${encodeURIComponent(filter.businessProcessStepId)}`)
+    const qs = params.length ? '?' + params.join('&') : ''
+    return api.get<FunctionalFlowStep[]>(`/FunctionalFlowSteps${qs}`)
+  },
+  getById: (id: number) => api.get<FunctionalFlowStep>(`/FunctionalFlowSteps/${id}`),
+  getByStepId: (stepId: string) =>
+    api.get<FunctionalFlowStep[]>(`/FunctionalFlowSteps/by-step-id/${encodeURIComponent(stepId)}`),
+  create: (step: Omit<FunctionalFlowStep, 'id' | 'createdAt' | 'updatedAt'>) =>
+    api.post<FunctionalFlowStep>('/FunctionalFlowSteps', step),
+  update: (id: number, step: Partial<FunctionalFlowStep>) =>
+    api.put(`/FunctionalFlowSteps/${id}`, step),
+  updatePosition: (id: number, x: number, y: number) =>
+    api.put(`/FunctionalFlowSteps/${id}/position`, { x, y }),
+  updatePositionsBulk: (positions: Array<{ nodeId: string; x: number; y: number }>) =>
+    api.post('/FunctionalFlowSteps/positions', positions),
+  delete: (id: number) => api.delete(`/FunctionalFlowSteps/${id}`),
+  saveBulk: (steps: FunctionalFlowStep[]) =>
+    api.post('/FunctionalFlowSteps/bulk', steps),
+}
+
+/**
+ * FlowConnections API
+ * ★ Phase 0 で flowType ('business' / 'system') によるフィルタに対応
+ */
 export const flowConnectionsApi = {
-  getAll: () => api.get<FlowConnection[]>('/FlowConnections'),
+  /** 全接続取得（flowTypeで絞り込み可: 'business' | 'system'） */
+  getAll: (flowType?: 'business' | 'system') => {
+    const qs = flowType ? `?flowType=${flowType}` : ''
+    return api.get<FlowConnection[]>(`/FlowConnections${qs}`)
+  },
   getById: (id: number) => api.get<FlowConnection>(`/FlowConnections/${id}`),
-  getByFromNode: (fromNodeId: string) => 
-    api.get<FlowConnection[]>(`/FlowConnections/from/${fromNodeId}`),
-  getByToNode: (toNodeId: string) => 
-    api.get<FlowConnection[]>(`/FlowConnections/to/${toNodeId}`),
-  create: (connection: Omit<FlowConnection, 'id' | 'createdAt' | 'updatedAt'>) => 
+  getByFromNode: (fromNodeId: string, flowType?: 'business' | 'system') => {
+    const qs = flowType ? `?flowType=${flowType}` : ''
+    return api.get<FlowConnection[]>(`/FlowConnections/from/${fromNodeId}${qs}`)
+  },
+  getByToNode: (toNodeId: string, flowType?: 'business' | 'system') => {
+    const qs = flowType ? `?flowType=${flowType}` : ''
+    return api.get<FlowConnection[]>(`/FlowConnections/to/${toNodeId}${qs}`)
+  },
+  create: (connection: Omit<FlowConnection, 'id' | 'createdAt' | 'updatedAt'>) =>
     api.post<FlowConnection>('/FlowConnections', connection),
-  update: (id: number, connection: Partial<FlowConnection>) => 
+  update: (id: number, connection: Partial<FlowConnection>) =>
     api.put(`/FlowConnections/${id}`, connection),
   delete: (id: number) => api.delete(`/FlowConnections/${id}`),
-  saveBulk: (connections: FlowConnection[]) => 
+  saveBulk: (connections: FlowConnection[]) =>
     api.post('/FlowConnections/bulk', connections),
 }
 

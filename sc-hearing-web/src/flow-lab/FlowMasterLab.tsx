@@ -3,44 +3,61 @@ import { ReactFlowProvider } from 'reactflow'
 import ReactFlowCanvas from './ReactFlowCanvas'
 import NodePropertyPanel from './NodePropertyPanel'
 import NodePalette from './NodePalette'
-import { convertToReactFlow, convertSystemFlowToReactFlow } from './converters'
+import {
+  convertFunctionalFlowToReactFlow,
+  convertSystemFlowToReactFlow,
+  convertBusinessProcessFlowToReactFlow,
+  convertBusinessFlowToReactFlow,
+} from './converters'
 import {
   businessFlowStepsApi,
   flowConnectionsApi,
   systemFlowStepsApi,
+  systemFlowNodesApi,
+  businessProcessFlowStepsApi,
+  businessProcessFlowConnectionsApi,
+  functionalFlowStepsApi,
 } from '../services/api'
 import type { FlowNode, FlowEdge, NodeKind } from './types'
 import { NODE_KIND_META } from './types'
 
-type FlowTab = 'business' | 'system'
-const POS_KEY_BIZ = 'flow-lab-pos-biz'
-const POS_KEY_SYS = 'flow-lab-pos-sys'
-
-function loadPositions(key: string): Record<string, { x: number; y: number }> {
-  try { return JSON.parse(localStorage.getItem(key) ?? '{}') } catch { return {} }
-}
-function savePositions(key: string, nodes: FlowNode[]) {
-  const pos: Record<string, { x: number; y: number }> = {}
-  nodes.forEach(n => { pos[n.id] = n.position })
-  localStorage.setItem(key, JSON.stringify(pos))
-}
-function applyPositions(nodes: FlowNode[], posKey: string): FlowNode[] {
-  const saved = loadPositions(posKey)
-  return nodes.map(n => ({ ...n, position: saved[n.id] ?? n.position }))
-}
+type FlowTab = 'process' | 'business' | 'functional' | 'system'
 
 export default function FlowMasterLab() {
-  const [flowTab, setFlowTab] = useState<FlowTab>('business')
+  const [flowTab, setFlowTab] = useState<FlowTab>('process')
+
+  // 第1階層
+  const [procNodes, setProcNodes] = useState<FlowNode[]>([])
+  const [procEdges, setProcEdges] = useState<FlowEdge[]>([])
+
+  // 第2階層
   const [bizNodes, setBizNodes] = useState<FlowNode[]>([])
   const [bizEdges, setBizEdges] = useState<FlowEdge[]>([])
+
+  // 第3階層
+  const [funcNodes, setFuncNodes] = useState<FlowNode[]>([])
+  const [funcEdges, setFuncEdges] = useState<FlowEdge[]>([])
+
+  // 第4階層
   const [sysNodes, setSysNodes] = useState<FlowNode[]>([])
   const [sysEdges, setSysEdges] = useState<FlowEdge[]>([])
 
-  const nodes = flowTab === 'business' ? bizNodes : sysNodes
-  const edges = flowTab === 'business' ? bizEdges : sysEdges
-  const setNodes = flowTab === 'business' ? setBizNodes : setSysNodes
-  const setEdges = flowTab === 'business' ? setBizEdges : setSysEdges
-  const posKey = flowTab === 'business' ? POS_KEY_BIZ : POS_KEY_SYS
+  const nodes = flowTab === 'process' ? procNodes
+              : flowTab === 'business' ? bizNodes
+              : flowTab === 'functional' ? funcNodes
+              : sysNodes
+  const edges = flowTab === 'process' ? procEdges
+              : flowTab === 'business' ? bizEdges
+              : flowTab === 'functional' ? funcEdges
+              : sysEdges
+  const setNodes = flowTab === 'process' ? setProcNodes
+                 : flowTab === 'business' ? setBizNodes
+                 : flowTab === 'functional' ? setFuncNodes
+                 : setSysNodes
+  const setEdges = flowTab === 'process' ? setProcEdges
+                 : flowTab === 'business' ? setBizEdges
+                 : flowTab === 'functional' ? setFuncEdges
+                 : setSysEdges
 
   const [selectedNode, setSelectedNode] = useState<FlowNode | null>(null)
   const [selectedEdge, setSelectedEdge] = useState<FlowEdge | null>(null)
@@ -52,98 +69,158 @@ export default function FlowMasterLab() {
 
   const showStatus = (msg: string) => { setStatusMsg(msg); setTimeout(() => setStatusMsg(''), 3500) }
 
+  // ========== ロード関数 ==========
+  const loadProcFromDB = useCallback(async () => {
+    setLoading(true)
+    try {
+      const [procRes, connRes] = await Promise.all([
+        businessProcessFlowStepsApi.getAll(),
+        businessProcessFlowConnectionsApi.getAll(),
+      ])
+      const { nodes: n, edges: e } = convertBusinessProcessFlowToReactFlow(procRes.data, connRes.data)
+      setProcNodes(n)
+      setProcEdges(e)
+      showStatus('✓ 業務プロセスフローを読み込みました')
+    } catch (err) {
+      console.error(err); showStatus('❌ 読み込みエラー')
+    } finally { setLoading(false) }
+  }, [])
+
   const loadBizFromDB = useCallback(async () => {
     setLoading(true)
     try {
-      const [stepsRes, connRes] = await Promise.all([businessFlowStepsApi.getAll(), flowConnectionsApi.getAll()])
-      const { nodes: n, edges: e } = convertToReactFlow(stepsRes.data, connRes.data)
-      setBizNodes(applyPositions(n, POS_KEY_BIZ))
+      const [stepsRes, connRes] = await Promise.all([
+        businessFlowStepsApi.getAll(),
+        flowConnectionsApi.getAll('business'),
+      ])
+      const { nodes: n, edges: e } = convertBusinessFlowToReactFlow(stepsRes.data, connRes.data)
+      setBizNodes(n)
       setBizEdges(e)
       showStatus('✓ 業務フローを読み込みました')
-    } catch { showStatus('❌ 読み込みエラー') }
-    finally { setLoading(false) }
+    } catch (err) {
+      console.error(err); showStatus('❌ 読み込みエラー')
+    } finally { setLoading(false) }
+  }, [])
+
+  const loadFuncFromDB = useCallback(async () => {
+    setLoading(true)
+    try {
+      const [stepsRes, connRes] = await Promise.all([
+        functionalFlowStepsApi.getAll(),
+        flowConnectionsApi.getAll('functional'),
+      ])
+      const { nodes: n, edges: e } = convertFunctionalFlowToReactFlow(stepsRes.data, connRes.data)
+      setFuncNodes(n)
+      setFuncEdges(e)
+      showStatus('✓ 機能フローを読み込みました')
+    } catch (err) {
+      console.error(err); showStatus('❌ 読み込みエラー')
+    } finally { setLoading(false) }
   }, [])
 
   const loadSysFromDB = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await systemFlowStepsApi.getAll()
-      const { nodes: n, edges: e } = convertSystemFlowToReactFlow(res.data)
-      setSysNodes(applyPositions(n, POS_KEY_SYS))
+      const [stepsRes, nodesRes, connRes] = await Promise.all([
+        systemFlowStepsApi.getAll(),
+        systemFlowNodesApi.getAll(),
+        flowConnectionsApi.getAll('system'),
+      ])
+      const { nodes: n, edges: e } = convertSystemFlowToReactFlow(stepsRes.data, nodesRes.data, connRes.data)
+      setSysNodes(n)
       setSysEdges(e)
       showStatus('✓ システムフローを読み込みました')
-    } catch { showStatus('❌ 読み込みエラー') }
-    finally { setLoading(false) }
+    } catch (err) {
+      console.error(err); showStatus('❌ 読み込みエラー')
+    } finally { setLoading(false) }
   }, [])
 
-  useEffect(() => { loadBizFromDB() }, [])
-  useEffect(() => { if (flowTab === 'system' && sysNodes.length === 0) loadSysFromDB() }, [flowTab])
+  // 初回ロード
+  useEffect(() => { loadProcFromDB() }, [])
+
+  // タブ切替時の遅延ロード
+  useEffect(() => {
+    if (flowTab === 'business' && bizNodes.length === 0) loadBizFromDB()
+    if (flowTab === 'functional' && funcNodes.length === 0) loadFuncFromDB()
+    if (flowTab === 'system' && sysNodes.length === 0) loadSysFromDB()
+  }, [flowTab])
 
   const handleFlowTabChange = (tab: FlowTab) => {
     setFlowTab(tab); setSelectedNode(null); setSelectedEdge(null); setIsDirty(false)
   }
 
+  // ========== 保存処理 ==========
   const saveToDb = async () => {
     setSaving(true)
     try {
-      savePositions(posKey, nodes)
-      if (flowTab === 'business') {
-        const [stepsRes, connRes] = await Promise.all([businessFlowStepsApi.getAll(), flowConnectionsApi.getAll()])
-        const existingSteps = stepsRes.data as any[]
-        const existingConns = connRes.data as any[]
-        const canvasNodeIds = new Set(nodes.map(n => n.id))
-        for (const s of existingSteps) { if (!canvasNodeIds.has(s.nodeId)) await businessFlowStepsApi.delete(s.id) }
-        const existingNodeIdMap = new Map(existingSteps.map((s: any) => [s.nodeId, s]))
-        for (const node of nodes) {
-          const d = { stepId: node.data.stepId || node.id, stepName: node.data.stepId || node.id, nodeId: node.id, nodeLabel: node.data.label, nodeType: node.data.kind || 'process', displayOrder: Math.round(node.position.x / 10), parentNodeId: '', connectionType: 'normal', mermaidStyle: node.data.kind || 'step', isActive: true }
-          const ex = existingNodeIdMap.get(node.id)
-          if (ex) await businessFlowStepsApi.update(ex.id, { ...ex, ...d })
-          else await businessFlowStepsApi.create(d)
-        }
-        const canvasEdgeKeys = new Set(edges.map(e => `${e.source}-${e.target}`))
-        for (const c of existingConns) { if (!canvasEdgeKeys.has(`${c.fromNodeId}-${c.toNodeId}`)) await flowConnectionsApi.delete(c.id) }
-        const existingConnMap = new Map(existingConns.map((c: any) => [`${c.fromNodeId}-${c.toNodeId}`, c]))
-        for (let i = 0; i < edges.length; i++) {
-          const edge = edges[i]; const key = `${edge.source}-${edge.target}`
-          const cd = { fromNodeId: edge.source, toNodeId: edge.target, connectionType: edge.data?.edgeStyle === 'dotted' ? 'dotted' : edge.data?.edgeStyle === 'dashed' ? 'dashed' : 'normal', conditionLabel: edge.data?.conditionLabel || '', displayOrder: i + 1, isActive: true }
-          const exC = existingConnMap.get(key)
-          if (exC) await flowConnectionsApi.update(exC.id, { ...exC, ...cd })
-          else await flowConnectionsApi.create(cd)
-        }
-      } else {
-        const res = await systemFlowStepsApi.getAll()
-        const existingSteps = res.data as any[]
-        const canvasNodeIds = new Set(nodes.map(n => n.id))
-        for (const s of existingSteps) { if (!canvasNodeIds.has(s.stepId)) await systemFlowStepsApi.delete(s.id) }
-        const existingStepMap = new Map(existingSteps.map((s: any) => [s.stepId, s]))
-        for (let i = 0; i < nodes.length; i++) {
-          const node = nodes[i]
-          const d = { stepId: node.id, stepName: node.data.label, businessType: node.data.stepId || node.data.label, displayOrder: i + 1, isSubgraph: true, subgraphLabel: node.data.label, isActive: true }
-          const ex = existingStepMap.get(node.id)
-          if (ex) await systemFlowStepsApi.update(ex.id, { ...ex, ...d })
-          else await systemFlowStepsApi.create(d)
-        }
-      }
-      setSavedAt(new Date()); setIsDirty(false)
-      showStatus('✅ DBに保存しました')
-    } catch (err) { console.error(err); showStatus('❌ 保存に失敗しました') }
-    finally { setSaving(false) }
+      if (flowTab === 'process') await saveProcFlow()
+      else if (flowTab === 'business') await saveBizFlow()
+      else if (flowTab === 'functional') await saveFuncFlow()
+      else await saveSysFlow()
+      setSavedAt(new Date()); setIsDirty(false); showStatus('✅ DBに保存しました')
+    } catch (err) {
+      console.error(err); showStatus('❌ 保存に失敗しました')
+    } finally { setSaving(false) }
+  }
+
+  const saveProcFlow = async () => {
+    const userNodes = procNodes.filter(n => !n.id.startsWith('cat_'))
+    const positionUpdates = userNodes.map(n => ({
+      stepId: n.id, x: n.position.x, y: n.position.y,
+    }))
+    if (positionUpdates.length > 0) {
+      await businessProcessFlowStepsApi.updatePositionsBulk(positionUpdates)
+    }
+  }
+
+  const saveBizFlow = async () => {
+    const userNodes = bizNodes.filter(n => !n.id.startsWith('bp_grp_'))
+    const positionUpdates = userNodes.map(n => ({
+      stepId: n.id, x: n.position.x, y: n.position.y,
+    }))
+    if (positionUpdates.length > 0) {
+      await businessFlowStepsApi.updatePositionsBulk(positionUpdates)
+    }
+  }
+
+  const saveFuncFlow = async () => {
+    const positionUpdates = funcNodes.map(n => ({
+      nodeId: n.id, x: n.position.x, y: n.position.y,
+    }))
+    if (positionUpdates.length > 0) {
+      await functionalFlowStepsApi.updatePositionsBulk(positionUpdates)
+    }
+  }
+
+  const saveSysFlow = async () => {
+    const userNodes = sysNodes.filter(n => !n.id.startsWith('step_'))
+    const positionUpdates = userNodes.map(n => ({
+      nodeId: n.id, x: n.position.x, y: n.position.y,
+    }))
+    if (positionUpdates.length > 0) {
+      await systemFlowNodesApi.updatePositionsBulk(positionUpdates)
+    }
   }
 
   const handleReloadFromDB = async () => {
     if (!confirm(`DBから再読み込みします。現在の配置が失われます。`)) return
-    localStorage.removeItem(posKey)
     setSelectedNode(null); setSelectedEdge(null); setIsDirty(false)
-    if (flowTab === 'business') { setBizNodes([]); setBizEdges([]); await loadBizFromDB() }
+    if (flowTab === 'process') { setProcNodes([]); setProcEdges([]); await loadProcFromDB() }
+    else if (flowTab === 'business') { setBizNodes([]); setBizEdges([]); await loadBizFromDB() }
+    else if (flowTab === 'functional') { setFuncNodes([]); setFuncEdges([]); await loadFuncFromDB() }
     else { setSysNodes([]); setSysEdges([]); await loadSysFromDB() }
   }
 
   const handleAddNode = useCallback((kind: NodeKind, position = { x: 200 + Math.random() * 300, y: 100 + Math.random() * 200 }) => {
     const meta = NODE_KIND_META[kind]
-    const id = `node_${Date.now()}_${Math.random().toString(36).slice(2, 5)}`
+    const idPrefix = flowTab === 'system' ? 'SF_node'
+                   : flowTab === 'process' ? 'BP_node'
+                   : flowTab === 'business' ? 'BF_node'
+                   : 'FF_node'
+    const id = `${idPrefix}_${Date.now()}_${Math.random().toString(36).slice(2, 5)}`
     setNodes(prev => [...prev, { id, type: kind, data: { label: meta.label, kind, stepId: '', description: '' }, position }])
     setIsDirty(true)
-  }, [setNodes])
+  }, [setNodes, flowTab])
 
   const handleNodeChange = useCallback((id: string, patch: Partial<FlowNode['data']>) => {
     setNodes(prev => prev.map(n => n.id === id ? { ...n, data: { ...n.data, ...patch } } : n))
@@ -176,10 +253,15 @@ export default function FlowMasterLab() {
         <span style={{ fontSize: 16 }}>🔀</span>
         <span style={{ fontSize: 13, fontWeight: 700, color: '#93c5fd' }}>フローマスタ</span>
         <div style={{ width: 1, height: 20, background: '#1e3a5f' }} />
-        {([{ id: 'business' as FlowTab, label: '📈 業務フロー', color: '#3b82f6' }, { id: 'system' as FlowTab, label: '🔧 システムフロー', color: '#10b981' }] as const).map(({ id, label, color }) => {
+        {([
+          { id: 'process'    as FlowTab, label: '🌐 業務プロセス',  color: '#a855f7' },
+          { id: 'business'   as FlowTab, label: '📈 業務フロー',    color: '#3b82f6' },
+          { id: 'functional' as FlowTab, label: '⚙️ 機能フロー',    color: '#10b981' },
+          { id: 'system'     as FlowTab, label: '🔧 システムフロー', color: '#f59e0b' },
+        ] as const).map(({ id, label, color }) => {
           const isActive = flowTab === id
           return (
-            <button key={id} onClick={() => handleFlowTabChange(id)} style={{ padding: '4px 14px', border: isActive ? 'none' : '1px solid #1e3a5f', borderRadius: 6, background: isActive ? color : 'transparent', color: isActive ? 'white' : '#94a3b8', fontWeight: isActive ? 700 : 500, fontSize: 12, cursor: 'pointer' } as React.CSSProperties}
+            <button key={id} onClick={() => handleFlowTabChange(id)} style={{ padding: '4px 12px', border: isActive ? 'none' : '1px solid #1e3a5f', borderRadius: 6, background: isActive ? color : 'transparent', color: isActive ? 'white' : '#94a3b8', fontWeight: isActive ? 700 : 500, fontSize: 12, cursor: 'pointer' } as React.CSSProperties}
               onMouseEnter={e => { if (!isActive) e.currentTarget.style.color = 'white' }}
               onMouseLeave={e => { if (!isActive) e.currentTarget.style.color = '#94a3b8' }}
             >{label}</button>

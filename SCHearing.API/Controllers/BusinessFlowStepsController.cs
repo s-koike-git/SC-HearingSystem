@@ -5,6 +5,10 @@ using SCHearing.API.Models;
 
 namespace SCHearing.API.Controllers
 {
+    /// <summary>
+    /// 業務フロー (第2階層: 業務処理単位) のCRUD API
+    /// F5で業務処理単位用に再構成
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class BusinessFlowStepsController : ControllerBase
@@ -16,124 +20,149 @@ namespace SCHearing.API.Controllers
             _context = context;
         }
 
-        /// <summary>
-        /// 全ての業務フロー工程を取得
-        /// </summary>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BusinessFlowStep>>> GetAll()
+        public async Task<ActionResult<IEnumerable<BusinessFlowStep>>> GetAll(
+            [FromQuery] string? businessProcessStepId = null)
         {
-            var steps = await _context.BusinessFlowSteps
-                .Where(s => s.IsActive)
-                .OrderBy(s => s.DisplayOrder)
-                .ToListAsync();
+            var query = _context.BusinessFlowSteps.AsQueryable().Where(s => s.IsActive);
 
+            if (!string.IsNullOrEmpty(businessProcessStepId))
+                query = query.Where(s => s.BusinessProcessStepId == businessProcessStepId);
+
+            var steps = await query.OrderBy(s => s.DisplayOrder).ToListAsync();
             return Ok(steps);
         }
 
-        /// <summary>
-        /// IDで業務フロー工程を取得
-        /// </summary>
         [HttpGet("{id}")]
         public async Task<ActionResult<BusinessFlowStep>> GetById(int id)
         {
             var step = await _context.BusinessFlowSteps.FindAsync(id);
-
-            if (step == null)
-            {
-                return NotFound();
-            }
-
+            if (step == null) return NotFound();
             return Ok(step);
         }
 
-        /// <summary>
-        /// 業務フロー工程を作成
-        /// </summary>
+        [HttpGet("by-step-id/{stepId}")]
+        public async Task<ActionResult<BusinessFlowStep>> GetByStepId(string stepId)
+        {
+            var step = await _context.BusinessFlowSteps
+                .FirstOrDefaultAsync(s => s.StepId == stepId);
+            if (step == null) return NotFound();
+            return Ok(step);
+        }
+
+        [HttpGet("by-process/{businessProcessStepId}")]
+        public async Task<ActionResult<IEnumerable<BusinessFlowStep>>> GetByProcess(string businessProcessStepId)
+        {
+            var steps = await _context.BusinessFlowSteps
+                .Where(s => s.BusinessProcessStepId == businessProcessStepId && s.IsActive)
+                .OrderBy(s => s.DisplayOrder)
+                .ToListAsync();
+            return Ok(steps);
+        }
+
         [HttpPost]
         public async Task<ActionResult<BusinessFlowStep>> Create(BusinessFlowStep step)
         {
             step.CreatedAt = DateTime.Now;
             step.UpdatedAt = DateTime.Now;
-
             _context.BusinessFlowSteps.Add(step);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction(nameof(GetById), new { id = step.Id }, step);
         }
 
-        /// <summary>
-        /// 業務フロー工程を更新
-        /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, BusinessFlowStep step)
         {
-            if (id != step.Id)
-            {
-                return BadRequest();
-            }
-
+            if (id != step.Id) return BadRequest();
             step.UpdatedAt = DateTime.Now;
-
             _context.Entry(step).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StepExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                if (!StepExists(id)) return NotFound();
+                throw;
             }
-
             return NoContent();
         }
 
-        /// <summary>
-        /// 業務フロー工程を削除
-        /// </summary>
+        [HttpPut("{id}/position")]
+        public async Task<IActionResult> UpdatePosition(int id, [FromBody] PositionDto dto)
+        {
+            var step = await _context.BusinessFlowSteps.FindAsync(id);
+            if (step == null) return NotFound();
+            step.PositionX = dto.X;
+            step.PositionY = dto.Y;
+            step.UpdatedAt = DateTime.Now;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpPost("positions")]
+        public async Task<IActionResult> UpdatePositionsBulk([FromBody] List<StepPositionDto> positions)
+        {
+            if (positions == null || positions.Count == 0)
+                return BadRequest(new { message = "positions が空です" });
+
+            var stepIds = positions.Select(p => p.StepId).ToList();
+            var steps = await _context.BusinessFlowSteps
+                .Where(s => stepIds.Contains(s.StepId))
+                .ToListAsync();
+
+            var now = DateTime.Now;
+            var updated = 0;
+            foreach (var p in positions)
+            {
+                var step = steps.FirstOrDefault(s => s.StepId == p.StepId);
+                if (step != null)
+                {
+                    step.PositionX = p.X;
+                    step.PositionY = p.Y;
+                    step.UpdatedAt = now;
+                    updated++;
+                }
+            }
+            await _context.SaveChangesAsync();
+            return Ok(new { count = updated });
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var step = await _context.BusinessFlowSteps.FindAsync(id);
-            if (step == null)
-            {
-                return NotFound();
-            }
-
+            if (step == null) return NotFound();
             _context.BusinessFlowSteps.Remove(step);
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
-        /// <summary>
-        /// 一括保存（CSV一括登録用）
-        /// </summary>
         [HttpPost("bulk")]
         public async Task<IActionResult> SaveBulk(List<BusinessFlowStep> steps)
         {
-            foreach (var step in steps)
+            foreach (var s in steps)
             {
-                step.CreatedAt = DateTime.Now;
-                step.UpdatedAt = DateTime.Now;
+                s.CreatedAt = DateTime.Now;
+                s.UpdatedAt = DateTime.Now;
             }
-
             _context.BusinessFlowSteps.AddRange(steps);
             await _context.SaveChangesAsync();
-
             return Ok(new { count = steps.Count });
         }
 
-        private bool StepExists(int id)
+        private bool StepExists(int id) => _context.BusinessFlowSteps.Any(e => e.Id == id);
+
+        public class PositionDto
         {
-            return _context.BusinessFlowSteps.Any(e => e.Id == id);
+            public double X { get; set; }
+            public double Y { get; set; }
+        }
+        public class StepPositionDto
+        {
+            public string StepId { get; set; } = string.Empty;
+            public double X { get; set; }
+            public double Y { get; set; }
         }
     }
 }

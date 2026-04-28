@@ -17,13 +17,21 @@ namespace SCHearing.API.Controllers
         }
 
         /// <summary>
-        /// 全てのフロー接続を取得
+        /// 全てのフロー接続を取得（flowTypeで絞り込み可）
         /// </summary>
+        /// <param name="flowType">'business' または 'system' を指定すると絞り込み</param>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<FlowConnection>>> GetAll()
+        public async Task<ActionResult<IEnumerable<FlowConnection>>> GetAll(
+            [FromQuery] string? flowType = null)
         {
-            var connections = await _context.FlowConnections
-                .Where(c => c.IsActive)
+            var query = _context.FlowConnections.AsQueryable().Where(c => c.IsActive);
+
+            if (!string.IsNullOrEmpty(flowType))
+            {
+                query = query.Where(c => c.FlowType == flowType);
+            }
+
+            var connections = await query
                 .OrderBy(c => c.DisplayOrder)
                 .ToListAsync();
 
@@ -50,10 +58,19 @@ namespace SCHearing.API.Controllers
         /// 接続元ノードIDでフロー接続を取得
         /// </summary>
         [HttpGet("from/{fromNodeId}")]
-        public async Task<ActionResult<IEnumerable<FlowConnection>>> GetByFromNode(string fromNodeId)
+        public async Task<ActionResult<IEnumerable<FlowConnection>>> GetByFromNode(
+            string fromNodeId,
+            [FromQuery] string? flowType = null)
         {
-            var connections = await _context.FlowConnections
-                .Where(c => c.FromNodeId == fromNodeId && c.IsActive)
+            var query = _context.FlowConnections
+                .Where(c => c.FromNodeId == fromNodeId && c.IsActive);
+
+            if (!string.IsNullOrEmpty(flowType))
+            {
+                query = query.Where(c => c.FlowType == flowType);
+            }
+
+            var connections = await query
                 .OrderBy(c => c.DisplayOrder)
                 .ToListAsync();
 
@@ -64,10 +81,19 @@ namespace SCHearing.API.Controllers
         /// 接続先ノードIDでフロー接続を取得
         /// </summary>
         [HttpGet("to/{toNodeId}")]
-        public async Task<ActionResult<IEnumerable<FlowConnection>>> GetByToNode(string toNodeId)
+        public async Task<ActionResult<IEnumerable<FlowConnection>>> GetByToNode(
+            string toNodeId,
+            [FromQuery] string? flowType = null)
         {
-            var connections = await _context.FlowConnections
-                .Where(c => c.ToNodeId == toNodeId && c.IsActive)
+            var query = _context.FlowConnections
+                .Where(c => c.ToNodeId == toNodeId && c.IsActive);
+
+            if (!string.IsNullOrEmpty(flowType))
+            {
+                query = query.Where(c => c.FlowType == flowType);
+            }
+
+            var connections = await query
                 .OrderBy(c => c.DisplayOrder)
                 .ToListAsync();
 
@@ -82,6 +108,12 @@ namespace SCHearing.API.Controllers
         {
             connection.CreatedAt = DateTime.Now;
             connection.UpdatedAt = DateTime.Now;
+
+            // FlowType未指定時は'business'をデフォルトに
+            if (string.IsNullOrEmpty(connection.FlowType))
+            {
+                connection.FlowType = "business";
+            }
 
             _context.FlowConnections.Add(connection);
             await _context.SaveChangesAsync();
@@ -101,6 +133,12 @@ namespace SCHearing.API.Controllers
             }
 
             connection.UpdatedAt = DateTime.Now;
+
+            // FlowType未指定時は'business'をデフォルトに
+            if (string.IsNullOrEmpty(connection.FlowType))
+            {
+                connection.FlowType = "business";
+            }
 
             _context.Entry(connection).State = EntityState.Modified;
 
@@ -151,6 +189,11 @@ namespace SCHearing.API.Controllers
             {
                 connection.CreatedAt = DateTime.Now;
                 connection.UpdatedAt = DateTime.Now;
+
+                if (string.IsNullOrEmpty(connection.FlowType))
+                {
+                    connection.FlowType = "business";
+                }
             }
 
             _context.FlowConnections.AddRange(connections);

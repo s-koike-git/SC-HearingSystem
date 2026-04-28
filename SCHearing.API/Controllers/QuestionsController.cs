@@ -20,32 +20,30 @@ namespace SCHearing.API.Controllers
         }
 
         // ============================================
-        // 質問マスタ画面用：全件取得
+        // 質問マスタ画面用：全件取得（旧エンドポイント、互換のため残す）
         // ============================================
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<Question>>> GetAllQuestions()
         {
             return await _context.Questions
                 .ToListAsync();
-
         }
 
         // ============================================
-        // ヒアリング用：業務別取得
+        // ヒアリング用：業務別取得（businessType未指定時は全件返却）
         // ============================================
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Question>>> GetQuestions(
-            [FromQuery] string businessType)
+            [FromQuery] string? businessType = null)
         {
-            if (string.IsNullOrWhiteSpace(businessType))
+            var query = _context.Questions.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(businessType))
             {
-                return BadRequest("businessType は必須です。");
+                query = query.Where(q => q.BusinessType == businessType);
             }
 
-            return await _context.Questions
-                .Where(q => q.BusinessType == businessType)
-                .ToListAsync();
-
+            return await query.ToListAsync();
         }
 
         // ============================================
@@ -78,7 +76,6 @@ namespace SCHearing.API.Controllers
         // ============================================
         // 質問削除
         // ============================================
-        
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteQuestion(int id)
         {
@@ -92,7 +89,7 @@ namespace SCHearing.API.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
-        
+
         /// <summary>
         /// 質問一括登録（CSVインポート用）
         /// </summary>
@@ -122,7 +119,6 @@ namespace SCHearing.API.Controllers
                     no = item.NoPrograms
                 }),
 
-                // ✅ 今回追加した列
                 Implementation = item.Implementation,
                 Settings = item.Settings,
                 Priority = item.Priority,
