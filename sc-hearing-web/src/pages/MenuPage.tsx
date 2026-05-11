@@ -4,13 +4,7 @@ import Layout from '../components/Layout'
 import { announcementsApi, type Announcement } from '../services/api'
 import { inquiriesApi, type Inquiry } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
-
-const MENU_CARDS = [
-  { id: 'projects',     path: '/projects',          icon: '📋', label: '案件一覧',         description: '進行中・過去の案件を検索・管理します',        accent: '#1e40af', bg: 'linear-gradient(135deg,#1e3a8a,#1e40af)', tag: '案件管理' },
-  { id: 'new-project',  path: '/projects/new',       icon: '＋', label: '新規案件作成',     description: '会社情報を入力してヒアリングを開始します',    accent: '#059669', bg: 'linear-gradient(135deg,#064e3b,#059669)', tag: 'はじめる' },
-  { id: 'estimate',     path: '/program-estimate',   icon: '🧮', label: '工数見積もり',     description: 'プログラム単位で概算工数を算出します',        accent: '#0284c7', bg: 'linear-gradient(135deg,#0c4a6e,#0284c7)', tag: '見積' },
-  { id: 'cost',         path: '/cost-simulation',    icon: '💰', label: '原価シミュレーション', description: '顧客指定単価での利益率を試算します',      accent: '#d97706', bg: 'linear-gradient(135deg,#78350f,#d97706)', tag: '分析' },
-]
+import { getVisibleMenuItems } from '../config/menuConfig'
 
 export default function MenuPage() {
   const navigate = useNavigate()
@@ -19,6 +13,8 @@ export default function MenuPage() {
   const [expandedId, setExpandedId] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [hoveredCard, setHoveredCard] = useState<string | null>(null)
+
+  const menuCards = getVisibleMenuItems(isAdmin, 'menu-page')
 
   // お知らせを取得
   useEffect(() => {
@@ -123,13 +119,13 @@ export default function MenuPage() {
 
           {/* メニューカード */}
           <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: '1.25rem' }}>
-            {MENU_CARDS.map(card => {
-              const isHov = hoveredCard === card.id
+            {menuCards.map(card => {
+              const isHov = hoveredCard === card.path
               return (
                 <div
-                  key={card.id}
+                  key={card.path}
                   onClick={() => navigate(card.path)}
-                  onMouseEnter={() => setHoveredCard(card.id)}
+                  onMouseEnter={() => setHoveredCard(card.path)}
                   onMouseLeave={() => setHoveredCard(null)}
                   style={{
                     background: 'white', borderRadius: 16, padding: '1.75rem',
@@ -141,13 +137,13 @@ export default function MenuPage() {
                     position: 'relative', overflow: 'hidden',
                   }}
                 >
-                  <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 4, background: card.bg, borderRadius: '16px 0 0 16px' }} />
+                  <div style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 4, background: card.bgGradient, borderRadius: '16px 0 0 16px' }} />
                   <div style={{ marginLeft: '0.5rem' }}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', background: `${card.accent}15`, color: card.accent, borderRadius: 6, padding: '0.18rem 0.55rem', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.05em', marginBottom: '0.9rem' }}>
                       {card.tag}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                      <div style={{ width: 48, height: 48, flexShrink: 0, background: card.bg, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, boxShadow: `0 4px 12px ${card.accent}40` }}>
+                      <div style={{ width: 48, height: 48, flexShrink: 0, background: card.bgGradient, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, boxShadow: `0 4px 12px ${card.accent}40` }}>
                         {card.icon}
                       </div>
                       <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#0f172a', lineHeight: 1.2 }}>{card.label}</h3>
@@ -181,10 +177,7 @@ export default function MenuPage() {
               </button>
             </div>
           {!loading && announcements.length > 0 && (
-              <div style={{
-              width: '400px',
-              flexShrink: 0
-            }}>
+              <div style={{ width: '100%' }}>
               <h2 style={{
                 fontSize: '1.3rem',
                 color: '#2c3e50',
