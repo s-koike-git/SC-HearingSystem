@@ -10,6 +10,8 @@ import AdminDashboard from './components/AdminDashboard'
 import PrivateRoute from './components/PrivateRoute'
 import ProgramEstimatePage from './pages/ProgramEstimatePage'
 import CostSimulationPage from './pages/CostSimulationPage'
+import CustomerManagementPage from './pages/CustomerManagementPage'
+import WorkTaskPage from './pages/WorkTaskPage'
 
 function App() {
   return (
@@ -89,7 +91,18 @@ function App() {
             }
           />
           
+          {/* 既存顧客管理 */}
+          <Route
+            path="/customers"
+            element={
+              <PrivateRoute>
+                <CustomerManagementPage />
+              </PrivateRoute>
+            }
+          />
+
           <Route path="/cost-simulation" element={<CostSimulationPage />} />
+          <Route path="/work-tasks" element={<WorkTaskPage />} />
           
           {/* デフォルトルート：ログインにリダイレクト */}
           <Route path="/" element={<Navigate to="/login" replace />} />

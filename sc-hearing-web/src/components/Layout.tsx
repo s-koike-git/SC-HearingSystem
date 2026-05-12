@@ -91,7 +91,11 @@ function Layout({ children }: LayoutProps) {
         <nav style={{ flex: 1, padding: '12px 8px', overflowY: 'auto', overflowX: 'hidden' }}>
           {visibleMenu.map(item => {
             const isActive = location.pathname === item.path
-              || (item.path !== '/menu' && location.pathname.startsWith(item.path + '/'))
+              || (
+                item.path !== '/menu' &&
+                location.pathname.startsWith(item.path + '/') &&
+                !visibleMenu.some(m => m.path !== item.path && m.path === location.pathname)
+              )
             return (
               <button
                 key={item.path}

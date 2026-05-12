@@ -847,3 +847,128 @@ export const inquiriesApi = {
   delete: (id: number) =>
     api.delete(`/Inquiries/${id}`),
 }
+
+// ─── 既存顧客管理API ──────────────────────────────────────────
+export interface Customer {
+  id: number
+  name: string
+  industry: string
+  primeType: string
+  partner: string | null
+  modules: string
+  version: number | null
+  proposalStatus: string
+  scMaintDate: string | null
+  serverEnv: string | null
+  serverMaintDate: string | null
+  contact: string
+  customerContact: string | null
+  notes: string | null
+  monthlyFee: number | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type CustomerDto = Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>
+
+export const customersApi = {
+  getAll: () => api.get<Customer[]>('/Customers'),
+  getById: (id: number) => api.get<Customer>(`/Customers/${id}`),
+  create: (data: CustomerDto) => api.post<Customer>('/Customers', data),
+  update: (id: number, data: CustomerDto) => api.put<Customer>(`/Customers/${id}`, data),
+  delete: (id: number) => api.delete(`/Customers/${id}`),
+}
+
+// ─── 顧客案件API ──────────────────────────────────────────────
+export interface CustomerProject {
+  id: number
+  customerId: number
+  projectName: string
+  projectType: string
+  status: string
+  description: string | null
+  startDate: string | null
+  expectedEndDate: string | null
+  amount: number | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type CustomerProjectDto = Omit<CustomerProject, 'id' | 'createdAt' | 'updatedAt'>
+
+export const customerProjectsApi = {
+  getByCustomer: (customerId: number) =>
+    api.get<CustomerProject[]>(`/CustomerProjects/customer/${customerId}`),
+  create: (data: CustomerProjectDto) =>
+    api.post<CustomerProject>('/CustomerProjects', data),
+  update: (id: number, data: CustomerProjectDto) =>
+    api.put<CustomerProject>(`/CustomerProjects/${id}`, data),
+  delete: (id: number) =>
+    api.delete(`/CustomerProjects/${id}`),
+}
+
+// ─── 顧客添付ファイルAPI ──────────────────────────────────────
+export interface CustomerFileItem {
+  id: number
+  customerId: number
+  projectId: number | null
+  fileName: string
+  fileType: string
+  fileSize: number
+  description: string | null
+  uploadedBy: string
+  createdAt: string
+}
+
+export const customerFilesApi = {
+  getByCustomer: (customerId: number) =>
+    api.get<CustomerFileItem[]>(`/CustomerFiles/customer/${customerId}`),
+
+  upload: (customerId: number, file: File, description?: string, uploadedBy?: string, projectId?: number) => {
+    const form = new FormData()
+    form.append('file', file)
+    if (description) form.append('description', description)
+    if (uploadedBy) form.append('uploadedBy', uploadedBy)
+    if (projectId != null) form.append('projectId', String(projectId))
+    return api.post<CustomerFileItem>(`/CustomerFiles/upload/${customerId}`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+
+  getDownloadUrl: (id: number) => {
+    const base = import.meta.env.VITE_API_BASE_URL || '/api'
+    return `${base}/CustomerFiles/${id}/download`
+  },
+
+  delete: (id: number) => api.delete(`/CustomerFiles/${id}`),
+}
+
+// ─── 作業管理API ──────────────────────────────────────────────
+export interface WorkTask {
+  id: number
+  no: number
+  category: string
+  assignees: string
+  customerName: string
+  taskName: string
+  status: string
+  startDate: string | null
+  plannedEndDate: string | null
+  actualEndDate: string | null
+  progress: number
+  priority: string
+  notes: string
+  deliverable: string
+  projectId: number | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type WorkTaskDto = Omit<WorkTask, 'id' | 'createdAt' | 'updatedAt'>
+
+export const workTasksApi = {
+  getAll: () => api.get<WorkTask[]>('/WorkTasks'),
+  create: (data: WorkTaskDto) => api.post<WorkTask>('/WorkTasks', data),
+  update: (id: number, data: WorkTaskDto) => api.put<WorkTask>(`/WorkTasks/${id}`, data),
+  delete: (id: number) => api.delete(`/WorkTasks/${id}`),
+}

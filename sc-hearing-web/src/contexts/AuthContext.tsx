@@ -5,7 +5,9 @@ export interface User {
   id: number
   username: string
   email: string
-  role: 'admin' | 'user'
+  fullName: string
+  role: string          // カンマ区切り: "admin,customer_manager"
+  roles: string[]       // 配列展開版: ["admin", "customer_manager"]
 }
 
 interface AuthContextType {
@@ -15,6 +17,8 @@ interface AuthContextType {
   logout: () => void
   isAuthenticated: boolean
   isAdmin: boolean
+  isCustomerManager: boolean
+  hasRole: (role: string) => boolean
   isLoading: boolean  // ✅ 追加: localStorage復元完了前はtrue
   addUser: (user: User & { password: string }) => Promise<void>
   updateUser: (id: number, user: Partial<User & { password: string }>) => Promise<void>
@@ -117,7 +121,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         isAuthenticated: !!user,
-        isAdmin: user?.role === 'admin',
+        isAdmin: user?.roles?.includes('admin') ?? user?.role === 'admin',
+        isCustomerManager: user?.roles?.includes('customer_manager') ?? false,
+        hasRole: (role: string) => user?.roles?.includes(role) ?? false,
         isLoading,  // ✅ 追加
         addUser,
         updateUser,

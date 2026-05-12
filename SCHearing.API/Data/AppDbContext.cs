@@ -24,6 +24,10 @@ namespace SCHearing.API.Data
         public DbSet<ProgramEstimate> ProgramEstimates { get; set; }
         public DbSet<ProgramEstimateItem> ProgramEstimateItems { get; set; }
         public DbSet<BusinessFlowMapping> BusinessFlowMappings { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<CustomerProject> CustomerProjects { get; set; }
+        public DbSet<CustomerFile> CustomerFiles { get; set; }
+        public DbSet<WorkTask> WorkTasks { get; set; }
 
         // 第1階層
         public DbSet<BusinessProcessFlowStep> BusinessProcessFlowSteps { get; set; } = null!;
