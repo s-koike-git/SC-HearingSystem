@@ -17,6 +17,7 @@ namespace SCHearing.API.Models
         public string? StartDate { get; set; }
         public string? ExpectedEndDate { get; set; }
         public int? Amount { get; set; }
+        public string Assignees { get; set; } = "";
         [Required] public DateTime CreatedAt { get; set; } = DateTime.Now;
         [Required] public DateTime UpdatedAt { get; set; } = DateTime.Now;
     }

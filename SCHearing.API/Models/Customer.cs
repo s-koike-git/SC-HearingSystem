@@ -40,6 +40,8 @@ namespace SCHearing.API.Models
         public string? Notes { get; set; }
 
         public int? MonthlyFee { get; set; }
+        
+        public string? LastVisitDate { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;

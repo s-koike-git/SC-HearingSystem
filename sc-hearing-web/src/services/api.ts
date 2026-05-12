@@ -867,6 +867,8 @@ export interface Customer {
   monthlyFee: number | null
   createdAt: string
   updatedAt: string
+  lastVisitDate?: string | null
+  assignees?: string
 }
 
 export type CustomerDto = Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>

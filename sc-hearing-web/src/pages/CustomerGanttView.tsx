@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from 'react'
-import type { Customer, CustomerProject, CustomerProjectDto } from '../services/api'
-import { customerProjectsApi } from '../services/api'
+import type { Customer, CustomerProject, CustomerProjectDto, CustomerFileItem } from '../services/api'
+import { customerProjectsApi, customerFilesApi } from '../services/api'
 
 type Scale = '1m'|'3m'|'6m'|'1y'|'all'
 
@@ -313,12 +313,39 @@ function ProjectDetailModal({project:p,customerName,onClose,onSave,onDelete}:{
   onClose:()=>void;onSave:(dto:CustomerProjectDto)=>Promise<void>;onDelete:()=>Promise<void>
 }){
   const[editing,setEditing]=useState(false)
+  const[fileTab,setFileTab]=useState(false)
+  const[projFiles,setProjFiles]=useState<CustomerFileItem[]>([])
+  const[filesLoading,setFilesLoading]=useState(false)
+  const[uploading,setUploading]=useState(false)
+  const fileInputRef=useRef<HTMLInputElement>(null)
   const[form,setForm]=useState<CustomerProjectDto>({
     customerId:p.customerId,projectName:p.projectName,projectType:p.projectType,
     status:p.status,description:p.description,startDate:p.startDate,expectedEndDate:p.expectedEndDate,amount:p.amount,
   })
   const[saving,setSaving]=useState(false)
   const[confirmDel,setConfirmDel]=useState(false)
+
+  // ファイル読み込み
+  useEffect(()=>{
+    if(!fileTab)return
+    setFilesLoading(true)
+    customerFilesApi.getByCustomer(p.customerId)
+      .then(r=>setProjFiles(r.data.filter(f=>f.projectId===p.id)))
+      .catch(()=>setProjFiles([]))
+      .finally(()=>setFilesLoading(false))
+  },[fileTab,p.customerId,p.id])
+
+  const handleUpload=async(fl:FileList|null)=>{
+    if(!fl||fl.length===0)return;setUploading(true)
+    try{for(const f of Array.from(fl))await customerFilesApi.upload(p.customerId,f,undefined,'',p.id)
+      const r=await customerFilesApi.getByCustomer(p.customerId)
+      setProjFiles(r.data.filter(f=>f.projectId===p.id))
+    }catch{alert('アップロードに失敗しました')}finally{setUploading(false);if(fileInputRef.current)fileInputRef.current.value=''}
+  }
+  const handleFileDelete=async(fid:number)=>{
+    await customerFilesApi.delete(fid)
+    setProjFiles(prev=>prev.filter(f=>f.id!==fid))
+  }
   const sc=SC[p.status]??SC['提案中']
   const set=(k:keyof CustomerProjectDto,v:unknown)=>setForm(prev=>({...prev,[k]:v===''?null:v}))
 
@@ -349,8 +376,9 @@ function ProjectDetailModal({project:p,customerName,onClose,onSave,onDelete}:{
           </div>
           {/* モード切り替えタブ */}
           <div style={{display:'flex',gap:0,marginTop:8}}>
-            <button onClick={()=>setEditing(false)} style={{padding:'5px 14px',border:'1px solid #e2e8f0',borderRight:'none',borderRadius:'6px 0 0 6px',background:!editing?'#0f172a':'white',color:!editing?'white':'#475569',fontWeight:600,fontSize:'0.75rem',cursor:'pointer',fontFamily:'inherit'}}>詳細</button>
-            <button onClick={()=>setEditing(true)} style={{padding:'5px 14px',border:'1px solid #e2e8f0',borderRadius:'0 6px 6px 0',background:editing?'#0f172a':'white',color:editing?'white':'#475569',fontWeight:600,fontSize:'0.75rem',cursor:'pointer',fontFamily:'inherit'}}>✏ 編集</button>
+            <button onClick={()=>{setEditing(false);setFileTab(false)}} style={{padding:'5px 14px',border:'1px solid #e2e8f0',borderRight:'none',borderRadius:'6px 0 0 6px',background:!editing&&!fileTab?'#0f172a':'white',color:!editing&&!fileTab?'white':'#475569',fontWeight:600,fontSize:'0.75rem',cursor:'pointer',fontFamily:'inherit'}}>詳細</button>
+            <button onClick={()=>{setEditing(true);setFileTab(false)}} style={{padding:'5px 14px',border:'1px solid #e2e8f0',borderRight:'none',background:editing?'#0f172a':'white',color:editing?'white':'#475569',fontWeight:600,fontSize:'0.75rem',cursor:'pointer',fontFamily:'inherit'}}>✏ 編集</button>
+            <button onClick={()=>{setEditing(false);setFileTab(true)}} style={{padding:'5px 14px',border:'1px solid #e2e8f0',borderRadius:'0 6px 6px 0',background:fileTab?'#0369a1':'white',color:fileTab?'white':'#475569',fontWeight:600,fontSize:'0.75rem',cursor:'pointer',fontFamily:'inherit'}}>📎 資料{projFiles.length>0&&<span style={{marginLeft:4,background:'white',color:'#0369a1',borderRadius:99,padding:'0 4px',fontSize:'0.62rem',fontWeight:700}}>{projFiles.length}</span>}</button>
           </div>
         </div>
 
@@ -374,6 +402,42 @@ function ProjectDetailModal({project:p,customerName,onClose,onSave,onDelete}:{
                 ))}
               </div>
               {p.description&&<div style={{background:'#f8fafc',borderRadius:8,padding:'10px 12px',fontSize:'0.78rem',color:'#475569',lineHeight:1.6}}>{p.description}</div>}
+
+          {/* 資料タブ */}
+          {fileTab&&(
+            <div>
+              <input ref={fileInputRef} type="file" multiple style={{display:'none'}} onChange={e=>handleUpload(e.target.files)}/>
+              <div style={{marginBottom:10,display:'flex',alignItems:'center',gap:8}}>
+                <button onClick={()=>fileInputRef.current?.click()} disabled={uploading}
+                  style={{display:'flex',alignItems:'center',gap:4,padding:'5px 12px',border:'1px dashed #d1d5db',borderRadius:6,background:'white',color:'#64748b',cursor:'pointer',fontSize:'0.75rem',fontWeight:600,outline:'none',fontFamily:'inherit'}}>
+                  {uploading?'アップロード中...':'📎 ファイルを追加'}
+                </button>
+                <span style={{fontSize:'0.65rem',color:'#94a3b8'}}>最大20MB</span>
+              </div>
+              {filesLoading?<div style={{textAlign:'center',padding:'1rem',color:'#94a3b8',fontSize:'0.8rem'}}>読み込み中...</div>
+                :projFiles.length===0?<div style={{textAlign:'center',padding:'1rem',color:'#94a3b8',fontSize:'0.8rem',border:'1px dashed #e2e8f0',borderRadius:8}}>添付ファイルがありません</div>
+                :(
+                <div style={{display:'flex',flexDirection:'column',gap:5}}>
+                  {projFiles.map(f=>{
+                    const ext=f.fileName.split('.').pop()?.toLowerCase()??''
+                    const icon=f.fileType.includes('pdf')||ext==='pdf'?'📄':['docx','doc'].includes(ext)?'📝':['xlsx','xls'].includes(ext)?'📊':['pptx','ppt'].includes(ext)?'📋':f.fileType.includes('image')||['jpg','jpeg','png','webp'].includes(ext)?'🖼️':'📎'
+                    const sz=f.fileSize<1024?f.fileSize+'B':f.fileSize<1048576?(f.fileSize/1024).toFixed(1)+'KB':(f.fileSize/1048576).toFixed(1)+'MB'
+                    return(
+                      <div key={f.id} style={{display:'flex',alignItems:'center',gap:7,padding:'6px 10px',background:'#f8fafc',borderRadius:7,border:'1px solid #e2e8f0'}}>
+                        <span style={{fontSize:'1rem',flexShrink:0}}>{icon}</span>
+                        <a href={customerFilesApi.getDownloadUrl(f.id)} target="_blank" rel="noopener noreferrer" style={{flex:1,minWidth:0,fontSize:'0.75rem',fontWeight:600,color:'#0369a1',textDecoration:'none',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}} onMouseEnter={e=>(e.currentTarget.style.textDecoration='underline')} onMouseLeave={e=>(e.currentTarget.style.textDecoration='none')}>{f.fileName}</a>
+                        <span style={{fontSize:'0.62rem',color:'#94a3b8',flexShrink:0}}>{sz}</span>
+                        <a href={customerFilesApi.getDownloadUrl(f.id)} target="_blank" rel="noopener noreferrer" style={{width:24,height:24,border:'1px solid #bae6fd',borderRadius:4,background:'#f0f9ff',color:'#0369a1',textDecoration:'none',fontSize:'0.7rem',fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>↗</a>
+                        <a href={customerFilesApi.getDownloadUrl(f.id)} download={f.fileName} style={{width:24,height:24,border:'1px solid #d1fae5',borderRadius:4,background:'#f0fdf4',color:'#059669',textDecoration:'none',fontSize:'0.7rem',fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>↓</a>
+                        <button onClick={()=>handleFileDelete(f.id)} style={{width:24,height:24,border:'1px solid #fecaca',borderRadius:4,background:'#fef2f2',color:'#dc2626',cursor:'pointer',fontSize:'0.65rem',outline:'none',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>✕</button>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
             </div>
           )}
 
