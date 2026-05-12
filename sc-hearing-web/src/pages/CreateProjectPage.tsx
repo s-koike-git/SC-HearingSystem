@@ -1,10 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import { projectsApi } from '../services/api'
 
+
+// ─── マスタAPI取得フック ──────────────────────────────────────
+function useMasterValues(category: string, defaults: string[]): string[] {
+  const [values, setValues] = useState<string[]>(defaults)
+  useEffect(() => {
+    fetch('/sc-hearing/api/MasterItems/category/' + category)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.length) setValues(data.map((m: any) => m.value)) })
+      .catch(() => {})
+  }, [category])
+  return values
+}
+
 function CreateProjectPage() {
   const navigate = useNavigate()
+  const INDUSTRIES = useMasterValues('create_industry', ['製造業','食品製造業','小売業','卸売業','サービス業','建設業','運輸業','その他'])
+
   const [formData, setFormData] = useState({
     companyName: '',
     industry: '',

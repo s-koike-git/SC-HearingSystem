@@ -1,8 +1,20 @@
-import { useState } from 'react'
+import { useState , useEffect } from 'react'
 import Layout from '../components/Layout'
 import type { MaterialRow, LaborRow, ExpenseRow, OverheadSetting } from '../services/api'
 
 type CostTab = 'materials' | 'labor' | 'expenses' | 'overhead'
+
+
+function useMasterValues(category: string, defaults: string[]): string[] {
+  const [values, setValues] = useState<string[]>(defaults)
+  useEffect(() => {
+    fetch('/sc-hearing/api/MasterItems/category/' + category)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.length) setValues(data.map((m: any) => m.value)) })
+      .catch(() => {})
+  }, [category])
+  return values
+}
 
 function CostSimulationPage() {
   const [step, setStep] = useState<'input' | 'costs' | 'result'>('input')
@@ -333,13 +345,7 @@ function CostSimulationPage() {
                         <td style={{ padding: '0.5rem' }}>
                           <select value={material.unit} onChange={(e) => updateMaterialRow(material.id, 'unit', e.target.value)}
                             style={{ width: '100%', padding: '0.5rem', border: '1px solid #bdc3c7', borderRadius: '4px' }}>
-                            <option value="個">個</option>
-                            <option value="本">本</option>
-                            <option value="枚">枚</option>
-                            <option value="kg">kg</option>
-                            <option value="g">g</option>
-                            <option value="m">m</option>
-                            <option value="L">L</option>
+                            {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
                           </select>
                         </td>
                         <td style={{ padding: '0.5rem', textAlign: 'right', fontWeight: 'bold' }}>¥{material.subtotal.toLocaleString()}</td>

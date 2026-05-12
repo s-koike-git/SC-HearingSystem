@@ -28,6 +28,8 @@ namespace SCHearing.API.Data
         public DbSet<CustomerProject> CustomerProjects { get; set; }
         public DbSet<CustomerFile> CustomerFiles { get; set; }
         public DbSet<WorkTask> WorkTasks { get; set; }
+        public DbSet<WorkTaskFile> WorkTaskFiles { get; set; }
+        public DbSet<MasterItem> MasterItems { get; set; }
 
         // 第1階層
         public DbSet<BusinessProcessFlowStep> BusinessProcessFlowSteps { get; set; } = null!;

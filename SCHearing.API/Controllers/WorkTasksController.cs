@@ -32,6 +32,7 @@ namespace SCHearing.API.Controllers
                 StartDate = dto.StartDate, PlannedEndDate = dto.PlannedEndDate,
                 ActualEndDate = dto.ActualEndDate, Progress = dto.Progress,
                 Priority = dto.Priority, Notes = dto.Notes, Deliverable = dto.Deliverable,
+                ProjectId = dto.ProjectId,   // ← 追加
                 CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now,
             };
             _ctx.WorkTasks.Add(t);
@@ -49,6 +50,7 @@ namespace SCHearing.API.Controllers
             t.StartDate = dto.StartDate; t.PlannedEndDate = dto.PlannedEndDate;
             t.ActualEndDate = dto.ActualEndDate; t.Progress = dto.Progress;
             t.Priority = dto.Priority; t.Notes = dto.Notes; t.Deliverable = dto.Deliverable;
+            t.ProjectId = dto.ProjectId;   // ← 追加
             t.UpdatedAt = DateTime.Now;
             await _ctx.SaveChangesAsync();
             return Ok(t);
@@ -80,7 +82,6 @@ namespace SCHearing.API.Controllers
         public string Priority { get; set; } = "中";
         public string Notes { get; set; } = "";
         public string Deliverable { get; set; } = "";
+        public int? ProjectId { get; set; }   // ← 追加
     }
 }
-
-// AppDbContext.csに追加: public DbSet<WorkTask> WorkTasks { get; set; }

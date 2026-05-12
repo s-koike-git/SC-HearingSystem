@@ -7,10 +7,9 @@ import ProgramManagement from './admin/ProgramManagement'
 import SystemSettings from './admin/SystemSettings'
 import AnnouncementManagement from './admin/AnnouncementManagement'
 import FlowMasterManagement from './admin/FlowMasterManagement'
-import { EditLockProvider } from '../contexts/EditLockContext'
-import { EditLockHeader, EditLockedContent } from './admin/EditLockHeader'
+import MasterItemManagement from './admin/MasterItemManagement'
 
-type TabType = 'users' | 'businesses' | 'questions' | 'programs' | 'settings' | 'announcements' | 'flow-master'
+type TabType = 'users' | 'businesses' | 'questions' | 'programs' | 'settings' | 'announcements' | 'flow-master' | 'master-items'
 
 const TABS: { id: TabType; name: string; icon: string; color: string }[] = [
   { id: 'users',         name: 'ユーザー管理',  icon: '👤', color: '#3b82f6' },
@@ -20,31 +19,18 @@ const TABS: { id: TabType; name: string; icon: string; color: string }[] = [
   { id: 'announcements', name: 'お知らせ',       icon: '📢', color: '#f59e0b' },
   { id: 'settings',      name: 'システム設定',   icon: '⚙️', color: '#64748b' },
   { id: 'flow-master',   name: 'フローマスタ',   icon: '🔀', color: '#ec4899' },
+  { id: 'master-items',  name: '項目マスタ',     icon: '⚙️', color: '#f97316' },
 ]
-
-const LOCKABLE_TABS: TabType[] = ['businesses', 'questions', 'programs', 'flow-master']
 
 function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('users')
   const activeTabMeta = TABS.find(t => t.id === activeTab)!
-  const isLockable = LOCKABLE_TABS.includes(activeTab)
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'users':         return <UserManagement />
-      case 'businesses':    return <BusinessManagement />
-      case 'questions':     return <QuestionManagement />
-      case 'programs':      return <ProgramManagement />
-      case 'announcements': return <AnnouncementManagement />
-      case 'settings':      return <SystemSettings />
-      case 'flow-master':   return <FlowMasterManagement />
-    }
-  }
 
   return (
     <Layout>
       <div style={{ padding: '1.5rem 2rem', maxWidth: 1600, margin: '0 auto', fontFamily: '"Noto Sans JP", sans-serif' }}>
 
+        {/* ページヘッダー */}
         <div style={{
           background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
           borderRadius: 12, padding: '1.25rem 1.75rem', marginBottom: '1.25rem',
@@ -70,8 +56,10 @@ function AdminDashboard() {
           </div>
         </div>
 
+        {/* タブ + コンテンツ */}
         <div style={{ background: '#0f172a', borderRadius: 12, border: '1px solid #1e3a5f', overflow: 'hidden' }}>
 
+          {/* タブバー */}
           <div style={{
             display: 'flex', background: '#0a1628',
             borderBottom: '1px solid #1e3a5f',
@@ -100,38 +88,25 @@ function AdminDashboard() {
             })}
           </div>
 
+          {/* コンテンツ（flow-master以外は白コンテナで包む） */}
           {activeTab === 'flow-master' ? (
             <div style={{ padding: '1.5rem' }}>
-              <EditLockProvider key={activeTab}>
-                <EditLockHeader />
-                <EditLockedContent>
-                  {renderTabContent()}
-                </EditLockedContent>
-              </EditLockProvider>
+              <FlowMasterManagement />
             </div>
           ) : (
             <div style={{ background: 'white', margin: '1.25rem', borderRadius: 10, padding: '1.75rem' }}>
-              {isLockable ? (
-                <EditLockProvider key={activeTab}>
-                  <EditLockHeader />
-                  <EditLockedContent>
-                    {renderTabContent()}
-                  </EditLockedContent>
-                </EditLockProvider>
-              ) : (
-                renderTabContent()
-              )}
+              {activeTab === 'users'         && <UserManagement />}
+              {activeTab === 'businesses'    && <BusinessManagement />}
+              {activeTab === 'questions'     && <QuestionManagement />}
+              {activeTab === 'programs'      && <ProgramManagement />}
+              {activeTab === 'settings'      && <SystemSettings />}
+              {activeTab === 'announcements' && <AnnouncementManagement />}
+              {activeTab === 'master-items'  && <MasterItemManagement />}
             </div>
           )}
         </div>
       </div>
-      <style>{`
-        button:focus{outline:none;}
-        fieldset[disabled] button { cursor: not-allowed !important; }
-        fieldset[disabled] input,
-        fieldset[disabled] select,
-        fieldset[disabled] textarea { cursor: not-allowed !important; background-color: #f9fafb !important; }
-      `}</style>
+      <style>{`button:focus{outline:none;}`}</style>
     </Layout>
   )
 }

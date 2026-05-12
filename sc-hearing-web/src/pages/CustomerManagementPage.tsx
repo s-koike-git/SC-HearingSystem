@@ -4,6 +4,10 @@ import { customersApi, customerProjectsApi, customerFilesApi, type Customer, typ
 import { useAuth } from '../contexts/AuthContext'
 import CustomerGanttView from './CustomerGanttView'
 
+// ─── 日付変換（type="date"用） ────────────────────────────────
+const toDateInput = (s: string|null|undefined): string => s ? s.replace(/\//g, '-') : ''
+const fromDateInput = (s: string): string|null => s ? s.replace(/-/g, '/') : null
+
 const TODAY = new Date('2026-05-11')
 const TODAY_STR = '2026/05/11'
 const THIS_YEAR = '2026'
@@ -41,10 +45,30 @@ function getUrgency(s:string|null):Urgency{if(!s)return'none';const d=parseDate(
 function cardUrgency(c:Customer):Urgency{const order:Urgency[]=['expired','critical','warning','caution','ok','none'];const si=order.indexOf(getUrgency(c.serverMaintDate)),sci=order.indexOf(getUrgency(c.scMaintDate));return order[Math.min(si<0?99:si,sci<0?99:sci)]??'none'}
 function dateLabel(s:string|null,u:Urgency):string{if(!s)return'―';const d=parseDate(s);if(!d)return s;const m=Math.round((d.getTime()-TODAY.getTime())/(1000*60*60*24*30));return u==='expired'?`${s}（期限切れ）`:`${s}（あと${m}ヶ月）`}
 function parseMods(s:string){return['販売','生産','原価'].filter(m=>s.includes(m))}
-function getLastVisit(c:Customer):string|null{return(c as any).lastVisitDate as string|null|undefined??null}
-function isVisitedThisYear(c:Customer):boolean{const lv=getLastVisit(c);return !!(lv&&lv.startsWith(THIS_YEAR))}
+function getLastVisit(c:Customer):string|null{
+  const v=(c as any).lastVisitDate
+  if(!v||typeof v!=='string'||v.trim()===''||v.trim()==='null')return null
+  return v.trim()
+}
+function isVisitedThisYear(c:Customer):boolean{
+  const lv=getLastVisit(c)
+  return !!(lv&&lv.length>0&&lv.startsWith(THIS_YEAR))
+}
 function visitDaysAgo(c:Customer):number|null{const lv=getLastVisit(c);const d=parseDate(lv);if(!d)return null;return Math.round((TODAY.getTime()-d.getTime())/86400000)}
 function assigneeList(s:string|undefined|null):string[]{if(!s)return[];return s.split(',').map(a=>a.trim()).filter(Boolean)}
+
+
+// ─── マスタAPI取得フック ──────────────────────────────────────
+function useMasterValues(category: string, defaults: string[]): string[] {
+  const [values, setValues] = useState<string[]>(defaults)
+  useEffect(() => {
+    fetch('/sc-hearing/api/MasterItems/category/' + category)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.length) setValues(data.map((m: any) => m.value)) })
+      .catch(() => {})
+  }, [category])
+  return values
+}
 
 const EMPTY_CUSTOMER: CustomerDto={name:'',industry:'',primeType:'プライム',partner:null,modules:'SC販売',version:null,proposalStatus:'',scMaintDate:null,serverEnv:null,serverMaintDate:null,contact:'永田 暁洋',customerContact:null,notes:null,monthlyFee:null,lastVisitDate:null}
 
@@ -67,7 +91,17 @@ export default function CustomerManagementPage(){
   const[delTarget,setDelTarget]=useState<Customer|null>(null)
   const[editProject,setEditProject]=useState<{project:CustomerProject|null;customerId:number}|null>(null)
   const[visitingId,setVisitingId]=useState<number|null>(null)
+  const[showFilter,setShowFilter]=useState(false)
+  const EMPTY_CF={contacts:[] as string[],industries:[] as string[],serverEnvs:[] as string[],modules:[] as string[],primeTypes:[] as string[],feeMin:'',feeMax:'',scMaintFrom:'',scMaintTo:'',serverMaintFrom:'',serverMaintTo:''}
+  const[cf,setCf]=useState(EMPTY_CF)
+  const activeCFCount=[cf.contacts.length>0,cf.industries.length>0,cf.serverEnvs.length>0,cf.modules.length>0,cf.primeTypes.length>0,!!(cf.feeMin||cf.feeMax),!!(cf.scMaintFrom||cf.scMaintTo),!!(cf.serverMaintFrom||cf.serverMaintTo)].filter(Boolean).length
 
+  // ★ マスタAPIから動的に取得（フォール バックは上の定数）
+  const CONTACTS      = useMasterValues('tcs_contact',    ['永田 暁洋','岸本 健二','小池 慎郁','成清 祐介','西山 悠太','赤星 美和子'])
+  const PROJECT_TYPES = useMasterValues('project_type',   ['サーバーリプレイス','SCカスタマイズ','バージョンアップ','商品購入','保守契約更新','その他'])
+  const PROJECT_STATUSES = useMasterValues('project_status',['提案中','商談中','受注','対応中','完了','失注'])
+  const SERVER_ENVS   = useMasterValues('server_env',     ['オンプレ(TCS管理)','オンプレ(お客様管理)','AWS(TCS管理)','Azure(TCS管理)','データセンター(仮想)'])
+  const MODULE_OPTIONS= useMasterValues('sc_module',      ['SC販売','SC販売生産','SC販売生産原価'])
   const load=useCallback(async()=>{try{const r=await customersApi.getAll();setCustomers(r.data)}catch(e){console.error(e)}finally{setLoading(false)}},[])
   useEffect(()=>{load()},[load])
   const loadProjects=async(id:number)=>{try{const r=await customerProjectsApi.getByCustomer(id);setProjects(p=>({...p,[id]:r.data}))}catch{setProjects(p=>({...p,[id]:[]}))}};
@@ -76,19 +110,24 @@ export default function CustomerManagementPage(){
   const switchToGantt=async()=>{setViewMode('gantt');for(const c of customers){if(!projects[c.id])await loadProjects(c.id)}}
   const switchToMeeting=async()=>{setMeetingMode(true);for(const c of customers){if(!projects[c.id])await loadProjects(c.id)}}
 
-  // ★ 訪問登録（ワンクリックで今日の日付をセット）
-  const handleQuickVisit=async(c:Customer)=>{
-    setVisitingId(c.id)
+  // ★ 訪問トグル専用エンドポイント（/api/Customers/{id}/visit-date）
+  const handleQuickVisit=async(cust:Customer)=>{
+    setVisitingId(cust.id)
+    const currentVisit=getLastVisit(cust)
+    const newDate=currentVisit?'':TODAY_STR  // トグル
     try{
-      await customersApi.update(c.id,{
-        name:c.name,industry:c.industry,primeType:c.primeType,partner:c.partner,
-        modules:c.modules,version:c.version,proposalStatus:'',
-        scMaintDate:c.scMaintDate,serverEnv:c.serverEnv,serverMaintDate:c.serverMaintDate,
-        contact:c.contact,customerContact:c.customerContact,notes:c.notes,monthlyFee:c.monthlyFee,
-        lastVisitDate:TODAY_STR,
-      } as CustomerDto)
+      // 訪問日専用PATCHエンドポイントを使用（full updateより確実）
+      const res=await fetch(`/sc-hearing/api/Customers/${cust.id}/visit-date`,{
+        method:'PATCH',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({visitDate:newDate}),
+      })
+      if(!res.ok)throw new Error('HTTP '+res.status)
       await load()
-    }catch{alert('訪問登録に失敗しました')}finally{setVisitingId(null)}
+    }catch(e){
+      console.error(e)
+      alert('訪問日の更新に失敗しました')
+    }finally{setVisitingId(null)}
   }
 
   const filtered=useMemo(()=>{
@@ -101,6 +140,17 @@ export default function CustomerManagementPage(){
       if(fUrgency!=='all'){const u=cardUrgency(c);if(fUrgency==='expired'&&u!=='expired')return false;if(fUrgency==='critical'&&u!=='critical'&&u!=='expired')return false;if(fUrgency==='warning'&&u!=='warning')return false;if(fUrgency==='ok'&&u!=='ok'&&u!=='none'&&u!=='caution')return false}
       if(fVisit==='unvisited'&&isVisitedThisYear(c))return false
       if(fVisit==='visited'&&!isVisitedThisYear(c))return false
+      if(cf.contacts.length>0&&!cf.contacts.includes(c.contact))return false
+      if(cf.industries.length>0&&!cf.industries.includes(c.industry))return false
+      if(cf.serverEnvs.length>0&&!cf.serverEnvs.includes(c.serverEnv||''))return false
+      if(cf.modules.length>0&&!cf.modules.some(m=>(c.modules||'').includes(m)))return false
+      if(cf.primeTypes.length>0&&!cf.primeTypes.includes(c.primeType))return false
+      if(cf.feeMin&&(c.monthlyFee||0)<Number(cf.feeMin))return false
+      if(cf.feeMax&&(c.monthlyFee||0)>Number(cf.feeMax))return false
+      if(cf.scMaintFrom&&(c.scMaintDate||'')<cf.scMaintFrom.replace(/-/g,'/'))return false
+      if(cf.scMaintTo&&(c.scMaintDate||'')>cf.scMaintTo.replace(/-/g,'/'))return false
+      if(cf.serverMaintFrom&&(c.serverMaintDate||'')<cf.serverMaintFrom.replace(/-/g,'/'))return false
+      if(cf.serverMaintTo&&(c.serverMaintDate||'')>cf.serverMaintTo.replace(/-/g,'/'))return false
       return true
     }).sort((a,b)=>{
       if(meetingMode){const au=!isVisitedThisYear(a),bu=!isVisitedThisYear(b);if(au&&!bu)return-1;if(!au&&bu)return 1}
@@ -164,6 +214,11 @@ export default function CustomerManagementPage(){
             <option value="visited">✅ 今年訪問済みのみ</option>
           </select>
           {!meetingMode&&<select style={sel} value={fType} onChange={e=>setFType(e.target.value)}><option value="all">全種別</option><option value="プライム">プライム</option><option value="サブ">サブ</option></select>}
+          <button onClick={()=>setShowFilter(true)} style={{display:'flex',alignItems:'center',gap:6,padding:'7px 14px',border:`2px solid ${activeCFCount>0?'#1d4ed8':'#e2e8f0'}`,borderRadius:8,background:activeCFCount>0?'#eff6ff':'white',color:activeCFCount>0?'#1d4ed8':'#475569',fontWeight:700,fontSize:'0.82rem',cursor:'pointer',fontFamily:'inherit',outline:'none',whiteSpace:'nowrap'}}>
+            <span>🔽 フィルター</span>
+            {activeCFCount>0&&<span style={{background:'#1d4ed8',color:'white',borderRadius:99,padding:'1px 7px',fontSize:'0.7rem',fontWeight:700}}>{activeCFCount}</span>}
+          </button>
+          {activeCFCount>0&&<button onClick={()=>setCf(EMPTY_CF)} style={{padding:'6px 10px',border:'1px solid #fecaca',borderRadius:7,background:'#fef2f2',color:'#dc2626',fontSize:'0.75rem',fontWeight:600,cursor:'pointer',fontFamily:'inherit',outline:'none'}}>✕ クリア</button>}
         </div>
 
         {/* コンテンツ */}
@@ -202,33 +257,117 @@ export default function CustomerManagementPage(){
 
       {(isCreating||editCustomer)&&<CustomerFormModal customer={editCustomer} onClose={()=>{setIsCreating(false);setEditCustomer(null)}} onSave={async dto=>{if(editCustomer)await customersApi.update(editCustomer.id,dto);else await customersApi.create(dto);await load();setIsCreating(false);setEditCustomer(null)}}/>}
       {editProject&&<ProjectFormModal project={editProject.project} customerId={editProject.customerId} onClose={()=>setEditProject(null)} onSave={async dto=>{if(editProject.project)await customerProjectsApi.update(editProject.project.id,dto);else await customerProjectsApi.create(dto);await loadProjects(editProject.customerId);setEditProject(null)}}/>}
+      {showFilter&&<CustomerFilterModal cf={cf} setCf={setCf} onClose={()=>setShowFilter(false)} onClear={()=>{setCf(EMPTY_CF);setShowFilter(false)}} contacts={CONTACTS} industries={[...new Set(customers.map(cu=>cu.industry).filter(Boolean))]} serverEnvs={SERVER_ENVS} modules={MODULE_OPTIONS} activeCFCount={activeCFCount}/>}
       {delTarget&&<ConfirmModal title="顧客を削除しますか？" message={`「${delTarget.name}」を削除します。\n関連する案件・添付ファイルも全て削除されます。`} onCancel={()=>setDelTarget(null)} onConfirm={async()=>{await customersApi.delete(delTarget.id);await load();setDelTarget(null)}}/>}
     </Layout>
   )
 }
 
 // ─── 訪問ステータスバッジ ─────────────────────────────────────
+// ─── 顧客管理 詳細フィルターモーダル ─────────────────────────────
+interface CFState{contacts:string[];industries:string[];serverEnvs:string[];modules:string[];primeTypes:string[];feeMin:string;feeMax:string;scMaintFrom:string;scMaintTo:string;serverMaintFrom:string;serverMaintTo:string}
+function CustomerFilterModal({cf,setCf,onClose,onClear,contacts,industries,serverEnvs,modules,activeCFCount}:{
+  cf:CFState;setCf:(v:CFState)=>void;onClose:()=>void;onClear:()=>void;
+  contacts:string[];industries:string[];serverEnvs:string[];modules:string[];activeCFCount:number
+}){
+  const[local,setLocal]=useState({...cf})
+  const toggle=(key:keyof CFState,val:string)=>{
+    const arr=local[key] as string[]
+    setLocal(p=>({...p,[key]:arr.includes(val)?arr.filter(x=>x!==val):[...arr,val]}))
+  }
+  const apply=()=>{setCf(local);onClose()}
+  const inp:React.CSSProperties={width:'100%',padding:'7px 10px',border:'1px solid #e2e8f0',borderRadius:6,fontSize:'0.82rem',fontFamily:'inherit',outline:'none',boxSizing:'border-box' as const}
+  const sect=(title:string)=><div style={{fontSize:'0.68rem',fontWeight:700,color:'#64748b',letterSpacing:'0.06em',textTransform:'uppercase' as const,marginBottom:6,marginTop:16}}>{title}</div>
+  const chip=(label:string,active:boolean,onClick:()=>void,color='#1d4ed8')=>(
+    <button onClick={onClick} style={{padding:'4px 12px',border:`1px solid ${active?color:'#e2e8f0'}`,borderRadius:99,background:active?`${color}15`:'white',color:active?color:'#64748b',fontSize:'0.75rem',fontWeight:active?700:400,cursor:'pointer',fontFamily:'inherit',outline:'none',transition:'all .1s'}}>
+      {active&&'✓ '}{label}
+    </button>
+  )
+  const localActiveCount=[local.contacts.length>0,local.industries.length>0,local.serverEnvs.length>0,local.modules.length>0,local.primeTypes.length>0,!!(local.feeMin||local.feeMax),!!(local.scMaintFrom||local.scMaintTo),!!(local.serverMaintFrom||local.serverMaintTo)].filter(Boolean).length
+  return(
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.45)',zIndex:4000,display:'flex',alignItems:'flex-start',justifyContent:'flex-end',padding:'60px 16px 16px'}} onClick={onClose}>
+      <div style={{background:'white',borderRadius:14,width:500,maxHeight:'calc(100vh - 80px)',display:'flex',flexDirection:'column',boxShadow:'0 20px 60px rgba(0,0,0,0.2)',overflow:'hidden'}} onClick={e=>e.stopPropagation()}>
+        <div style={{padding:'14px 18px',borderBottom:'1px solid #f1f5f9',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+          <div>
+            <div style={{fontWeight:700,fontSize:'0.95rem',color:'#0f172a'}}>顧客 詳細フィルター</div>
+            {localActiveCount>0&&<div style={{fontSize:'0.72rem',color:'#1d4ed8'}}>{localActiveCount}件の条件が設定されています</div>}
+          </div>
+          <button onClick={onClose} style={{background:'none',border:'none',fontSize:'1.1rem',cursor:'pointer',color:'#94a3b8',outline:'none'}}>✕</button>
+        </div>
+        <div style={{overflowY:'auto',flex:1,padding:'4px 18px 18px'}}>
+          {sect('TCS担当者（複数選択可）')}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:5}}>
+            {contacts.map(a=>{const active=local.contacts.includes(a);return(
+              <label key={a} style={{display:'flex',alignItems:'center',gap:6,padding:'6px 8px',borderRadius:7,border:`1px solid ${active?'#1d4ed8':'#e2e8f0'}`,background:active?'#eff6ff':'white',cursor:'pointer'}}>
+                <input type="checkbox" checked={active} onChange={()=>toggle('contacts',a)} style={{accentColor:'#1d4ed8',width:13,height:13,cursor:'pointer',flexShrink:0}}/>
+                <span style={{fontSize:'0.78rem',fontWeight:active?700:400,color:active?'#1d4ed8':'#334155'}}>{a}</span>
+              </label>
+            )})}
+          </div>
+          {sect('業種（複数選択可）')}
+          <div style={{display:'flex',gap:5,flexWrap:'wrap'}}>
+            {industries.slice(0,15).map(ind=>chip(ind,local.industries.includes(ind),()=>toggle('industries',ind),'#0369a1'))}
+          </div>
+          {sect('プライム/サブ')}
+          <div style={{display:'flex',gap:6}}>
+            {['プライム','サブ'].map(pt=>chip(pt,local.primeTypes.includes(pt),()=>toggle('primeTypes',pt),'#7c3aed'))}
+          </div>
+          {sect('サーバー環境（複数選択可）')}
+          <div style={{display:'flex',gap:5,flexWrap:'wrap'}}>
+            {serverEnvs.map(env=>chip(env,local.serverEnvs.includes(env),()=>toggle('serverEnvs',env),'#059669'))}
+          </div>
+          {sect('SCモジュール（複数選択可）')}
+          <div style={{display:'flex',gap:5,flexWrap:'wrap'}}>
+            {modules.map(mod=>chip(mod,local.modules.includes(mod),()=>toggle('modules',mod),'#d97706'))}
+          </div>
+          {sect('月額保守料（円）')}
+          <div style={{display:'grid',gridTemplateColumns:'1fr auto 1fr',gap:8,alignItems:'center'}}>
+            <input style={inp} type="number" placeholder="下限（例: 100000）" value={local.feeMin} onChange={e=>setLocal(p=>({...p,feeMin:e.target.value}))}/>
+            <span style={{fontSize:'0.75rem',color:'#94a3b8'}}>〜</span>
+            <input style={inp} type="number" placeholder="上限（例: 500000）" value={local.feeMax} onChange={e=>setLocal(p=>({...p,feeMax:e.target.value}))}/>
+          </div>
+          {sect('SC保守期限')}
+          <div style={{display:'grid',gridTemplateColumns:'1fr auto 1fr',gap:8,alignItems:'center'}}>
+            <input type="date" style={inp} value={local.scMaintFrom} onChange={e=>setLocal(p=>({...p,scMaintFrom:e.target.value}))}/>
+            <span style={{fontSize:'0.75rem',color:'#94a3b8'}}>〜</span>
+            <input type="date" style={inp} value={local.scMaintTo} onChange={e=>setLocal(p=>({...p,scMaintTo:e.target.value}))}/>
+          </div>
+          {sect('サーバー保守期限')}
+          <div style={{display:'grid',gridTemplateColumns:'1fr auto 1fr',gap:8,alignItems:'center'}}>
+            <input type="date" style={inp} value={local.serverMaintFrom} onChange={e=>setLocal(p=>({...p,serverMaintFrom:e.target.value}))}/>
+            <span style={{fontSize:'0.75rem',color:'#94a3b8'}}>〜</span>
+            <input type="date" style={inp} value={local.serverMaintTo} onChange={e=>setLocal(p=>({...p,serverMaintTo:e.target.value}))}/>
+          </div>
+        </div>
+        <div style={{display:'flex',gap:8,padding:'12px 18px',borderTop:'1px solid #f1f5f9',flexShrink:0}}>
+          <button onClick={onClear} style={{padding:'8px 14px',border:'1px solid #e2e8f0',borderRadius:7,background:'white',color:'#475569',cursor:'pointer',fontWeight:600,fontSize:'0.82rem',fontFamily:'inherit',outline:'none'}}>クリア</button>
+          <button onClick={apply} style={{flex:1,padding:'8px',border:'none',borderRadius:7,background:'#0f172a',color:'white',cursor:'pointer',fontWeight:700,fontSize:'0.85rem',fontFamily:'inherit',outline:'none'}}>
+            この条件で絞り込む{localActiveCount>0?` (${localActiveCount}件の条件)`:''}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
 function VisitBadge({c,onVisit,visiting,size='sm'}:{c:Customer;onVisit:()=>void;visiting:boolean;size?:'sm'|'lg'}){
   const visited=isVisitedThisYear(c)
   const lv=getLastVisit(c)
-  const dago=visitDaysAgo(c)
   const fs=size==='lg'?'0.82rem':'0.65rem'
+  const pd=size==='lg'?'5px 14px':'2px 8px'
   if(visited){
     return(
-      <div style={{display:'flex',alignItems:'center',gap:4}}>
-        <span style={{fontSize:fs,padding:size==='lg'?'4px 12px':'2px 8px',borderRadius:99,background:'#f0fdf4',color:'#15803d',fontWeight:700,border:'1px solid #bbf7d0'}}>
-          ✅ 訪問済 {lv}
-        </span>
-        <button onClick={e=>{e.stopPropagation();onVisit()}} disabled={visiting} style={{fontSize:'0.6rem',padding:'1px 6px',border:'1px solid #bbf7d0',borderRadius:99,background:'white',color:'#64748b',cursor:'pointer',outline:'none',fontFamily:'inherit'}}>
-          {visiting?'…':'更新'}
-        </button>
-      </div>
+      <button onClick={e=>{e.stopPropagation();onVisit()}} disabled={visiting}
+        style={{display:'flex',alignItems:'center',gap:4,fontSize:fs,padding:pd,borderRadius:99,background:'#f0fdf4',color:'#15803d',fontWeight:700,border:'2px solid #bbf7d0',cursor:'pointer',outline:'none',fontFamily:'inherit'}}>
+        {visiting?'処理中…':`✅ 訪問済 ${lv||''}`}
+      </button>
     )
   }
   return(
     <button onClick={e=>{e.stopPropagation();onVisit()}} disabled={visiting}
-      style={{display:'flex',alignItems:'center',gap:4,fontSize:fs,padding:size==='lg'?'5px 14px':'2px 8px',borderRadius:99,background:'#faf5ff',color:'#7c3aed',fontWeight:700,border:'2px solid #ddd6fe',cursor:'pointer',outline:'none',fontFamily:'inherit',animation:visiting?'none':undefined}}>
-      {visiting?'登録中…':'📅 今日 訪問済にする'}
+      style={{display:'flex',alignItems:'center',gap:4,fontSize:fs,padding:pd,borderRadius:99,background:'#faf5ff',color:'#7c3aed',fontWeight:700,border:'2px solid #ddd6fe',cursor:'pointer',outline:'none',fontFamily:'inherit'}}>
+      {visiting?'処理中…':'📅 未訪問'}
     </button>
   )
 }
@@ -377,8 +516,8 @@ function CustomerCard({customer:c,projects,files,expanded,currentUser,visiting,o
           {/* ★ 訪問登録ボタン */}
           {!visited&&(
             <button onClick={e=>{e.stopPropagation();onVisit()}} disabled={visiting}
-              style={{padding:'4px 10px',border:'2px solid #ddd6fe',borderRadius:6,background:'#faf5ff',color:'#7c3aed',cursor:'pointer',fontSize:'0.7rem',fontWeight:700,outline:'none',fontFamily:'inherit',whiteSpace:'nowrap'}}>
-              {visiting?'…':'📅 訪問済'}
+              style={{padding:'4px 10px',border:'2px solid #fed7aa',borderRadius:6,background:'#fff7ed',color:'#c2410c',cursor:'pointer',fontSize:'0.7rem',fontWeight:700,outline:'none',fontFamily:'inherit',whiteSpace:'nowrap'}}>
+              {visiting?'…':'📅 訪問登録'}
             </button>
           )}
           <button onClick={e=>{e.stopPropagation();onEdit()}} style={{width:28,height:28,border:'1px solid #e2e8f0',borderRadius:6,background:'white',color:'#475569',cursor:'pointer',fontSize:'0.75rem',display:'flex',alignItems:'center',justifyContent:'center',outline:'none'}}>✏️</button>
@@ -525,6 +664,9 @@ function CompactFileSection({customerId,projectId,allFiles,currentUser,onFilesCh
 // ─── 顧客フォームモーダル ─────────────────────────────────────
 function CustomerFormModal({customer,onClose,onSave}:{customer:Customer|null;onClose:()=>void;onSave:(dto:CustomerDto)=>Promise<void>}){
   const lv=(customer as any)?.lastVisitDate as string|null|undefined
+  const CONTACTS=useMasterValues('tcs_contact',['永田 暁洋','岸本 健二','小池 慎郁','成清 祐介','西山 悠太','赤星 美和子'])
+  const SERVER_ENVS=useMasterValues('server_env',['オンプレ(TCS管理)','オンプレ(お客様管理)','AWS(TCS管理)','Azure(TCS管理)','データセンター(仮想)'])
+  const MODULE_OPTIONS=useMasterValues('sc_module',['SC販売','SC販売生産','SC販売生産原価'])
   const[form,setForm]=useState<CustomerDto>(customer?{
     name:customer.name,industry:customer.industry,primeType:customer.primeType,partner:customer.partner,
     modules:customer.modules,version:customer.version,proposalStatus:'',
@@ -549,22 +691,20 @@ function CustomerFormModal({customer,onClose,onSave}:{customer:Customer|null;onC
         <div style={fld}><label style={lbl}>SCモジュール</label><select style={inp} value={form.modules} onChange={e=>set('modules',e.target.value)}>{MODULE_OPTIONS.map(m=><option key={m}>{m}</option>)}</select></div>
         <div style={fld}><label style={lbl}>バージョン</label><input style={inp} type="number" step="0.1" value={form.version??''} onChange={e=>set('version',e.target.value?+e.target.value:null)} placeholder="例：9"/></div>
         <div style={fld}><label style={lbl}>月次保守料（円）</label><input style={inp} type="number" value={form.monthlyFee??''} onChange={e=>set('monthlyFee',e.target.value?+e.target.value:null)}/></div>
-        <div style={fld}><label style={lbl}>最終訪問日 (YYYY/MM/DD)</label><input style={inp} value={(form as any).lastVisitDate??''} onChange={e=>set('lastVisitDate' as any,e.target.value)} placeholder="例：2026/03/15"/></div>
+        <div style={fld}><label style={lbl}>最終訪問日 (YYYY/MM/DD)</label><input style={inp} type="date" value={toDateInput((form as any).lastVisitDate)} onChange={e=>set('lastVisitDate' as any,fromDateInput(e.target.value))}/></div>
       </div>
       <div style={{borderTop:'1px solid #f1f5f9',paddingTop:'0.85rem',marginBottom:'0.85rem'}}>
         <div style={{fontSize:'0.68rem',fontWeight:700,color:'#94a3b8',marginBottom:'0.7rem',letterSpacing:'0.06em',textTransform:'uppercase' as const}}>サーバー情報</div>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 1rem'}}>
           <div style={fld}><label style={lbl}>サーバー環境</label><select style={inp} value={form.serverEnv??''} onChange={e=>set('serverEnv',e.target.value)}><option value="">（なし）</option>{SERVER_ENVS.map(s=><option key={s}>{s}</option>)}</select></div>
-          <div style={fld}><label style={lbl}>サーバー保守期限 (YYYY/MM/DD)</label><input style={inp} value={form.serverMaintDate??''} onChange={e=>set('serverMaintDate',e.target.value)} placeholder="例：2026/09/30"/></div>
-          <div style={fld}><label style={lbl}>SC保守期限 (YYYY/MM/DD)</label><input style={inp} value={form.scMaintDate??''} onChange={e=>set('scMaintDate',e.target.value)} placeholder="例：2027/03/31"/></div>
+          <div style={fld}><label style={lbl}>サーバー保守期限 (YYYY/MM/DD)</label><input style={inp} type="date" value={toDateInput(form.serverMaintDate)} onChange={e=>set('serverMaintDate',fromDateInput(e.target.value))}/></div>
+          <div style={fld}><label style={lbl}>SC保守期限 (YYYY/MM/DD)</label><input style={inp} type="date" value={toDateInput(form.scMaintDate)} onChange={e=>set('scMaintDate',fromDateInput(e.target.value))}/></div>
         </div>
       </div>
       <div style={{borderTop:'1px solid #f1f5f9',paddingTop:'0.85rem'}}>
         {/* ★ 担当者の役割を明確化 */}
-        <div style={{fontSize:'0.68rem',fontWeight:700,color:'#94a3b8',marginBottom:'0.7rem',letterSpacing:'0.06em',textTransform:'uppercase' as const}}>担当者（顧客との連絡窓口）</div>
-        <div style={{background:'#f0f9ff',border:'1px solid #bae6fd',borderRadius:8,padding:'8px 12px',marginBottom:'0.75rem',fontSize:'0.75rem',color:'#0369a1'}}>
-          💡 ここで設定する担当者は「顧客との主な連絡窓口（年次訪問担当）」です。案件ごとの担当者は案件フォームで、作業ごとの担当者は作業管理ページで設定します。
-        </div>
+        <div style={{fontSize:'0.68rem',fontWeight:700,color:'#94a3b8',marginBottom:'0.7rem',letterSpacing:'0.06em',textTransform:'uppercase' as const}}>担当者</div>
+
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 1rem'}}>
           <div style={fld}><label style={lbl}>TCS連絡担当者</label><select style={inp} value={form.contact} onChange={e=>set('contact',e.target.value)}>{CONTACTS.map(c=><option key={c}>{c}</option>)}</select></div>
           <div style={fld}><label style={lbl}>顧客側担当者</label><input style={inp} value={form.customerContact??''} onChange={e=>set('customerContact',e.target.value)} placeholder="例：濱様"/></div>
@@ -578,6 +718,9 @@ function CustomerFormModal({customer,onClose,onSave}:{customer:Customer|null;onC
 // ─── 案件フォームモーダル（担当者追加） ──────────────────────
 function ProjectFormModal({project,customerId,onClose,onSave}:{project:CustomerProject|null;customerId:number;onClose:()=>void;onSave:(dto:CustomerProjectDto)=>Promise<void>}){
   const pas=assigneeList((project as any)?.assignees)
+  const CONTACTS=useMasterValues('tcs_contact',['永田 暁洋','岸本 健二','小池 慎郁','成清 祐介','西山 悠太','赤星 美和子'])
+  const PROJECT_TYPES=useMasterValues('project_type',['サーバーリプレイス','SCカスタマイズ','バージョンアップ','商品購入','保守契約更新','その他'])
+  const PROJECT_STATUSES=useMasterValues('project_status',['提案中','商談中','受注','対応中','完了','失注'])
   const[form,setForm]=useState<CustomerProjectDto>(project?{customerId,projectName:project.projectName,projectType:project.projectType,status:project.status,description:project.description,startDate:project.startDate,expectedEndDate:project.expectedEndDate,amount:project.amount}:{customerId,projectName:'',projectType:'その他',status:'提案中',description:null,startDate:null,expectedEndDate:null,amount:null})
   const[assigneeSet,setAssigneeSet]=useState<Set<string>>(new Set(pas))
   const[saving,setSaving]=useState(false)
@@ -598,8 +741,8 @@ function ProjectFormModal({project,customerId,onClose,onSave}:{project:CustomerP
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 1rem'}}>
         <div style={fld}><label style={lbl}>種別</label><select style={inp} value={form.projectType} onChange={e=>set('projectType',e.target.value)}>{PROJECT_TYPES.map(t=><option key={t}>{t}</option>)}</select></div>
         <div style={fld}><label style={lbl}>ステータス</label><select style={inp} value={form.status} onChange={e=>set('status',e.target.value)}>{PROJECT_STATUSES.map(s=><option key={s}>{s}</option>)}</select></div>
-        <div style={fld}><label style={lbl}>開始日 (YYYY/MM/DD)</label><input style={inp} value={form.startDate??''} onChange={e=>set('startDate',e.target.value)} placeholder="例：2026/05/01"/></div>
-        <div style={fld}><label style={lbl}>完了予定日 (YYYY/MM/DD)</label><input style={inp} value={form.expectedEndDate??''} onChange={e=>set('expectedEndDate',e.target.value)} placeholder="例：2026/09/30"/></div>
+        <div style={fld}><label style={lbl}>開始日 (YYYY/MM/DD)</label><input style={inp} type="date" value={toDateInput(form.startDate)} onChange={e=>set('startDate',fromDateInput(e.target.value))}/></div>
+        <div style={fld}><label style={lbl}>完了予定日 (YYYY/MM/DD)</label><input style={inp} type="date" value={toDateInput(form.expectedEndDate)} onChange={e=>set('expectedEndDate',fromDateInput(e.target.value))}/></div>
         <div style={fld}><label style={lbl}>金額（円）</label><input style={inp} type="number" value={form.amount??''} onChange={e=>set('amount',e.target.value?+e.target.value:null)}/></div>
       </div>
       {/* ★ 案件担当者チェックボックス */}

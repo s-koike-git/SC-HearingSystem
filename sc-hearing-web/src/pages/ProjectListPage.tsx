@@ -15,7 +15,7 @@ interface Project {
 
 type SortField = 'companyName' | 'industry' | 'contactPerson' | 'createdAt' | 'status'
 type SortOrder = 'asc' | 'desc'
-type StatusFilter = '全て' | '未着手' | '進行中' | '完了' | '保留'
+type StatusFilter = string
 
 const STATUS_CONFIG: Record<string, { color: string; bg: string; border: string; icon: string }> = {
   '未着手': { color: '#475569', bg: '#f1f5f9', border: '#cbd5e1', icon: '○' },
@@ -24,11 +24,26 @@ const STATUS_CONFIG: Record<string, { color: string; bg: string; border: string;
   '保留':   { color: '#854F0B', bg: '#FAEEDA', border: '#BA7517', icon: '⏸' },
 }
 
+
+// ─── マスタAPI取得フック ──────────────────────────────────────
+function useMasterValues(category: string, defaults: string[]): string[] {
+  const [values, setValues] = useState<string[]>(defaults)
+  useEffect(() => {
+    fetch('/sc-hearing/api/MasterItems/category/' + category)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.length) setValues(data.map((m: any) => m.value)) })
+      .catch(() => {})
+  }, [category])
+  return values
+}
+
 function ProjectListPage() {
   const navigate = useNavigate()
   const [projects, setProjects] = useState<Project[]>([])
   const [searchText, setSearchText] = useState('')
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('全て')
+  const [statusFilter, setStatusFilter] = useState<string>('全て')
+  const STATUS_OPTIONS = useMasterValues('project_progress', ['未着手','進行中','完了','保留'])
+
   const [sortField, setSortField] = useState<SortField>('createdAt')
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc')
   const [showHelp, setShowHelp] = useState(false)
@@ -48,7 +63,7 @@ function ProjectListPage() {
   }
 
   const statusCounts = useMemo(() => {
-    const counts: Record<string, number> = { '未着手': 0, '進行中': 0, '完了': 0, '保留': 0 }
+    const counts: Record<string, number> = Object.fromEntries([...STATUS_OPTIONS].map(s => [s, 0]))
     projects.forEach(p => {
       if (counts[p.status] !== undefined) counts[p.status]++
     })
@@ -204,7 +219,7 @@ function ProjectListPage() {
             />
           </div>
           <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-            {(['全て', '未着手', '進行中', '完了', '保留'] as StatusFilter[]).map(s => {
+            {(['全て', ...STATUS_OPTIONS] as StatusFilter[]).map(s => {
               const isActive = statusFilter === s
               const cfg = s !== '全て' ? STATUS_CONFIG[s] : null
               return (
@@ -337,10 +352,7 @@ function ProjectListPage() {
                       fontFamily: 'inherit',
                     }}
                   >
-                    <option value="未着手">{STATUS_CONFIG['未着手'].icon} 未着手</option>
-                    <option value="進行中">{STATUS_CONFIG['進行中'].icon} 進行中</option>
-                    <option value="完了">{STATUS_CONFIG['完了'].icon} 完了</option>
-                    <option value="保留">{STATUS_CONFIG['保留'].icon} 保留</option>
+                    {STATUS_OPTIONS.map(s => <option key={s} value={s}>{(STATUS_CONFIG[s] || STATUS_CONFIG['未着手']).icon} {s}</option>)}
                   </select>
                 </div>
                 <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>

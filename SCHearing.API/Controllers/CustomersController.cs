@@ -57,6 +57,7 @@ namespace SCHearing.API.Controllers
                 CustomerContact = dto.CustomerContact,
                 Notes           = dto.Notes,
                 MonthlyFee      = dto.MonthlyFee,
+                LastVisitDate   = dto.LastVisitDate,
                 CreatedAt       = DateTime.Now,
                 UpdatedAt       = DateTime.Now,
             };
@@ -87,6 +88,7 @@ namespace SCHearing.API.Controllers
             item.CustomerContact = dto.CustomerContact;
             item.Notes           = dto.Notes;
             item.MonthlyFee      = dto.MonthlyFee;
+            item.LastVisitDate   = dto.LastVisitDate;   // ← 追加
             item.UpdatedAt       = DateTime.Now;
 
             await _context.SaveChangesAsync();
@@ -104,24 +106,42 @@ namespace SCHearing.API.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
+        // ─── 訪問日専用更新 ───────────────────────────────────────
+        [HttpPatch("{id}/visit-date")]
+        public async Task<IActionResult> UpdateVisitDate(int id, [FromBody] VisitDateDto dto)
+        {
+            var customer = await _context.Customers.FindAsync(id);  // _ctx → _context
+            if (customer == null) return NotFound();
+
+            customer.LastVisitDate = string.IsNullOrEmpty(dto.VisitDate) ? null : dto.VisitDate;
+            await _context.SaveChangesAsync();
+            return Ok(customer);
+        }
     }
 
     // ─── DTO ─────────────────────────────────────────────────────
     public class CustomerDto
     {
-        public string Name            { get; set; } = string.Empty;
-        public string Industry        { get; set; } = string.Empty;
-        public string PrimeType       { get; set; } = "プライム";
-        public string? Partner        { get; set; }
-        public string Modules         { get; set; } = "SC販売";
-        public double? Version        { get; set; }
-        public string ProposalStatus  { get; set; } = "未提案";
-        public string? ScMaintDate    { get; set; }
-        public string? ServerEnv      { get; set; }
+        public string Name             { get; set; } = string.Empty;
+        public string Industry         { get; set; } = string.Empty;
+        public string PrimeType        { get; set; } = "プライム";
+        public string? Partner         { get; set; }
+        public string Modules          { get; set; } = "SC販売";
+        public double? Version         { get; set; }
+        public string ProposalStatus   { get; set; } = "未提案";
+        public string? ScMaintDate     { get; set; }
+        public string? ServerEnv       { get; set; }
         public string? ServerMaintDate { get; set; }
-        public string Contact         { get; set; } = string.Empty;
+        public string Contact          { get; set; } = string.Empty;
         public string? CustomerContact { get; set; }
-        public string? Notes          { get; set; }
-        public int? MonthlyFee        { get; set; }
+        public string? Notes           { get; set; }
+        public int? MonthlyFee         { get; set; }
+        public string? LastVisitDate   { get; set; }   // ← 追加
+    }
+
+    public class VisitDateDto
+    {
+        public string? VisitDate { get; set; }
     }
 }

@@ -39,6 +39,22 @@ function fmt(d:Date){return`${d.getFullYear()}/${String(d.getMonth()+1).padStart
 interface DragInfo { type:'move'|'left'|'right'; project:CustomerProject; startX:number; origStart:Date|null; origEnd:Date|null }
 interface Props { customers:Customer[]; projects:Record<number,CustomerProject[]>; onProjectChange:(customerId:number)=>void }
 
+// ─── マスタAPI取得フック ──────────────────────────────────────
+function useMasterValues(category: string, defaults: string[]): string[] {
+  const [values, setValues] = useState<string[]>(defaults)
+  useEffect(() => {
+    fetch('/sc-hearing/api/MasterItems/category/' + category)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.length) setValues(data.map((m: any) => m.value)) })
+      .catch(() => {})
+  }, [category])
+  return values
+}
+
+// ─── 日付変換（type="date"用） ────────────────────────────────
+const toDateInput = (s: string|null|undefined): string => s ? s.replace(/\//g, '-') : ''
+const fromDateInput = (s: string): string|null => s ? s.replace(/-/g, '/') : null
+
 export default function CustomerGanttView({customers,projects,onProjectChange}:Props){
   const[scale,setScale]=useState<Scale>('6m')
   const[viewStart,setViewStart]=useState(()=>startOfMonth(addMonths(TODAY,-1)))
@@ -312,6 +328,8 @@ function ProjectDetailModal({project:p,customerName,onClose,onSave,onDelete}:{
   project:CustomerProject;customerName:string
   onClose:()=>void;onSave:(dto:CustomerProjectDto)=>Promise<void>;onDelete:()=>Promise<void>
 }){
+  const PROJECT_TYPES=useMasterValues('project_type',['サーバーリプレイス','SCカスタマイズ','バージョンアップ','商品購入','保守契約更新','その他'])
+  const PROJECT_STATUSES=useMasterValues('project_status',['提案中','商談中','受注','対応中','完了','失注'])
   const[editing,setEditing]=useState(false)
   const[fileTab,setFileTab]=useState(false)
   const[projFiles,setProjFiles]=useState<CustomerFileItem[]>([])
@@ -448,8 +466,8 @@ function ProjectDetailModal({project:p,customerName,onClose,onSave,onDelete}:{
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 10px'}}>
                 <div style={fld}><label style={lbl}>種別</label><select style={inp} value={form.projectType} onChange={e=>set('projectType',e.target.value)}>{(['サーバーリプレイス','SCカスタマイズ','バージョンアップ','商品購入','保守契約更新','その他']).map(t=><option key={t}>{t}</option>)}</select></div>
                 <div style={fld}><label style={lbl}>ステータス</label><select style={inp} value={form.status} onChange={e=>set('status',e.target.value)}>{(['提案中','商談中','受注','対応中','完了','失注']).map(s=><option key={s}>{s}</option>)}</select></div>
-                <div style={fld}><label style={lbl}>開始日 (YYYY/MM/DD)</label><input style={inp} value={form.startDate??''} onChange={e=>set('startDate',e.target.value)} placeholder="例：2026/05/01"/></div>
-                <div style={fld}><label style={lbl}>完了予定日 (YYYY/MM/DD)</label><input style={inp} value={form.expectedEndDate??''} onChange={e=>set('expectedEndDate',e.target.value)} placeholder="例：2026/09/30"/></div>
+                <div style={fld}><label style={lbl}>開始日 (YYYY/MM/DD)</label><input style={inp} type="date" value={toDateInput(form.startDate)} onChange={e=>set('startDate',fromDateInput(e.target.value))}/></div>
+                <div style={fld}><label style={lbl}>完了予定日 (YYYY/MM/DD)</label><input style={inp} type="date" value={toDateInput(form.expectedEndDate)} onChange={e=>set('expectedEndDate',fromDateInput(e.target.value))}/></div>
                 <div style={fld}><label style={lbl}>金額（円）</label><input style={inp} type="number" value={form.amount??''} onChange={e=>set('amount',e.target.value?+e.target.value:null)}/></div>
               </div>
               <div style={fld}><label style={lbl}>詳細・メモ</label><textarea style={{...inp,resize:'vertical',minHeight:70}} value={form.description??''} onChange={e=>set('description',e.target.value)}/></div>
@@ -486,6 +504,9 @@ function ProjectDetailModal({project:p,customerName,onClose,onSave,onDelete}:{
 
 // ─── 案件追加モーダル ─────────────────────────────────────────
 function AddProjectModal({customers,initialCustomerId,onClose,onSave}:{customers:Customer[];initialCustomerId:number|null;onClose:()=>void;onSave:(dto:CustomerProjectDto)=>Promise<void>}){
+  const PROJECT_TYPES=useMasterValues('project_type',['サーバーリプレイス','SCカスタマイズ','バージョンアップ','商品購入','保守契約更新','その他'])
+  const PROJECT_STATUSES=useMasterValues('project_status',['提案中','商談中','受注','対応中','完了','失注'])
+  const CONTACTS_LIST=useMasterValues('tcs_contact',['永田 暁洋','岸本 健二','小池 慎郁','成清 祐介','西山 悠太','赤星 美和子'])
   const[form,setForm]=useState<CustomerProjectDto>({customerId:initialCustomerId??customers[0]?.id??0,projectName:'',projectType:'その他',status:'提案中',description:null,startDate:null,expectedEndDate:null,amount:null})
   const[saving,setSaving]=useState(false)
   const[error,setError]=useState('')
@@ -509,8 +530,8 @@ function AddProjectModal({customers,initialCustomerId,onClose,onSave}:{customers
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0 1rem'}}>
             <div style={fld}><label style={lbl}>種別</label><select style={inp} value={form.projectType} onChange={e=>set('projectType',e.target.value)}>{['サーバーリプレイス','SCカスタマイズ','バージョンアップ','商品購入','保守契約更新','その他'].map(t=><option key={t}>{t}</option>)}</select></div>
             <div style={fld}><label style={lbl}>ステータス</label><select style={inp} value={form.status} onChange={e=>set('status',e.target.value)}>{['提案中','商談中','受注','対応中','完了','失注'].map(s=><option key={s}>{s}</option>)}</select></div>
-            <div style={fld}><label style={lbl}>開始日 (YYYY/MM/DD)</label><input style={inp} value={form.startDate??''} onChange={e=>set('startDate',e.target.value)} placeholder="例：2026/05/01"/></div>
-            <div style={fld}><label style={lbl}>完了予定日 (YYYY/MM/DD)</label><input style={inp} value={form.expectedEndDate??''} onChange={e=>set('expectedEndDate',e.target.value)} placeholder="例：2026/09/30"/></div>
+            <div style={fld}><label style={lbl}>開始日 (YYYY/MM/DD)</label><input style={inp} type="date" value={toDateInput(form.startDate)} onChange={e=>set('startDate',fromDateInput(e.target.value))}/></div>
+            <div style={fld}><label style={lbl}>完了予定日 (YYYY/MM/DD)</label><input style={inp} type="date" value={toDateInput(form.expectedEndDate)} onChange={e=>set('expectedEndDate',fromDateInput(e.target.value))}/></div>
             <div style={fld}><label style={lbl}>金額（円）</label><input style={inp} type="number" value={form.amount??''} onChange={e=>set('amount',e.target.value?+e.target.value:null)}/></div>
           </div>
           <div style={fld}><label style={lbl}>詳細・メモ</label><textarea style={{...inp,resize:'vertical',minHeight:80}} value={form.description??''} onChange={e=>set('description',e.target.value)} placeholder="提案内容・進捗メモ"/></div>

@@ -12,6 +12,7 @@ import ProgramEstimatePage from './pages/ProgramEstimatePage'
 import CostSimulationPage from './pages/CostSimulationPage'
 import CustomerManagementPage from './pages/CustomerManagementPage'
 import WorkTaskPage from './pages/WorkTaskPage'
+import MasterSettingsPage from './pages/MasterSettingsPage'
 
 function App() {
   return (
@@ -103,6 +104,7 @@ function App() {
 
           <Route path="/cost-simulation" element={<CostSimulationPage />} />
           <Route path="/work-tasks" element={<WorkTaskPage />} />
+          <Route path="/master-settings" element={<MasterSettingsPage />} />
           
           {/* デフォルトルート：ログインにリダイレクト */}
           <Route path="/" element={<Navigate to="/login" replace />} />
